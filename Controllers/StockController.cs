@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TucaAPI.Data;
+using TucaAPI.Mappers;
 
 namespace TucaAPI.Controllers
 {
@@ -16,7 +17,7 @@ namespace TucaAPI.Controllers
 
         [HttpGet]
         public IActionResult GetAll() {
-            var stocks = this.context.Stocks.ToList();
+            var stocks = this.context.Stocks.ToList().Select(s => s.ToStockDto());
             return Ok(stocks);
         }
 
@@ -26,7 +27,7 @@ namespace TucaAPI.Controllers
 
             if (stock == null) return NotFound();
             
-            return Ok(stock);
+            return Ok(stock.ToStockDto());
         }
     }
 }
