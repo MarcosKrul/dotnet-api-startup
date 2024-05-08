@@ -63,5 +63,19 @@ namespace TucaAPI.Controllers
 
             return Ok(stock.ToStockDto());
         }
+
+        [HttpDelete]
+        [Route("{id}")]
+        public IActionResult Delete([FromRoute] int id)
+        {
+            var stock = this.context.Stocks.FirstOrDefault(x => x.Id == id);
+
+            if (stock == null) return NotFound();
+
+            this.context.Remove(stock);
+            this.context.SaveChanges();
+
+            return NoContent();
+        }
     }
 }
