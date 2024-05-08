@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TucaAPI.Data;
+using TucaAPI.Dtos.Stock;
 using TucaAPI.Mappers;
 
 namespace TucaAPI.Controllers
@@ -28,6 +29,16 @@ namespace TucaAPI.Controllers
             if (stock == null) return NotFound();
             
             return Ok(stock.ToStockDto());
+        }
+
+        [HttpPost]
+        public IActionResult Create([FromBody] CreateStockRequestDto data) {
+            var stockModel = data.ToStockFromCreateDTO();
+
+            this.context.Add(stockModel);
+            this.context.SaveChanges();
+
+            return CreatedAtAction(nameof(GetById), new { id = stockModel.Id }, stockModel.ToStockDto());
         }
     }
 }

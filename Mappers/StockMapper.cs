@@ -16,5 +16,16 @@ namespace TucaAPI.Mappers
                 MarketCap = stockModel.MarketCap,
             };
         }
+
+        public static Stock ToStockFromCreateDTO(this CreateStockRequestDto createStockRequestDto) {
+            return new Stock {
+                Symbol = createStockRequestDto.Symbol,
+                CompanyName = createStockRequestDto.CompanyName,
+                Industry = createStockRequestDto.Industry,
+                LastDiv = createStockRequestDto.LastDiv,
+                Purchase = createStockRequestDto.Purchase,
+                MarketCap = createStockRequestDto.MarketCap,
+            };
+        }
     }
 }
