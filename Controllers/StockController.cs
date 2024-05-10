@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using TucaAPI.Data;
 using TucaAPI.Dtos.Stock;
+using TucaAPI.Interfaces;
 using TucaAPI.Mappers;
 
 namespace TucaAPI.Controllers
@@ -10,26 +11,26 @@ namespace TucaAPI.Controllers
     [ApiController]
     public class StockController : ControllerBase
     {
-        private readonly ApplicationDBContext context;
+        private readonly IStockRepository repository;
 
-        public StockController(ApplicationDBContext context)
+        public StockController(IStockRepository repository)
         {
-            this.context = context;
+            this.repository = repository;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var stocks = await this.context.Stocks.ToListAsync();
+            var stocks = await this.repository.GetAllAsync();
             var formatted = stocks.Select(s => s.ToStockDto());
             
-            return Ok(stocks);
+            return Ok(formatted);
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById([FromRoute] int id)
         {
-            var stock = await this.context.Stocks.FindAsync(id);
+            var stock = await this.repository.GetByIdAsync(id);
 
             if (stock == null) return NotFound();
 
@@ -39,30 +40,20 @@ namespace TucaAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateStockRequestDto data)
         {
-            var stockModel = data.ToStockFromCreateDTO();
+            var stock = data.ToStockFromCreateDTO();
 
-            await this.context.AddAsync(stockModel);
-            await this.context.SaveChangesAsync();
+            await this.repository.CreateAsync(stock);
 
-            return CreatedAtAction(nameof(GetById), new { id = stockModel.Id }, stockModel.ToStockDto());
+            return CreatedAtAction(nameof(GetById), new { id = stock.Id }, stock.ToStockDto());
         }
 
         [HttpPut]
         [Route("{id}")]
         public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateStockRequestDto data)
         {
-            var stock = await this.context.Stocks.FirstOrDefaultAsync(x => x.Id == id);
+            var stock = await this.repository.UpdateAsync(id, data);
 
             if (stock == null) return NotFound();
-
-            stock.Symbol = data.Symbol;
-            stock.CompanyName = data.CompanyName;
-            stock.Industry = data.Industry;
-            stock.LastDiv = data.LastDiv;
-            stock.Purchase = data.Purchase;
-            stock.MarketCap = data.MarketCap;
-
-            await this.context.SaveChangesAsync();
 
             return Ok(stock.ToStockDto());
         }
@@ -71,12 +62,11 @@ namespace TucaAPI.Controllers
         [Route("{id}")]
         public async Task<IActionResult> Delete([FromRoute] int id)
         {
-            var stock = await this.context.Stocks.FirstOrDefaultAsync(x => x.Id == id);
+            var stock = await this.repository.GetByIdAsync(id);
 
             if (stock == null) return NotFound();
 
-            this.context.Remove(stock);
-            await this.context.SaveChangesAsync();
+            await this.repository.DeleteAsync(stock);
 
             return NoContent();
         }
