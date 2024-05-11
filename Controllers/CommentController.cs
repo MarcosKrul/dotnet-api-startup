@@ -53,5 +53,21 @@ namespace TucaAPI.Controllers
 
             return CreatedAtAction(nameof(GetById), new { id = comment.Id }, comment.ToCommentDto());
         }
+
+        [HttpDelete]
+        [Route("{id}")]
+        public async Task<IActionResult> Delete([FromRoute] int id) 
+        {
+            var comment = await this.commentRepository.GetByIdAsync(id);
+
+            if (comment == null) 
+            {
+                return NotFound();
+            }
+
+            await this.commentRepository.DeleteAsync(comment);
+
+            return NoContent();
+        }
     }
 }

@@ -21,6 +21,12 @@ namespace TucaAPI.Repositories
             return comment;
         }
 
+        public async Task DeleteAsync(Comment comment)
+        {
+            this.context.Remove(comment);
+            await this.context.SaveChangesAsync();
+        }
+
         public async Task<List<Comment>> GetAllAsync()
         {
             return await context.Comments.ToListAsync();
