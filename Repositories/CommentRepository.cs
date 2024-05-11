@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using TucaAPI.Data;
 using TucaAPI.Interfaces;
@@ -21,6 +17,11 @@ namespace TucaAPI.Repositories
         public async Task<List<Comment>> GetAllAsync()
         {
             return await context.Comments.ToListAsync();
+        }
+
+        public async Task<Comment?> GetByIdAsync(int id)
+        {
+            return await this.context.Comments.FindAsync(id);
         }
     }
 }
