@@ -17,7 +17,7 @@ namespace TucaAPI.Repositories
 
         public async Task<Stock> CreateAsync(Stock stock)
         {
-            await this.context.AddAsync(stock);
+            await this.context.Stocks.AddAsync(stock);
             await this.context.SaveChangesAsync();
             return stock;
         }
@@ -36,6 +36,11 @@ namespace TucaAPI.Repositories
         public async Task<Stock?> GetByIdAsync(int id)
         {
             return await this.context.Stocks.Include(c => c.Comments).FirstOrDefaultAsync(i => i.Id == id);
+        }
+
+        public Task<bool> StockExistsAsync(int id)
+        {
+            return this.context.Stocks.AnyAsync(item => item.Id == id);
         }
 
         public async Task<Stock?> UpdateAsync(int id, UpdateStockRequestDto stockDto)

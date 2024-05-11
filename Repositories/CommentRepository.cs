@@ -14,6 +14,13 @@ namespace TucaAPI.Repositories
             this.context = context;
         }
 
+        public async Task<Comment> CreateAsync(Comment comment)
+        {
+            await this.context.Comments.AddAsync(comment);
+            await this.context.SaveChangesAsync();
+            return comment;
+        }
+
         public async Task<List<Comment>> GetAllAsync()
         {
             return await context.Comments.ToListAsync();

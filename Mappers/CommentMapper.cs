@@ -16,5 +16,15 @@ namespace TucaAPI.Mappers
                 Title = comment.Title
             };
         }
+
+        public static Comment ToCommentFromRequestDto(this CreateCommentRequestDto comment, int stockId)
+        {
+            return new Comment
+            {
+                Content = comment.Content,
+                Title = comment.Title,
+                StockId = stockId
+            };
+        }
     }
 }
