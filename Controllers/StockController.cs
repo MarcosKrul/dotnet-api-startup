@@ -23,7 +23,7 @@ namespace TucaAPI.Controllers
         {
             var stocks = await this.repository.GetAllAsync();
             var formatted = stocks.Select(s => s.ToStockDto());
-            
+
             return Ok(formatted);
         }
 

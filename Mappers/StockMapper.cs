@@ -5,8 +5,10 @@ namespace TucaAPI.Mappers
 {
     public static class StockMapper
     {
-        public static StockDto ToStockDto(this Stock stockModel) {
-            return new StockDto {
+        public static StockDto ToStockDto(this Stock stockModel)
+        {
+            return new StockDto
+            {
                 Id = stockModel.Id,
                 Symbol = stockModel.Symbol,
                 CompanyName = stockModel.CompanyName,
@@ -18,8 +20,10 @@ namespace TucaAPI.Mappers
             };
         }
 
-        public static Stock ToStockFromCreateDTO(this CreateStockRequestDto createStockRequestDto) {
-            return new Stock {
+        public static Stock ToStockFromCreateDTO(this CreateStockRequestDto createStockRequestDto)
+        {
+            return new Stock
+            {
                 Symbol = createStockRequestDto.Symbol,
                 CompanyName = createStockRequestDto.CompanyName,
                 Industry = createStockRequestDto.Industry,
