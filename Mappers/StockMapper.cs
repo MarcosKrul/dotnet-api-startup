@@ -14,6 +14,7 @@ namespace TucaAPI.Mappers
                 LastDiv = stockModel.LastDiv,
                 Purchase = stockModel.Purchase,
                 MarketCap = stockModel.MarketCap,
+                Comments = stockModel.Comments.Select(item => item.ToCommentDto()).ToList(),
             };
         }
 

@@ -30,12 +30,12 @@ namespace TucaAPI.Repositories
 
         public async Task<List<Stock>> GetAllAsync()
         {
-            return await this.context.Stocks.ToListAsync();
+            return await this.context.Stocks.Include(c => c.Comments).ToListAsync();
         }
 
         public async Task<Stock?> GetByIdAsync(int id)
         {
-            return await this.context.Stocks.FindAsync(id);
+            return await this.context.Stocks.Include(c => c.Comments).FirstOrDefaultAsync(i => i.Id == id);
         }
 
         public async Task<Stock?> UpdateAsync(int id, UpdateStockRequestDto stockDto)
