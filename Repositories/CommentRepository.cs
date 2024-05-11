@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using TucaAPI.Data;
+using TucaAPI.Dtos.Comment;
 using TucaAPI.Interfaces;
 using TucaAPI.Models;
 
@@ -35,6 +36,20 @@ namespace TucaAPI.Repositories
         public async Task<Comment?> GetByIdAsync(int id)
         {
             return await this.context.Comments.FindAsync(id);
+        }
+
+        public async Task<Comment?> UpdateAsync(int id, UpdateCommentRequestDto data)
+        {
+            var comment = await this.GetByIdAsync(id);
+
+            if (comment == null) return null;
+
+            comment.Title = data.Title;
+            comment.Content = data.Content;
+
+            await this.context.SaveChangesAsync();
+
+            return comment;
         }
     }
 }

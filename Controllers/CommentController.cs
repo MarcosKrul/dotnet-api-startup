@@ -56,11 +56,11 @@ namespace TucaAPI.Controllers
 
         [HttpDelete]
         [Route("{id}")]
-        public async Task<IActionResult> Delete([FromRoute] int id) 
+        public async Task<IActionResult> Delete([FromRoute] int id)
         {
             var comment = await this.commentRepository.GetByIdAsync(id);
 
-            if (comment == null) 
+            if (comment == null)
             {
                 return NotFound();
             }
@@ -68,6 +68,17 @@ namespace TucaAPI.Controllers
             await this.commentRepository.DeleteAsync(comment);
 
             return NoContent();
+        }
+
+        [HttpPut]
+        [Route("{id}")]
+        public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateCommentRequestDto data)
+        {
+            var comment = await this.commentRepository.UpdateAsync(id, data);
+
+            if (comment == null) return NotFound();
+
+            return Ok(comment.ToCommentDto());
         }
     }
 }
