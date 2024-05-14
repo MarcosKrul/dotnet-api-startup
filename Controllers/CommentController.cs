@@ -20,6 +20,7 @@ namespace TucaAPI.Controllers
         }
 
         [HttpGet]
+        [ValidateModelState]
         public async Task<IActionResult> GetAll()
         {
             var comments = await this.commentRepository.GetAllAsync();
@@ -29,6 +30,7 @@ namespace TucaAPI.Controllers
         }
 
         [HttpGet]
+        [ValidateModelState]
         [Route("{id:int}")]
         public async Task<IActionResult> GetById([FromRoute] int id)
         {
@@ -57,6 +59,7 @@ namespace TucaAPI.Controllers
         }
 
         [HttpDelete]
+        [ValidateModelState]
         [Route("{id:int}")]
         public async Task<IActionResult> Delete([FromRoute] int id)
         {
@@ -73,6 +76,7 @@ namespace TucaAPI.Controllers
         }
 
         [HttpPut]
+        [ValidateModelState]
         [Route("{id:int}")]
         public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateCommentRequestDto data)
         {

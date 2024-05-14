@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using TucaAPI.Data;
+using TucaAPI.Attributes;
 using TucaAPI.Dtos.Stock;
 using TucaAPI.Interfaces;
 using TucaAPI.Mappers;
@@ -19,6 +18,7 @@ namespace TucaAPI.Controllers
         }
 
         [HttpGet]
+        [ValidateModelState]
         public async Task<IActionResult> GetAll()
         {
             var stocks = await this.repository.GetAllAsync();
@@ -28,6 +28,7 @@ namespace TucaAPI.Controllers
         }
 
         [HttpGet("{id:int}")]
+        [ValidateModelState]
         public async Task<IActionResult> GetById([FromRoute] int id)
         {
             var stock = await this.repository.GetByIdAsync(id);
@@ -38,6 +39,7 @@ namespace TucaAPI.Controllers
         }
 
         [HttpPost]
+        [ValidateModelState]
         public async Task<IActionResult> Create([FromBody] CreateStockRequestDto data)
         {
             var stock = data.ToStockFromCreateDTO();
@@ -48,6 +50,7 @@ namespace TucaAPI.Controllers
         }
 
         [HttpPut]
+        [ValidateModelState]
         [Route("{id:int}")]
         public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateStockRequestDto data)
         {
@@ -59,6 +62,7 @@ namespace TucaAPI.Controllers
         }
 
         [HttpDelete]
+        [ValidateModelState]
         [Route("{id:int}")]
         public async Task<IActionResult> Delete([FromRoute] int id)
         {
