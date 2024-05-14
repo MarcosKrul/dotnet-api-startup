@@ -1,11 +1,15 @@
 using Microsoft.EntityFrameworkCore;
 using TucaAPI.Data;
 using TucaAPI.Interfaces;
+using TucaAPI.Attributes;
 using TucaAPI.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers();
+builder.Services.AddControllers(options =>
+{
+    options.Filters.Add<ValidateModelStateAttribute>();
+});
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddControllers().AddNewtonsoftJson(options =>

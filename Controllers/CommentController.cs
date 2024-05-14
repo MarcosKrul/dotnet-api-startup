@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using TucaAPI.Attributes;
 using TucaAPI.Dtos.Comment;
 using TucaAPI.Interfaces;
 using TucaAPI.Mappers;
@@ -28,7 +29,7 @@ namespace TucaAPI.Controllers
         }
 
         [HttpGet]
-        [Route("{id}")]
+        [Route("{id:int}")]
         public async Task<IActionResult> GetById([FromRoute] int id)
         {
             var comment = await this.commentRepository.GetByIdAsync(id);
@@ -39,7 +40,8 @@ namespace TucaAPI.Controllers
         }
 
         [HttpPost]
-        [Route("{stockId}")]
+        [ValidateModelState]
+        [Route("{stockId:int}")]
         public async Task<IActionResult> Create([FromRoute] int stockId, [FromBody] CreateCommentRequestDto data)
         {
             if (!await this.stockRepository.StockExistsAsync(stockId))
@@ -55,7 +57,7 @@ namespace TucaAPI.Controllers
         }
 
         [HttpDelete]
-        [Route("{id}")]
+        [Route("{id:int}")]
         public async Task<IActionResult> Delete([FromRoute] int id)
         {
             var comment = await this.commentRepository.GetByIdAsync(id);
@@ -71,7 +73,7 @@ namespace TucaAPI.Controllers
         }
 
         [HttpPut]
-        [Route("{id}")]
+        [Route("{id:int}")]
         public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateCommentRequestDto data)
         {
             var comment = await this.commentRepository.UpdateAsync(id, data);

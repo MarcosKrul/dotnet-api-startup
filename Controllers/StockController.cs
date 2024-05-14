@@ -7,7 +7,7 @@ using TucaAPI.Mappers;
 
 namespace TucaAPI.Controllers
 {
-    [Route("api/stock")]
+    [Route("api/[controller]")]
     [ApiController]
     public class StockController : ControllerBase
     {
@@ -27,7 +27,7 @@ namespace TucaAPI.Controllers
             return Ok(formatted);
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id:int}")]
         public async Task<IActionResult> GetById([FromRoute] int id)
         {
             var stock = await this.repository.GetByIdAsync(id);
@@ -48,7 +48,7 @@ namespace TucaAPI.Controllers
         }
 
         [HttpPut]
-        [Route("{id}")]
+        [Route("{id:int}")]
         public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateStockRequestDto data)
         {
             var stock = await this.repository.UpdateAsync(id, data);
@@ -59,7 +59,7 @@ namespace TucaAPI.Controllers
         }
 
         [HttpDelete]
-        [Route("{id}")]
+        [Route("{id:int}")]
         public async Task<IActionResult> Delete([FromRoute] int id)
         {
             var stock = await this.repository.GetByIdAsync(id);
