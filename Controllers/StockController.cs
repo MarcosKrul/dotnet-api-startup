@@ -19,9 +19,9 @@ namespace TucaAPI.Controllers
 
         [HttpGet]
         [ValidateModelState]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll([FromQuery] QueryStockDto query)
         {
-            var stocks = await this.repository.GetAllAsync();
+            var stocks = await this.repository.GetAllAsync(query);
             var formatted = stocks.Select(s => s.ToStockDto());
 
             return Ok(formatted);
