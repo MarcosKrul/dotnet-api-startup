@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using TucaAPI.Common;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using TucaAPI.Service;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -56,13 +57,14 @@ builder.Services.AddAuthentication(options =>
         ValidAudience = builder.Configuration["JWT:Audience"],
         ValidateIssuerSigningKey = true,
         IssuerSigningKey = new SymmetricSecurityKey(
-            System.Text.Encoding.UTF8.GetBytes(builder.Configuration["JWT:SigningKey"] ?? "secret")
+            System.Text.Encoding.UTF8.GetBytes(builder.Configuration["JWT:SigningKey"] ?? Constants.DEFAULT_JWT_SECRET)
         )
     };
 });
 
 builder.Services.AddScoped<IStockRepository, StockRepository>();
 builder.Services.AddScoped<ICommentRepository, CommentRepository>();
+builder.Services.AddScoped<ITokenService, TokenService>();
 
 var app = builder.Build();
 
