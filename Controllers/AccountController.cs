@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using TucaAPI.Attributes;
 using TucaAPI.Common;
 using TucaAPI.Dtos.Account;
 using TucaAPI.Interfaces;
@@ -13,15 +15,32 @@ namespace TucaAPI.Controllers
     {
         private readonly UserManager<AppUser> userManager;
         private readonly ITokenService tokenService;
+        private readonly SignInManager<AppUser> signInManager;
 
-        public AccountController(UserManager<AppUser> userManager, ITokenService tokenService)
+        private IActionResult GetAuthenticatedUserAction(AppUser user)
+        {
+            return Ok(new AuthenticatedUserDto
+            {
+                UserName = user.UserName ?? "",
+                Email = user.Email ?? "",
+                Token = this.tokenService.Create(user)
+            });
+        }
+
+        public AccountController(
+            UserManager<AppUser> userManager,
+            ITokenService tokenService,
+            SignInManager<AppUser> signInManager
+        )
         {
             this.tokenService = tokenService;
             this.userManager = userManager;
+            this.signInManager = signInManager;
         }
 
         [HttpPost]
         [Route("register")]
+        [ValidateModelState]
         public async Task<IActionResult> Register([FromBody] RegisterDto data)
         {
             if (string.IsNullOrEmpty(data.Password)) return BadRequest();
@@ -48,17 +67,30 @@ namespace TucaAPI.Controllers
                     return StatusCode(HttpStatus.INTERNAL_ERROR, roleResults.Errors);
                 }
 
-                return Ok(new NewUserDto
-                {
-                    UserName = appUser.UserName ?? "",
-                    Email = appUser.Email ?? "",
-                    Token = this.tokenService.Create(appUser)
-                });
+                return this.GetAuthenticatedUserAction(appUser);
             }
             catch (Exception exception)
             {
                 return StatusCode(HttpStatus.INTERNAL_ERROR, exception);
             }
+        }
+
+        [HttpPost]
+        [Route("login")]
+        [ValidateModelState]
+        public async Task<IActionResult> Login([FromBody] LoginDto data)
+        {
+            var unauthorizedError = Unauthorized("Invalid credentials");
+
+            var hasUser = await this.userManager.Users.FirstOrDefaultAsync(item => item.Email == data.Email);
+
+            if (hasUser == null) return unauthorizedError;
+
+            var result = await this.signInManager.CheckPasswordSignInAsync(hasUser, data.Password ?? "", false);
+
+            if (!result.Succeeded) return unauthorizedError;
+
+            return this.GetAuthenticatedUserAction(hasUser);
         }
     }
 }
