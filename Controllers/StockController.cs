@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using TucaAPI.Attributes;
 using TucaAPI.Dtos.Stock;
 using TucaAPI.Interfaces;
@@ -18,6 +19,7 @@ namespace TucaAPI.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         [ValidateModelState]
         public async Task<IActionResult> GetAll([FromQuery] QueryStockDto query)
         {
@@ -28,6 +30,7 @@ namespace TucaAPI.Controllers
         }
 
         [HttpGet("{id:int}")]
+        [Authorize]
         [ValidateModelState]
         public async Task<IActionResult> GetById([FromRoute] int id)
         {
@@ -39,6 +42,7 @@ namespace TucaAPI.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         [ValidateModelState]
         public async Task<IActionResult> Create([FromBody] CreateStockRequestDto data)
         {
@@ -50,6 +54,7 @@ namespace TucaAPI.Controllers
         }
 
         [HttpPut]
+        [Authorize]
         [ValidateModelState]
         [Route("{id:int}")]
         public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateStockRequestDto data)
@@ -62,6 +67,7 @@ namespace TucaAPI.Controllers
         }
 
         [HttpDelete]
+        [Authorize]
         [ValidateModelState]
         [Route("{id:int}")]
         public async Task<IActionResult> Delete([FromRoute] int id)
