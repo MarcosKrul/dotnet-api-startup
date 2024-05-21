@@ -55,17 +55,11 @@ namespace TucaAPI.Controllers
 
                 var createdUser = await this.userManager.CreateAsync(appUser, data.Password);
 
-                if (!createdUser.Succeeded)
-                {
-                    return StatusCode(HttpStatus.INTERNAL_ERROR, createdUser.Errors);
-                }
+                if (!createdUser.Succeeded) return StatusCode(HttpStatus.INTERNAL_ERROR, createdUser.Errors);
 
                 var roleResults = await this.userManager.AddToRoleAsync(appUser, "User");
 
-                if (!roleResults.Succeeded)
-                {
-                    return StatusCode(HttpStatus.INTERNAL_ERROR, roleResults.Errors);
-                }
+                if (!roleResults.Succeeded) return StatusCode(HttpStatus.INTERNAL_ERROR, roleResults.Errors);
 
                 return this.GetAuthenticatedUserAction(appUser);
             }

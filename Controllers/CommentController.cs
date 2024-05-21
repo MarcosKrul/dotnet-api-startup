@@ -50,10 +50,7 @@ namespace TucaAPI.Controllers
         [Route("{stockId:int}")]
         public async Task<IActionResult> Create([FromRoute] int stockId, [FromBody] CreateCommentRequestDto data)
         {
-            if (!await this.stockRepository.StockExistsAsync(stockId))
-            {
-                return BadRequest("Stock not found");
-            }
+            if (!await this.stockRepository.StockExistsAsync(stockId)) return BadRequest("Stock not found");
 
             var comment = data.ToCommentFromRequestDto(stockId);
 
@@ -70,10 +67,7 @@ namespace TucaAPI.Controllers
         {
             var comment = await this.commentRepository.GetByIdAsync(id);
 
-            if (comment == null)
-            {
-                return NotFound();
-            }
+            if (comment == null) return NotFound();
 
             await this.commentRepository.DeleteAsync(comment);
 
