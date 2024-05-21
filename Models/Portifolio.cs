@@ -2,8 +2,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace TucaAPI.Models
 {
-    [Table("Portifolios")]
-    public class Portifolio
+    [Table("Portfolios")]
+    public class Portfolio
     {
         public string AppUserId { get; set; }
         public int StockId { get; set; }
