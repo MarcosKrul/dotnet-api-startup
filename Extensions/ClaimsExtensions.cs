@@ -1,12 +1,17 @@
-using System.Secutiry.Claims;
+using System.Security.Claims;
 
-namespace TucaAPI.Extensions 
+namespace TucaAPI.Extensions
 {
-    public class ClaimsExtensions 
+    public static class ClaimsExtensions
     {
-        public static string GetEmail(this ClaimsPrincipal user) 
+        public static string? GetUsername(this ClaimsPrincipal user)
         {
-            return user.Claims.ClaimsPrincipal.Current.FindFirst(ClaimTypes.Email).Value;
+            return user.Claims.SingleOrDefault(x => x.Type.Equals("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname"))?.Value;
+        }
+
+        public static string? GetEmail(this ClaimsPrincipal user)
+        {
+            return user.Claims.SingleOrDefault(x => x.Type.Equals("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"))?.Value;
         }
     }
 }

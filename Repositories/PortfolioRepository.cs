@@ -9,23 +9,24 @@ namespace TucaAPI.Repositories
     {
         private readonly ApplicationDBContext context;
 
-        public CommentRepository(ApplicationDBContext context)
+        public PortfolioRepository(ApplicationDBContext context)
         {
             this.context = context;
         }
 
-        public async Task<List<Stock>> GetUserPortfolio(AppUser user) 
+        public async Task<List<Stock>> GetUserPortfolio(AppUser user)
         {
-            return await this.context.PortFolios
+            return await this.context.Portfolios
                 .Where(i => i.AppUserId == user.Id)
-                .Select(item => new Stock {
-                    Id = stock.StockId,
-                    Symbol = stock.Stock.Symbol,
-                    CompanyName = stock.Stock.CompanyName,
-                    Purchase = stock.Stock.Purchase,
-                    LastDiv = stock.Stock.LastDiv,
-                    Industry = stock.Stock.Industry,
-                    MarketCap = stock.Stock.MarketCap
+                .Select(item => new Stock
+                {
+                    Id = item.StockId,
+                    Symbol = item.Stock.Symbol,
+                    CompanyName = item.Stock.CompanyName,
+                    Purchase = item.Stock.Purchase,
+                    LastDiv = item.Stock.LastDiv,
+                    Industry = item.Stock.Industry,
+                    MarketCap = item.Stock.MarketCap
                 })
                 .ToListAsync();
         }

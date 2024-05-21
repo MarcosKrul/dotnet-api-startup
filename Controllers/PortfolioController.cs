@@ -1,5 +1,10 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using TucaAPI.Attributes;
 using TucaAPI.Extensions;
+using TucaAPI.Interfaces;
+using TucaAPI.Models;
 
 namespace TucaAPI.Controllers
 {
@@ -15,7 +20,7 @@ namespace TucaAPI.Controllers
             UserManager<AppUser> userManager,
             IStockRepository stockRepository,
             IPortfolioRepository portfolioRepository
-        ) 
+        )
         {
             this.stockRepository = stockRepository;
             this.userManager = userManager;
@@ -28,10 +33,12 @@ namespace TucaAPI.Controllers
         public async Task<IActionResult> GetUserPortfolio()
         {
             var email = User.GetEmail();
-            var user = await this.userManager.FindByEmailAsync(email);
+            var hasUser = await this.userManager.FindByEmailAsync(email ?? "");
 
-            var userPortFolio = await this.portfolioRepository.GetUserPortfolio(user);
-    
+            if (hasUser == null) return Unauthorized();
+
+            var userPortFolio = await this.portfolioRepository.GetUserPortfolio(hasUser);
+
             return Ok(userPortFolio);
         }
     }
