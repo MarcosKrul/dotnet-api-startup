@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using TucaAPI.Common;
 using TucaAPI.Data;
 using TucaAPI.Dtos.Stock;
 using TucaAPI.Interfaces;
@@ -36,7 +35,10 @@ namespace TucaAPI.Repositories
 
         public async Task<List<Stock>> GetAllAsync(QueryStockDto query)
         {
-            var stockQuery = this.context.Stocks.Include(c => c.Comments).AsQueryable();
+            var stockQuery = this.context.Stocks
+                .Include(c => c.Comments)
+                .ThenInclude(i => i.AppUser)
+                .AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(query.CompanyName))
                 stockQuery = stockQuery.Where(item => item.CompanyName.Contains(query.CompanyName));
@@ -56,7 +58,10 @@ namespace TucaAPI.Repositories
 
         public async Task<Stock?> GetByIdAsync(int id)
         {
-            return await this.context.Stocks.Include(c => c.Comments).FirstOrDefaultAsync(i => i.Id == id);
+            return await this.context.Stocks
+                .Include(c => c.Comments)
+                .ThenInclude(i => i.AppUser)
+                .FirstOrDefaultAsync(i => i.Id == id);
         }
 
         public Task<bool> StockExistsAsync(int id)

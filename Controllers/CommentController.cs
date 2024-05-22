@@ -1,9 +1,12 @@
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using TucaAPI.Attributes;
 using TucaAPI.Dtos.Comment;
+using TucaAPI.Extensions;
 using TucaAPI.Interfaces;
 using TucaAPI.Mappers;
+using TucaAPI.Models;
 
 namespace TucaAPI.Controllers
 {
@@ -13,11 +16,17 @@ namespace TucaAPI.Controllers
     {
         private readonly ICommentRepository commentRepository;
         private readonly IStockRepository stockRepository;
+        private readonly UserManager<AppUser> userManager;
 
-        public CommentController(ICommentRepository repository, IStockRepository stockRepository)
+        public CommentController(
+            ICommentRepository repository,
+            IStockRepository stockRepository,
+            UserManager<AppUser> userManager
+        )
         {
             this.commentRepository = repository;
             this.stockRepository = stockRepository;
+            this.userManager = userManager;
         }
 
         [HttpGet]
@@ -52,7 +61,11 @@ namespace TucaAPI.Controllers
         {
             if (!await this.stockRepository.StockExistsAsync(stockId)) return BadRequest("Stock not found");
 
-            var comment = data.ToCommentFromRequestDto(stockId);
+            var email = User.GetEmail();
+            var hasUser = await this.userManager.FindByEmailAsync(email ?? "");
+            if (hasUser == null) return Unauthorized();
+
+            var comment = data.ToCommentFromRequestDto(stockId, hasUser.Id);
 
             await this.commentRepository.CreateAsync(comment);
 

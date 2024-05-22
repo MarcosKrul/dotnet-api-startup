@@ -13,17 +13,19 @@ namespace TucaAPI.Mappers
                 Content = comment.Content,
                 CreatedOn = comment.CreatedOn,
                 StockId = comment.StockId,
-                Title = comment.Title
+                Title = comment.Title,
+                CreatedBy = comment.AppUser.UserName
             };
         }
 
-        public static Comment ToCommentFromRequestDto(this CreateCommentRequestDto comment, int stockId)
+        public static Comment ToCommentFromRequestDto(this CreateCommentRequestDto comment, int stockId, string userId)
         {
             return new Comment
             {
                 Content = comment.Content,
                 Title = comment.Title,
-                StockId = stockId
+                StockId = stockId,
+                AppUserId = userId
             };
         }
     }

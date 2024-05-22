@@ -24,7 +24,7 @@ namespace TucaAPI.Controllers
         public async Task<IActionResult> GetAll([FromQuery] QueryStockDto query)
         {
             var stocks = await this.repository.GetAllAsync(query);
-            var formatted = stocks.Select(s => s.ToStockDto());
+            var formatted = stocks.Select(s => s.ToStockDto()).ToList();
 
             return Ok(formatted);
         }
