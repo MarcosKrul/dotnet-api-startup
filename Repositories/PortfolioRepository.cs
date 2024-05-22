@@ -31,15 +31,15 @@ namespace TucaAPI.Repositories
         {
             return await this.context.Portfolios
                 .Where(i => i.AppUserId == user.Id)
-                .Select(item => new Stock
+                .Select(i => new Stock
                 {
-                    Id = item.StockId,
-                    Symbol = item.Stock.Symbol,
-                    CompanyName = item.Stock.CompanyName,
-                    Purchase = item.Stock.Purchase,
-                    LastDiv = item.Stock.LastDiv,
-                    Industry = item.Stock.Industry,
-                    MarketCap = item.Stock.MarketCap
+                    Id = i.StockId,
+                    Symbol = i.Stock.Symbol,
+                    CompanyName = i.Stock.CompanyName,
+                    Purchase = i.Stock.Purchase,
+                    LastDiv = i.Stock.LastDiv,
+                    Industry = i.Stock.Industry,
+                    MarketCap = i.Stock.MarketCap
                 })
                 .ToListAsync();
         }

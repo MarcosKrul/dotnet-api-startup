@@ -76,7 +76,7 @@ namespace TucaAPI.Controllers
         {
             var unauthorizedError = Unauthorized("Invalid credentials");
 
-            var hasUser = await this.userManager.Users.FirstOrDefaultAsync(item => item.Email == data.Email);
+            var hasUser = await this.userManager.Users.FirstOrDefaultAsync(i => i.Email == data.Email);
 
             if (hasUser == null) return unauthorizedError;
 

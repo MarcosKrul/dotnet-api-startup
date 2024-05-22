@@ -36,21 +36,21 @@ namespace TucaAPI.Repositories
         public async Task<List<Stock>> GetAllAsync(QueryStockDto query)
         {
             var stockQuery = this.context.Stocks
-                .Include(c => c.Comments)
+                .Include(i => i.Comments)
                 .ThenInclude(i => i.AppUser)
                 .AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(query.CompanyName))
-                stockQuery = stockQuery.Where(item => item.CompanyName.Contains(query.CompanyName));
+                stockQuery = stockQuery.Where(i => i.CompanyName.Contains(query.CompanyName));
 
             if (!string.IsNullOrWhiteSpace(query.Symbol))
-                stockQuery = stockQuery.Where(item => item.Symbol.Contains(query.Symbol));
+                stockQuery = stockQuery.Where(i => i.Symbol.Contains(query.Symbol));
 
 
             if (!string.IsNullOrWhiteSpace(query.SortBy) && query.SortBy.Equals("Symbol", StringComparison.OrdinalIgnoreCase))
                 stockQuery = query.Asc
-                    ? stockQuery.OrderBy(item => item.Symbol)
-                    : stockQuery.OrderByDescending(item => item.Symbol);
+                    ? stockQuery.OrderBy(i => i.Symbol)
+                    : stockQuery.OrderByDescending(i => i.Symbol);
 
 
             return await stockQuery.Skip(query.Limit * query.Page).Take(query.Limit).ToListAsync();
@@ -66,7 +66,7 @@ namespace TucaAPI.Repositories
 
         public Task<bool> StockExistsAsync(int id)
         {
-            return this.context.Stocks.AnyAsync(item => item.Id == id);
+            return this.context.Stocks.AnyAsync(i => i.Id == id);
         }
 
         public async Task<Stock?> UpdateAsync(int id, UpdateStockRequestDto stockDto)

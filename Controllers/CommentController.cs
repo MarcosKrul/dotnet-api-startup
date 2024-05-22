@@ -35,7 +35,7 @@ namespace TucaAPI.Controllers
         public async Task<IActionResult> GetAll()
         {
             var comments = await this.commentRepository.GetAllAsync();
-            var formatted = comments.Select(x => x.ToCommentDto());
+            var formatted = comments.Select(i => i.ToCommentDto());
 
             return Ok(formatted);
         }

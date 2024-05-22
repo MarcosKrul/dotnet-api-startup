@@ -57,7 +57,7 @@ namespace TucaAPI.Controllers
 
             var userPortfolio = await this.portfolioRepository.GetUserPortfolio(hasUser);
 
-            if (userPortfolio.Any(e => e.Id == stock.Id))
+            if (userPortfolio.Any(i => i.Id == stock.Id))
                 return BadRequest("Cannot add same stock to portfolio");
 
             var portfolioModel = new Portfolio
@@ -85,7 +85,7 @@ namespace TucaAPI.Controllers
             var userPortfolio = await this.portfolioRepository.GetUserPortfolio(hasUser);
 
             var filteredStock = userPortfolio
-                .Where(s => s.Symbol.Equals(symbol, StringComparison.CurrentCultureIgnoreCase))
+                .Where(i => i.Symbol.Equals(symbol, StringComparison.CurrentCultureIgnoreCase))
                 .ToList();
 
             if (filteredStock.Count != 1) return BadRequest("Stock not in you portfolio");

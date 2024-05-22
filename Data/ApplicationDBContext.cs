@@ -20,17 +20,17 @@ namespace TucaAPI.Data
         {
             base.OnModelCreating(builder);
 
-            builder.Entity<Portfolio>(x => x.HasKey(p => new { p.AppUserId, p.StockId }));
+            builder.Entity<Portfolio>(i => i.HasKey(p => new { p.AppUserId, p.StockId }));
 
             builder.Entity<Portfolio>()
-                .HasOne(u => u.AppUser)
-                .WithMany(u => u.Portfolios)
-                .HasForeignKey(p => p.AppUserId);
+                .HasOne(i => i.AppUser)
+                .WithMany(i => i.Portfolios)
+                .HasForeignKey(i => i.AppUserId);
 
             builder.Entity<Portfolio>()
-                .HasOne(u => u.Stock)
-                .WithMany(u => u.Portfolios)
-                .HasForeignKey(p => p.StockId);
+                .HasOne(i => i.Stock)
+                .WithMany(i => i.Portfolios)
+                .HasForeignKey(i => i.StockId);
 
             List<IdentityRole> roles = new List<IdentityRole>
             {
