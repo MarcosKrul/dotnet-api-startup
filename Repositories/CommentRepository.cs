@@ -41,7 +41,6 @@ namespace TucaAPI.Repositories
         public async Task<Comment?> UpdateAsync(int id, UpdateCommentRequestDto data)
         {
             var comment = await this.GetByIdAsync(id);
-
             if (comment == null) return null;
 
             comment.Title = data.Title;

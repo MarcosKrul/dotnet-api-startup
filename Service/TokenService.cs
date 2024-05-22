@@ -16,7 +16,6 @@ namespace TucaAPI.Service
         public TokenService(IConfiguration configuration)
         {
             this.configuration = configuration;
-
             var secretKey = this.configuration["JWT:SigningKey"] ?? Constants.DEFAULT_JWT_SECRET;
             this.key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
         }
@@ -24,14 +23,12 @@ namespace TucaAPI.Service
         private List<Claim> GetClaims(AppUser user)
         {
             if (string.IsNullOrEmpty(user.Email) || string.IsNullOrEmpty(user.UserName))
-            {
                 throw new Exception("Required user infos");
-            }
 
             var claims = new List<Claim>
             {
-                new Claim(JwtRegisteredClaimNames.Email, user.Email),
-                new Claim(JwtRegisteredClaimNames.GivenName, user.UserName),
+                new(JwtRegisteredClaimNames.Email, user.Email),
+                new(JwtRegisteredClaimNames.GivenName, user.UserName),
             };
 
             return claims;
@@ -40,9 +37,7 @@ namespace TucaAPI.Service
         private string GetFormattedToken(SecurityTokenDescriptor tokenDescription)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
-
             var token = tokenHandler.CreateToken(tokenDescription);
-
             return tokenHandler.WriteToken(token);
         }
 
