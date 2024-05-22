@@ -35,7 +35,6 @@ namespace TucaAPI.Controllers
         {
             var email = User.GetEmail();
             var hasUser = await this.userManager.FindByEmailAsync(email ?? "");
-
             if (hasUser == null) return Unauthorized();
 
             var userPortFolio = await this.portfolioRepository.GetUserPortfolio(hasUser);
@@ -72,6 +71,32 @@ namespace TucaAPI.Controllers
             if (portfolioModel == null) return StatusCode(HttpStatus.INTERNAL_ERROR, "Could not create");
 
             return Created();
+        }
+
+        [HttpDelete]
+        [Authorize]
+        [ValidateModelState]
+        public async Task<IActionResult> Delete(string symbol)
+        {
+            var email = User.GetEmail();
+            var hasUser = await this.userManager.FindByEmailAsync(email ?? "");
+            if (hasUser == null) return Unauthorized();
+
+            var userPortfolio = await this.portfolioRepository.GetUserPortfolio(hasUser);
+
+            var filteredStock = userPortfolio
+                .Where(s => s.Symbol.Equals(symbol, StringComparison.CurrentCultureIgnoreCase))
+                .ToList();
+
+            if (filteredStock.Count != 1) return BadRequest("Stock not in you portfolio");
+
+            await this.portfolioRepository.DeleteAsync(new Portfolio
+            {
+                AppUserId = hasUser.Id,
+                StockId = filteredStock.First().Id
+            });
+
+            return Ok();
         }
     }
 }

@@ -6,5 +6,6 @@ namespace TucaAPI.Interfaces
     {
         Task<List<Stock>> GetUserPortfolio(AppUser user);
         Task<Portfolio> CreateAsync(Portfolio portfolio);
+        Task DeleteAsync(Portfolio portfolio);
     }
 }

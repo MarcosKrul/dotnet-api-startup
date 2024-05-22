@@ -21,6 +21,12 @@ namespace TucaAPI.Repositories
             return portfolio;
         }
 
+        public async Task DeleteAsync(Portfolio portfolio)
+        {
+            this.context.Portfolios.Remove(portfolio);
+            await this.context.SaveChangesAsync();
+        }
+
         public async Task<List<Stock>> GetUserPortfolio(AppUser user)
         {
             return await this.context.Portfolios
