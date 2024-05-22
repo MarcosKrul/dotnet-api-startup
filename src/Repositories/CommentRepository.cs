@@ -30,7 +30,7 @@ namespace TucaAPI.Repositories
 
         public async Task<List<Comment>> GetAllAsync()
         {
-            return await context.Comments.Include(i => i.AppUserId).ToListAsync();
+            return await this.context.Comments.Include(i => i.AppUserId).ToListAsync();
         }
 
         public async Task<Comment?> GetByIdAsync(int id)
