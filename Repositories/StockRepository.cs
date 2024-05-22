@@ -29,26 +29,27 @@ namespace TucaAPI.Repositories
             await this.context.SaveChangesAsync();
         }
 
+        public async Task<Stock?> FindBySymbolAsync(string symbol)
+        {
+            return await this.context.Stocks.FirstOrDefaultAsync(item => item.Symbol == symbol);
+        }
+
         public async Task<List<Stock>> GetAllAsync(QueryStockDto query)
         {
             var stockQuery = this.context.Stocks.Include(c => c.Comments).AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(query.CompanyName))
-            {
                 stockQuery = stockQuery.Where(item => item.CompanyName.Contains(query.CompanyName));
-            }
 
             if (!string.IsNullOrWhiteSpace(query.Symbol))
-            {
                 stockQuery = stockQuery.Where(item => item.Symbol.Contains(query.Symbol));
-            }
+
 
             if (!string.IsNullOrWhiteSpace(query.SortBy) && query.SortBy.Equals("Symbol", StringComparison.OrdinalIgnoreCase))
-            {
                 stockQuery = query.Asc
                     ? stockQuery.OrderBy(item => item.Symbol)
                     : stockQuery.OrderByDescending(item => item.Symbol);
-            }
+
 
             return await stockQuery.Skip(query.Limit * query.Page).Take(query.Limit).ToListAsync();
         }

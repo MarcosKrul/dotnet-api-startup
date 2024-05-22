@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using TucaAPI.Attributes;
+using TucaAPI.Common;
 using TucaAPI.Extensions;
 using TucaAPI.Interfaces;
 using TucaAPI.Models;
@@ -40,6 +41,37 @@ namespace TucaAPI.Controllers
             var userPortFolio = await this.portfolioRepository.GetUserPortfolio(hasUser);
 
             return Ok(userPortFolio);
+        }
+
+        [HttpPost]
+        [Authorize]
+        [ValidateModelState]
+        public async Task<IActionResult> AddPortfolio(string symbol)
+        {
+            var email = User.GetEmail();
+            var hasUser = await this.userManager.FindByEmailAsync(email ?? "");
+            if (hasUser == null) return Unauthorized();
+
+            var stock = await this.stockRepository.FindBySymbolAsync(symbol);
+
+            if (stock == null) return BadRequest("Stock not found");
+
+            var userPortfolio = await this.portfolioRepository.GetUserPortfolio(hasUser);
+
+            if (userPortfolio.Any(e => e.Id == stock.Id))
+                return BadRequest("Cannot add same stock to portfolio");
+
+            var portfolioModel = new Portfolio
+            {
+                StockId = stock.Id,
+                AppUserId = hasUser.Id
+            };
+
+            await this.portfolioRepository.CreateAsync(portfolioModel);
+
+            if (portfolioModel == null) return StatusCode(HttpStatus.INTERNAL_ERROR, "Could not create");
+
+            return Created();
         }
     }
 }

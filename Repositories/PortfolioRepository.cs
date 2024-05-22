@@ -14,6 +14,13 @@ namespace TucaAPI.Repositories
             this.context = context;
         }
 
+        public async Task<Portfolio> CreateAsync(Portfolio portfolio)
+        {
+            await this.context.Portfolios.AddAsync(portfolio);
+            await this.context.SaveChangesAsync();
+            return portfolio;
+        }
+
         public async Task<List<Stock>> GetUserPortfolio(AppUser user)
         {
             return await this.context.Portfolios

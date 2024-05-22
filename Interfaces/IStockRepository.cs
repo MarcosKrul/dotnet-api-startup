@@ -11,5 +11,6 @@ namespace TucaAPI.Interfaces
         Task<Stock?> UpdateAsync(int id, UpdateStockRequestDto stockDto);
         Task DeleteAsync(Stock stock);
         Task<bool> StockExistsAsync(int id);
+        Task<Stock?> FindBySymbolAsync(string symbol);
     }
 }
