@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using TucaAPI.Service;
 using Microsoft.OpenApi.Models;
+using TucaAPI.src.Common;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,7 +26,7 @@ builder.Services.AddSwaggerGen(option =>
     option.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         In = ParameterLocation.Header,
-        Description = "Please enter a valid token",
+        Description = Messages.PLEASE_ENTER_VALID_TOKEN,
         Name = "Authorization",
         Type = SecuritySchemeType.Http,
         BearerFormat = "JWT",
@@ -54,7 +55,7 @@ builder.Services.AddControllers().AddNewtonsoftJson(options =>
 
 builder.Services.AddDbContext<ApplicationDBContext>(options =>
 {
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+    options.UseSqlServer(builder.Configuration.GetConnectionString(EnvVariables.DB_CONNECTION_STRING));
 });
 
 builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
@@ -81,12 +82,12 @@ builder.Services.AddAuthentication(options =>
     options.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuer = true,
-        ValidIssuer = builder.Configuration["JWT:Issuer"],
+        ValidIssuer = builder.Configuration[EnvVariables.JWT_ISSUER],
         ValidateAudience = true,
-        ValidAudience = builder.Configuration["JWT:Audience"],
+        ValidAudience = builder.Configuration[EnvVariables.JWT_AUDIENCE],
         ValidateIssuerSigningKey = true,
         IssuerSigningKey = new SymmetricSecurityKey(
-            System.Text.Encoding.UTF8.GetBytes(builder.Configuration["JWT:SigningKey"] ?? Constants.DEFAULT_JWT_SECRET)
+            System.Text.Encoding.UTF8.GetBytes(builder.Configuration[EnvVariables.JWT_SIGNIN_KEY] ?? Constants.DEFAULT_JWT_SECRET)
         )
     };
 });

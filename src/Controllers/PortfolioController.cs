@@ -6,6 +6,7 @@ using TucaAPI.Common;
 using TucaAPI.Extensions;
 using TucaAPI.Interfaces;
 using TucaAPI.Models;
+using TucaAPI.src.Common;
 
 namespace TucaAPI.Controllers
 {
@@ -49,16 +50,18 @@ namespace TucaAPI.Controllers
         {
             var email = User.GetEmail();
             var hasUser = await this.userManager.FindByEmailAsync(email ?? "");
-            if (hasUser == null) return Unauthorized();
+            if (hasUser == null)
+                return Unauthorized();
 
             var stock = await this.stockRepository.FindBySymbolAsync(symbol);
 
-            if (stock == null) return BadRequest("Stock not found");
+            if (stock == null)
+                return BadRequest(Messages.STOCK_NOT_FOUND);
 
             var userPortfolio = await this.portfolioRepository.GetUserPortfolio(hasUser);
 
             if (userPortfolio.Any(i => i.Id == stock.Id))
-                return BadRequest("Cannot add same stock to portfolio");
+                return BadRequest(Messages.CANNOT_ADD_SAME_STOCK);
 
             var portfolioModel = new Portfolio
             {
@@ -68,7 +71,8 @@ namespace TucaAPI.Controllers
 
             await this.portfolioRepository.CreateAsync(portfolioModel);
 
-            if (portfolioModel == null) return StatusCode(HttpStatus.INTERNAL_ERROR, "Could not create");
+            if (portfolioModel == null)
+                return StatusCode(HttpStatus.INTERNAL_ERROR, Messages.COULD_NOT_CREATE);
 
             return Created();
         }
@@ -80,7 +84,8 @@ namespace TucaAPI.Controllers
         {
             var email = User.GetEmail();
             var hasUser = await this.userManager.FindByEmailAsync(email ?? "");
-            if (hasUser == null) return Unauthorized();
+            if (hasUser == null)
+                return Unauthorized();
 
             var userPortfolio = await this.portfolioRepository.GetUserPortfolio(hasUser);
 
@@ -88,7 +93,8 @@ namespace TucaAPI.Controllers
                 .Where(i => i.Symbol.Equals(symbol, StringComparison.CurrentCultureIgnoreCase))
                 .ToList();
 
-            if (filteredStock.Count != 1) return BadRequest("Stock not in you portfolio");
+            if (filteredStock.Count != 1)
+                return BadRequest(Messages.STOCK_NOT_IN_PORTFOLIO);
 
             await this.portfolioRepository.DeleteAsync(new Portfolio
             {

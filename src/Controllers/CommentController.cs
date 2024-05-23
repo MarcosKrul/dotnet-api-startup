@@ -7,6 +7,7 @@ using TucaAPI.Extensions;
 using TucaAPI.Interfaces;
 using TucaAPI.Mappers;
 using TucaAPI.Models;
+using TucaAPI.src.Common;
 
 namespace TucaAPI.Controllers
 {
@@ -59,7 +60,8 @@ namespace TucaAPI.Controllers
         [Route("{stockId:int}")]
         public async Task<IActionResult> Create([FromRoute] int stockId, [FromBody] CreateCommentRequestDto data)
         {
-            if (!await this.stockRepository.StockExistsAsync(stockId)) return BadRequest("Stock not found");
+            if (!await this.stockRepository.StockExistsAsync(stockId))
+                return BadRequest(Messages.STOCK_NOT_FOUND);
 
             var email = User.GetEmail();
             var hasUser = await this.userManager.FindByEmailAsync(email ?? "");

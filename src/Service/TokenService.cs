@@ -5,6 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 using TucaAPI.Common;
 using TucaAPI.Interfaces;
 using TucaAPI.Models;
+using TucaAPI.src.Common;
 
 namespace TucaAPI.Service
 {
@@ -16,14 +17,14 @@ namespace TucaAPI.Service
         public TokenService(IConfiguration configuration)
         {
             this.configuration = configuration;
-            var secretKey = this.configuration["JWT:SigningKey"] ?? Constants.DEFAULT_JWT_SECRET;
+            var secretKey = this.configuration[EnvVariables.JWT_SIGNIN_KEY] ?? Constants.DEFAULT_JWT_SECRET;
             this.key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
         }
 
         private List<Claim> GetClaims(AppUser user)
         {
             if (string.IsNullOrEmpty(user.Email) || string.IsNullOrEmpty(user.UserName))
-                throw new Exception("Required user infos");
+                throw new Exception(Messages.REQUIRED_USER_INFOS);
 
             var claims = new List<Claim>
             {
@@ -50,8 +51,8 @@ namespace TucaAPI.Service
                 Subject = new ClaimsIdentity(this.GetClaims(user)),
                 Expires = DateTime.Now.AddDays(Constants.JWT_DAYS_TO_EXPIRES),
                 SigningCredentials = credentials,
-                Issuer = this.configuration["JWT:Issuer"],
-                Audience = this.configuration["JWT:Audience"]
+                Issuer = this.configuration[EnvVariables.JWT_ISSUER],
+                Audience = this.configuration[EnvVariables.JWT_AUDIENCE]
             };
 
             return this.GetFormattedToken(tokenDescription);
