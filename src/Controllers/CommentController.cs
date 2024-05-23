@@ -80,9 +80,15 @@ namespace TucaAPI.Controllers
         [Route("{id:int}")]
         public async Task<IActionResult> Delete([FromRoute] int id)
         {
+            var email = User.GetEmail();
+            var hasUser = await this.userManager.FindByEmailAsync(email ?? "");
+            if (hasUser == null) return Unauthorized();
+
             var comment = await this.commentRepository.GetByIdAsync(id);
 
             if (comment == null) return NotFound();
+
+            if (comment.AppUserId != hasUser.Id) return Unauthorized();
 
             await this.commentRepository.DeleteAsync(comment);
 
@@ -95,7 +101,11 @@ namespace TucaAPI.Controllers
         [Route("{id:int}")]
         public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateCommentRequestDto data)
         {
-            var comment = await this.commentRepository.UpdateAsync(id, data);
+            var email = User.GetEmail();
+            var hasUser = await this.userManager.FindByEmailAsync(email ?? "");
+            if (hasUser == null) return Unauthorized();
+
+            var comment = await this.commentRepository.UpdateAsync(id, data, hasUser);
 
             if (comment == null) return NotFound();
 

@@ -9,6 +9,6 @@ namespace TucaAPI.Interfaces
         Task<Comment?> GetByIdAsync(int id);
         Task<Comment> CreateAsync(Comment comment);
         Task DeleteAsync(Comment comment);
-        Task<Comment?> UpdateAsync(int id, UpdateCommentRequestDto data);
+        Task<Comment?> UpdateAsync(int id, UpdateCommentRequestDto data, AppUser user);
     }
 }
