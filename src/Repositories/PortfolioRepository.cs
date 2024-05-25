@@ -27,7 +27,13 @@ namespace TucaAPI.Repositories
             await this.context.SaveChangesAsync();
         }
 
-        public async Task<List<Stock>> GetUserPortfolio(AppUser user)
+        public async Task<Portfolio?> GetUserPortfolio(int stockId, AppUser user)
+        {
+            return await this.context.Portfolios
+                .FirstOrDefaultAsync(i => i.StockId == stockId && i.AppUserId == user.Id);
+        }
+
+        public async Task<List<Stock>> GetStocksFromUserPortfolio(AppUser user)
         {
             return await this.context.Portfolios
                 .Where(i => i.AppUserId == user.Id)

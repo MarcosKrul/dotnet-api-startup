@@ -32,13 +32,13 @@ namespace TucaAPI.Controllers
         [HttpGet]
         [Authorize]
         [ValidateModelState]
-        public async Task<IActionResult> GetUserPortfolio()
+        public async Task<IActionResult> GetStocksFromUserPortfolio()
         {
             var email = User.GetEmail();
             var hasUser = await this.userManager.FindByEmailAsync(email ?? "");
             if (hasUser == null) return Unauthorized();
 
-            var userPortFolio = await this.portfolioRepository.GetUserPortfolio(hasUser);
+            var userPortFolio = await this.portfolioRepository.GetStocksFromUserPortfolio(hasUser);
 
             return Ok(userPortFolio);
         }
@@ -58,7 +58,7 @@ namespace TucaAPI.Controllers
             if (stock == null)
                 return BadRequest(Messages.STOCK_NOT_FOUND);
 
-            var userPortfolio = await this.portfolioRepository.GetUserPortfolio(hasUser);
+            var userPortfolio = await this.portfolioRepository.GetStocksFromUserPortfolio(hasUser);
 
             if (userPortfolio.Any(i => i.Id == stock.Id))
                 return BadRequest(Messages.CANNOT_ADD_SAME_STOCK);
@@ -80,27 +80,20 @@ namespace TucaAPI.Controllers
         [HttpDelete]
         [Authorize]
         [ValidateModelState]
-        public async Task<IActionResult> Delete(string symbol)
+        [Route("{stockId:int}")]
+        public async Task<IActionResult> Delete([FromRoute] int stockId)
         {
             var email = User.GetEmail();
             var hasUser = await this.userManager.FindByEmailAsync(email ?? "");
             if (hasUser == null)
                 return Unauthorized();
 
-            var userPortfolio = await this.portfolioRepository.GetUserPortfolio(hasUser);
+            var userPortfolio = await this.portfolioRepository.GetUserPortfolio(stockId, hasUser);
 
-            var filteredStock = userPortfolio
-                .Where(i => i.Symbol.Equals(symbol, StringComparison.CurrentCultureIgnoreCase))
-                .ToList();
-
-            if (filteredStock.Count != 1)
+            if (userPortfolio == null)
                 return BadRequest(Messages.STOCK_NOT_IN_PORTFOLIO);
 
-            await this.portfolioRepository.DeleteAsync(new Portfolio
-            {
-                AppUserId = hasUser.Id,
-                StockId = filteredStock.First().Id
-            });
+            await this.portfolioRepository.DeleteAsync(userPortfolio);
 
             return Ok();
         }
