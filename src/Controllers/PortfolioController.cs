@@ -46,14 +46,15 @@ namespace TucaAPI.Controllers
         [HttpPost]
         [Authorize]
         [ValidateModelState]
-        public async Task<IActionResult> AddPortfolio(string symbol)
+        [Route("{stockId:int}")]
+        public async Task<IActionResult> AddPortfolio([FromRoute] int stockId)
         {
             var email = User.GetEmail();
             var hasUser = await this.userManager.FindByEmailAsync(email ?? "");
             if (hasUser == null)
                 return Unauthorized();
 
-            var stock = await this.stockRepository.FindBySymbolAsync(symbol);
+            var stock = await this.stockRepository.GetByIdAsync(stockId);
 
             if (stock == null)
                 return BadRequest(Messages.STOCK_NOT_FOUND);

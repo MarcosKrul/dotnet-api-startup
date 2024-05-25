@@ -28,11 +28,6 @@ namespace TucaAPI.Repositories
             await this.context.SaveChangesAsync();
         }
 
-        public async Task<Stock?> FindBySymbolAsync(string symbol)
-        {
-            return await this.context.Stocks.FirstOrDefaultAsync(item => item.Symbol == symbol);
-        }
-
         public async Task<List<Stock>> GetAllAsync(QueryStockDto query)
         {
             var stockQuery = this.context.Stocks
