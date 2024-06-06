@@ -11,6 +11,9 @@ using Microsoft.IdentityModel.Tokens;
 using TucaAPI.Service;
 using Microsoft.OpenApi.Models;
 using TucaAPI.src.Common;
+using TucaAPI.src.Dtos.Mail;
+using TucaAPI.src.Interfaces;
+using TucaAPI.src.Service;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -58,6 +61,8 @@ builder.Services.AddDbContext<ApplicationDBContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString(EnvVariables.DB_CONNECTION_STRING));
 });
 
+builder.Services.Configure<MailSettings>(builder.Configuration.GetSection(EnvVariables.MAIL_SETTINGS));
+
 builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
 {
     options.Password.RequireDigit = true;
@@ -102,6 +107,7 @@ builder.Services.AddScoped<IStockRepository, StockRepository>();
 builder.Services.AddScoped<ICommentRepository, CommentRepository>();
 builder.Services.AddScoped<IPortfolioRepository, PortfolioRepository>();
 builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<IMailSenderService, MailSenderService>();
 
 var app = builder.Build();
 
