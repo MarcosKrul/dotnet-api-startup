@@ -7,5 +7,7 @@ namespace TucaAPI.src.Dtos.Account
         [Required]
         [EmailAddress]
         public string? Email { get; set; }
+        [Required]
+        public string Url { get; set; } = string.Empty;
     }
 }

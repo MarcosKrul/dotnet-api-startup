@@ -8,6 +8,8 @@ using TucaAPI.Interfaces;
 using TucaAPI.Models;
 using TucaAPI.src.Common;
 using TucaAPI.src.Dtos.Account;
+using TucaAPI.src.Dtos.Mail;
+using TucaAPI.src.Interfaces;
 
 namespace TucaAPI.Controllers
 {
@@ -18,6 +20,7 @@ namespace TucaAPI.Controllers
         private readonly UserManager<AppUser> userManager;
         private readonly ITokenService tokenService;
         private readonly SignInManager<AppUser> signInManager;
+        private readonly IMailSenderService mailService;
 
         private IActionResult GetAuthenticatedUserAction(AppUser user)
         {
@@ -32,12 +35,14 @@ namespace TucaAPI.Controllers
         public AccountController(
             UserManager<AppUser> userManager,
             ITokenService tokenService,
-            SignInManager<AppUser> signInManager
+            SignInManager<AppUser> signInManager,
+            IMailSenderService mailService
         )
         {
             this.tokenService = tokenService;
             this.userManager = userManager;
             this.signInManager = signInManager;
+            this.mailService = mailService;
         }
 
         [HttpPost]
@@ -100,7 +105,15 @@ namespace TucaAPI.Controllers
 
             var token = await this.userManager.GeneratePasswordResetTokenAsync(hasUser);
 
-            return Ok(token); //email
+            await this.mailService.SendAsync(new BaseMailData
+            {
+                EmailToId = hasUser.Email ?? "",
+                EmailToName = hasUser.UserName ?? "",
+                EmailSubject = hasUser.Email ?? "",
+                EmailBody = String.Format("{0}: {1}?token={2}", Messages.MAIL_RESET_PASSWORD, data.Url, token)
+            });
+
+            return Ok();
         }
 
         [HttpPost]
