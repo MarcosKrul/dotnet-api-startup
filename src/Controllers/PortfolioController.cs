@@ -36,7 +36,7 @@ namespace TucaAPI.Controllers
         {
             var email = User.GetEmail();
             var hasUser = await this.userManager.FindByEmailAsync(email ?? "");
-            if (hasUser == null) return Unauthorized();
+            if (hasUser is null) return Unauthorized();
 
             var userPortFolio = await this.portfolioRepository.GetStocksFromUserPortfolio(hasUser);
 
@@ -51,12 +51,12 @@ namespace TucaAPI.Controllers
         {
             var email = User.GetEmail();
             var hasUser = await this.userManager.FindByEmailAsync(email ?? "");
-            if (hasUser == null)
+            if (hasUser is null)
                 return Unauthorized();
 
             var stock = await this.stockRepository.GetByIdAsync(stockId);
 
-            if (stock == null)
+            if (stock is null)
                 return BadRequest(Messages.STOCK_NOT_FOUND);
 
             var userPortfolio = await this.portfolioRepository.GetStocksFromUserPortfolio(hasUser);
@@ -72,7 +72,7 @@ namespace TucaAPI.Controllers
 
             await this.portfolioRepository.CreateAsync(portfolioModel);
 
-            if (portfolioModel == null)
+            if (portfolioModel is null)
                 return StatusCode(HttpStatus.INTERNAL_ERROR, Messages.COULD_NOT_CREATE);
 
             return Created();
@@ -86,12 +86,12 @@ namespace TucaAPI.Controllers
         {
             var email = User.GetEmail();
             var hasUser = await this.userManager.FindByEmailAsync(email ?? "");
-            if (hasUser == null)
+            if (hasUser is null)
                 return Unauthorized();
 
             var userPortfolio = await this.portfolioRepository.GetUserPortfolio(stockId, hasUser);
 
-            if (userPortfolio == null)
+            if (userPortfolio is null)
                 return BadRequest(Messages.STOCK_NOT_IN_PORTFOLIO);
 
             await this.portfolioRepository.DeleteAsync(userPortfolio);

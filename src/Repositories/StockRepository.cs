@@ -68,7 +68,7 @@ namespace TucaAPI.Repositories
         {
             var stock = await this.GetByIdAsync(id);
 
-            if (stock == null) return null;
+            if (stock is null) return null;
 
             stock.Symbol = stockDto.Symbol;
             stock.CompanyName = stockDto.CompanyName;

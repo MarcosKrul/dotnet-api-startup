@@ -49,7 +49,7 @@ namespace TucaAPI.Controllers
         {
             var comment = await this.commentRepository.GetByIdAsync(id);
 
-            if (comment == null) return NotFound();
+            if (comment is null) return NotFound();
 
             return Ok(comment.ToCommentDto());
         }
@@ -65,7 +65,7 @@ namespace TucaAPI.Controllers
 
             var email = User.GetEmail();
             var hasUser = await this.userManager.FindByEmailAsync(email ?? "");
-            if (hasUser == null) return Unauthorized();
+            if (hasUser is null) return Unauthorized();
 
             var comment = data.ToCommentFromRequestDto(stockId, hasUser.Id);
 
@@ -82,11 +82,11 @@ namespace TucaAPI.Controllers
         {
             var email = User.GetEmail();
             var hasUser = await this.userManager.FindByEmailAsync(email ?? "");
-            if (hasUser == null) return Unauthorized();
+            if (hasUser is null) return Unauthorized();
 
             var comment = await this.commentRepository.GetByIdAsync(id);
 
-            if (comment == null) return NotFound();
+            if (comment is null) return NotFound();
 
             if (comment.AppUserId != hasUser.Id) return Unauthorized();
 
@@ -103,11 +103,11 @@ namespace TucaAPI.Controllers
         {
             var email = User.GetEmail();
             var hasUser = await this.userManager.FindByEmailAsync(email ?? "");
-            if (hasUser == null) return Unauthorized();
+            if (hasUser is null) return Unauthorized();
 
             var comment = await this.commentRepository.UpdateAsync(id, data, hasUser);
 
-            if (comment == null) return NotFound();
+            if (comment is null) return NotFound();
 
             return Ok(comment.ToCommentDto());
         }

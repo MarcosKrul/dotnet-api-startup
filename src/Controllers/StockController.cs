@@ -36,7 +36,7 @@ namespace TucaAPI.Controllers
         {
             var stock = await this.repository.GetByIdAsync(id);
 
-            if (stock == null) return NotFound();
+            if (stock is null) return NotFound();
 
             return Ok(stock.ToStockDto());
         }
@@ -61,7 +61,7 @@ namespace TucaAPI.Controllers
         {
             var stock = await this.repository.UpdateAsync(id, data);
 
-            if (stock == null) return NotFound();
+            if (stock is null) return NotFound();
 
             return Ok(stock.ToStockDto());
         }
@@ -74,7 +74,7 @@ namespace TucaAPI.Controllers
         {
             var stock = await this.repository.GetByIdAsync(id);
 
-            if (stock == null) return NotFound();
+            if (stock is null) return NotFound();
 
             await this.repository.DeleteAsync(stock);
 
