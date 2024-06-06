@@ -6,6 +6,8 @@ using TucaAPI.Common;
 using TucaAPI.Dtos.Account;
 using TucaAPI.Interfaces;
 using TucaAPI.Models;
+using TucaAPI.src.Common;
+using TucaAPI.src.Dtos.Account;
 
 namespace TucaAPI.Controllers
 {
@@ -74,17 +76,47 @@ namespace TucaAPI.Controllers
         [ValidateModelState]
         public async Task<IActionResult> Login([FromBody] LoginDto data)
         {
-            var unauthorizedError = Unauthorized("Invalid credentials");
+            var unauthorizedError = Unauthorized(Messages.INVALID_CREDENTIALS);
 
             var hasUser = await this.userManager.Users.FirstOrDefaultAsync(i => i.Email == data.Email);
 
-            if (hasUser == null) return unauthorizedError;
+            if (hasUser is null) return unauthorizedError;
 
             var result = await this.signInManager.CheckPasswordSignInAsync(hasUser, data.Password ?? "", false);
 
             if (!result.Succeeded) return unauthorizedError;
 
             return this.GetAuthenticatedUserAction(hasUser);
+        }
+
+        [HttpPost]
+        [Route("forgot")]
+        [ValidateModelState]
+        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequestDto data)
+        {
+            var hasUser = await this.userManager.Users.FirstOrDefaultAsync(i => i.Email == data.Email);
+
+            if (hasUser is null) return Unauthorized(Messages.INVALID_CREDENTIALS);
+
+            var token = await this.userManager.GeneratePasswordResetTokenAsync(hasUser);
+
+            return Ok(token); //email
+        }
+
+        [HttpPost]
+        [Route("reset")]
+        [ValidateModelState]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequestDto data)
+        {
+            var hasUser = await this.userManager.Users.FirstOrDefaultAsync(i => i.Email == data.Email);
+
+            if (hasUser is null) return Unauthorized(Messages.INVALID_CREDENTIALS);
+
+            var result = await this.userManager.ResetPasswordAsync(hasUser, data.Token, data.Password);
+
+            if (!result.Succeeded) return BadRequest(result);
+
+            return Ok();
         }
     }
 }
