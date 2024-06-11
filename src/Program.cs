@@ -80,7 +80,7 @@ builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
 
 builder.Services.Configure<DataProtectionTokenProviderOptions>(options =>
 {
-    options.TokenLifespan = Constants.FORGOT_PASSWORD_TOKEN_EXPIRES_IN;
+    options.TokenLifespan = Constants.TOKEN_EXPIRES_IN;
 });
 
 builder.Services.AddAuthentication(options =>

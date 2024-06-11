@@ -93,7 +93,7 @@ namespace TucaAPI.Controllers
 
             var result = await this.userManager.ConfirmEmailAsync(hasUser, data.Token ?? "");
 
-            if (!result.Succeeded) return Unauthorized(Messages.INVALID_CREDENTIALS);
+            if (!result.Succeeded) return Unauthorized(result.Errors);
 
             return this.GetAuthenticatedUserAction(hasUser);
         }
