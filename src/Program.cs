@@ -103,6 +103,12 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy(AuthorizationPolicies.ADMIN_ONLY, policy => policy.RequireClaim(PermissionClaims.ADM));
+    options.AddPolicy(AuthorizationPolicies.USER_ONLY, policy => policy.RequireClaim(PermissionClaims.USER));
+});
+
 builder.Services.AddScoped<IStockRepository, StockRepository>();
 builder.Services.AddScoped<ICommentRepository, CommentRepository>();
 builder.Services.AddScoped<IPortfolioRepository, PortfolioRepository>();

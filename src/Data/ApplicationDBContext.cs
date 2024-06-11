@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using TucaAPI.Models;
+using TucaAPI.src.Common;
 
 namespace TucaAPI.Data
 {
@@ -36,13 +37,13 @@ namespace TucaAPI.Data
             {
                 new IdentityRole
                 {
-                    Name = "Admin",
-                    NormalizedName = "ADMIN"
+                    Name = PermissionClaims.ADM,
+                    NormalizedName = PermissionClaims.ADM.Normalize()
                 },
                 new IdentityRole
                 {
-                    Name = "User",
-                    NormalizedName = "USER"
+                    Name = PermissionClaims.USER,
+                    NormalizedName = PermissionClaims.USER.Normalize()
                 }
             };
 
