@@ -70,6 +70,9 @@ builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
     options.Password.RequireLowercase = true;
     options.Password.RequireNonAlphanumeric = true;
     options.Password.RequiredLength = Constants.MIN_PASSWORD_LENGTH;
+    options.Lockout.AllowedForNewUsers = true;
+    options.Lockout.MaxFailedAccessAttempts = Constants.MAX_LOGIN_ATTEMPTS;
+    options.Lockout.DefaultLockoutTimeSpan = Constants.RESET_LOGIN_ATTEMPTS;
 })
 .AddEntityFrameworkStores<ApplicationDBContext>()
 .AddTokenProvider<DataProtectorTokenProvider<AppUser>>(TokenOptions.DefaultProvider);

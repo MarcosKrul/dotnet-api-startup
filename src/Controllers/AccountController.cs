@@ -87,7 +87,7 @@ namespace TucaAPI.Controllers
 
             if (hasUser is null) return unauthorizedError;
 
-            var result = await this.signInManager.CheckPasswordSignInAsync(hasUser, data.Password ?? "", false);
+            var result = await this.signInManager.CheckPasswordSignInAsync(hasUser, data.Password ?? "", true);
 
             if (!result.Succeeded) return unauthorizedError;
 
