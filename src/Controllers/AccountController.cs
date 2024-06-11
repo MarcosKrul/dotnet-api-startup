@@ -111,6 +111,8 @@ namespace TucaAPI.Controllers
 
             var result = await this.signInManager.CheckPasswordSignInAsync(hasUser, data.Password ?? "", true);
 
+            if (result.IsLockedOut) return Unauthorized(Messages.ACCOUNT_LOCKED);
+
             if (!result.Succeeded) return unauthorizedError;
 
             return this.GetAuthenticatedUserAction(hasUser);

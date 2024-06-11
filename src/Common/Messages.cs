@@ -13,5 +13,6 @@ namespace TucaAPI.src.Common
         public const string USER_NOT_FOUND = "Usuário não encontrado";
         public const string MAIL_RESET_PASSWORD = "Para recuperar sua senha, acesse o link";
         public const string MAIL_CONFIRM_ACCOUNT = "Para confirmar sua conta, acesse o link";
+        public const string ACCOUNT_LOCKED = "Sua conta foi bloqueada devido as diversas tentativas. Por favor, tente novamente mais tarde.";
     }
 }
