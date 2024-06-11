@@ -64,16 +64,38 @@ namespace TucaAPI.Controllers
 
                 if (!createdUser.Succeeded) return StatusCode(HttpStatus.INTERNAL_ERROR, createdUser.Errors);
 
-                var roleResults = await this.userManager.AddToRoleAsync(appUser, "User");
+                var token = await this.userManager.GenerateEmailConfirmationTokenAsync(appUser);
 
-                if (!roleResults.Succeeded) return StatusCode(HttpStatus.INTERNAL_ERROR, roleResults.Errors);
+                await this.mailService.SendAsync(new BaseMailData
+                {
+                    EmailToId = appUser.Email ?? "",
+                    EmailToName = appUser.UserName ?? "",
+                    EmailSubject = appUser.Email ?? "",
+                    EmailBody = String.Format("{0}: {1}?token={2}", Messages.MAIL_CONFIRM_ACCOUNT, data.Url, token)
+                });
 
-                return this.GetAuthenticatedUserAction(appUser);
+                return Ok();
             }
             catch (Exception exception)
             {
                 return StatusCode(HttpStatus.INTERNAL_ERROR, exception);
             }
+        }
+
+        [HttpPost]
+        [Route("confirm")]
+        [ValidateModelState]
+        public async Task<IActionResult> Confirm([FromBody] ConfirmDto data)
+        {
+            var hasUser = await this.userManager.Users.FirstOrDefaultAsync(i => i.Email == data.Email);
+
+            if (hasUser is null) return Unauthorized(Messages.USER_NOT_FOUND);
+
+            var result = await this.userManager.ConfirmEmailAsync(hasUser, data.Token ?? "");
+
+            if (!result.Succeeded) return Unauthorized(Messages.INVALID_CREDENTIALS);
+
+            return this.GetAuthenticatedUserAction(hasUser);
         }
 
         [HttpPost]

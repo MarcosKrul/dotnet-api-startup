@@ -10,6 +10,8 @@ namespace TucaAPI.src.Common
         public const string STOCK_NOT_IN_PORTFOLIO = "Stock not in you portfolio";
         public const string PLEASE_ENTER_VALID_TOKEN = "Please enter a valid token";
         public const string INVALID_CREDENTIALS = "Invalid credentials";
-        public const string MAIL_RESET_PASSWORD = "Para recuperar sua senha, acesso o link";
+        public const string USER_NOT_FOUND = "Usuário não encontrado";
+        public const string MAIL_RESET_PASSWORD = "Para recuperar sua senha, acesse o link";
+        public const string MAIL_CONFIRM_ACCOUNT = "Para confirmar sua conta, acesse o link";
     }
 }
