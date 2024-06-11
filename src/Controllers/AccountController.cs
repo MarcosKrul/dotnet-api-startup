@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TucaAPI.Attributes;
-using TucaAPI.Common;
 using TucaAPI.Dtos.Account;
 using TucaAPI.Interfaces;
 using TucaAPI.Models;
@@ -52,34 +51,27 @@ namespace TucaAPI.Controllers
         {
             if (string.IsNullOrEmpty(data.Password)) return BadRequest();
 
-            try
+            var appUser = new AppUser
             {
-                var appUser = new AppUser
-                {
-                    UserName = data.Username,
-                    Email = data.Email
-                };
+                UserName = data.Username,
+                Email = data.Email
+            };
 
-                var createdUser = await this.userManager.CreateAsync(appUser, data.Password);
+            var createdUser = await this.userManager.CreateAsync(appUser, data.Password);
 
-                if (!createdUser.Succeeded) return StatusCode(HttpStatus.INTERNAL_ERROR, createdUser.Errors);
+            if (!createdUser.Succeeded) return BadRequest(createdUser.Errors);
 
-                var token = await this.userManager.GenerateEmailConfirmationTokenAsync(appUser);
+            var token = await this.userManager.GenerateEmailConfirmationTokenAsync(appUser);
 
-                await this.mailService.SendAsync(new BaseMailData
-                {
-                    EmailToId = appUser.Email ?? "",
-                    EmailToName = appUser.UserName ?? "",
-                    EmailSubject = appUser.Email ?? "",
-                    EmailBody = String.Format("{0}: {1}?token={2}", Messages.MAIL_CONFIRM_ACCOUNT, data.Url, token)
-                });
-
-                return Ok();
-            }
-            catch (Exception exception)
+            await this.mailService.SendAsync(new BaseMailData
             {
-                return StatusCode(HttpStatus.INTERNAL_ERROR, exception);
-            }
+                EmailToId = appUser.Email ?? "",
+                EmailToName = appUser.UserName ?? "",
+                EmailSubject = appUser.Email ?? "",
+                EmailBody = String.Format("{0}: {1}?token={2}", Messages.MAIL_CONFIRM_ACCOUNT, data.Url, token)
+            });
+
+            return Ok();
         }
 
         [HttpPost]
