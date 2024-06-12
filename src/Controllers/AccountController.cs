@@ -7,6 +7,7 @@ using TucaAPI.Interfaces;
 using TucaAPI.Models;
 using TucaAPI.src.Common;
 using TucaAPI.src.Dtos.Account;
+using TucaAPI.src.Dtos.Common;
 using TucaAPI.src.Dtos.Mail;
 using TucaAPI.src.Interfaces;
 
@@ -23,11 +24,14 @@ namespace TucaAPI.Controllers
 
         private IActionResult GetAuthenticatedUserAction(AppUser user)
         {
-            return Ok(new AuthenticatedUserDto
+            return Ok(new SuccessApiResponse<AuthenticatedUserDto>
             {
-                UserName = user.UserName ?? "",
-                Email = user.Email ?? "",
-                Token = this.tokenService.Create(user)
+                Content = new AuthenticatedUserDto
+                {
+                    UserName = user.UserName ?? "",
+                    Email = user.Email ?? "",
+                    Token = this.tokenService.Create(user)
+                }
             });
         }
 
@@ -49,7 +53,8 @@ namespace TucaAPI.Controllers
         [ValidateModelState]
         public async Task<IActionResult> Register([FromBody] RegisterDto data)
         {
-            if (string.IsNullOrEmpty(data.Password)) return BadRequest();
+            if (string.IsNullOrEmpty(data.Password))
+                return BadRequest(new ApiResponse { Success = false });
 
             var appUser = new AppUser
             {
@@ -59,7 +64,11 @@ namespace TucaAPI.Controllers
 
             var createdUser = await this.userManager.CreateAsync(appUser, data.Password);
 
-            if (!createdUser.Succeeded) return BadRequest(createdUser.Errors);
+            if (!createdUser.Succeeded)
+                return BadRequest(new ErrorApiResponse<IdentityError>
+                {
+                    Errors = createdUser.Errors
+                });
 
             var token = await this.userManager.GenerateEmailConfirmationTokenAsync(appUser);
 
@@ -68,10 +77,10 @@ namespace TucaAPI.Controllers
                 EmailToId = appUser.Email ?? "",
                 EmailToName = appUser.UserName ?? "",
                 EmailSubject = appUser.Email ?? "",
-                EmailBody = String.Format("{0}: {1}?token={2}", Messages.MAIL_CONFIRM_ACCOUNT, data.Url, token)
+                EmailBody = String.Format("{0}: {1}?token={2}", MessageKey.MAIL_CONFIRM_ACCOUNT, data.Url, token)
             });
 
-            return Ok();
+            return Ok(new ApiResponse { Success = true });
         }
 
         [HttpPost]
@@ -81,11 +90,17 @@ namespace TucaAPI.Controllers
         {
             var hasUser = await this.userManager.Users.FirstOrDefaultAsync(i => i.Email == data.Email);
 
-            if (hasUser is null) return Unauthorized(Messages.USER_NOT_FOUND);
+            if (hasUser is null) return Unauthorized(new ErrorApiResponse<string>
+            {
+                Errors = [MessageKey.USER_NOT_FOUND]
+            });
 
             var result = await this.userManager.ConfirmEmailAsync(hasUser, data.Token ?? "");
 
-            if (!result.Succeeded) return Unauthorized(result.Errors);
+            if (!result.Succeeded) return Unauthorized(new ErrorApiResponse<IdentityError>
+            {
+                Errors = result.Errors
+            });
 
             return this.GetAuthenticatedUserAction(hasUser);
         }
@@ -95,7 +110,10 @@ namespace TucaAPI.Controllers
         [ValidateModelState]
         public async Task<IActionResult> Login([FromBody] LoginDto data)
         {
-            var unauthorizedError = Unauthorized(Messages.INVALID_CREDENTIALS);
+            var unauthorizedError = Unauthorized(new ErrorApiResponse<string>
+            {
+                Errors = [MessageKey.INVALID_CREDENTIALS]
+            });
 
             var hasUser = await this.userManager.Users.FirstOrDefaultAsync(i => i.Email == data.Email);
 
@@ -103,7 +121,10 @@ namespace TucaAPI.Controllers
 
             var result = await this.signInManager.CheckPasswordSignInAsync(hasUser, data.Password ?? "", true);
 
-            if (result.IsLockedOut) return Unauthorized(Messages.ACCOUNT_LOCKED);
+            if (result.IsLockedOut) return Unauthorized(new ErrorApiResponse<string>
+            {
+                Errors = [MessageKey.ACCOUNT_LOCKED]
+            });
 
             if (!result.Succeeded) return unauthorizedError;
 
@@ -117,7 +138,10 @@ namespace TucaAPI.Controllers
         {
             var hasUser = await this.userManager.Users.FirstOrDefaultAsync(i => i.Email == data.Email);
 
-            if (hasUser is null) return Unauthorized(Messages.INVALID_CREDENTIALS);
+            if (hasUser is null) return Unauthorized(new ErrorApiResponse<string>
+            {
+                Errors = [MessageKey.INVALID_CREDENTIALS]
+            });
 
             var token = await this.userManager.GeneratePasswordResetTokenAsync(hasUser);
 
@@ -126,10 +150,10 @@ namespace TucaAPI.Controllers
                 EmailToId = hasUser.Email ?? "",
                 EmailToName = hasUser.UserName ?? "",
                 EmailSubject = hasUser.Email ?? "",
-                EmailBody = String.Format("{0}: {1}?token={2}", Messages.MAIL_RESET_PASSWORD, data.Url, token)
+                EmailBody = String.Format("{0}: {1}?token={2}", MessageKey.MAIL_RESET_PASSWORD, data.Url, token)
             });
 
-            return Ok();
+            return Ok(new ApiResponse { Success = true });
         }
 
         [HttpPost]
@@ -139,13 +163,19 @@ namespace TucaAPI.Controllers
         {
             var hasUser = await this.userManager.Users.FirstOrDefaultAsync(i => i.Email == data.Email);
 
-            if (hasUser is null) return Unauthorized(Messages.INVALID_CREDENTIALS);
+            if (hasUser is null) return Unauthorized(new ErrorApiResponse<string>
+            {
+                Errors = [MessageKey.INVALID_CREDENTIALS]
+            });
 
             var result = await this.userManager.ResetPasswordAsync(hasUser, data.Token, data.Password);
 
-            if (!result.Succeeded) return BadRequest(result);
+            if (!result.Succeeded) return BadRequest(new SuccessApiResponse<IdentityResult>
+            {
+                Content = result
+            });
 
-            return Ok();
+            return Ok(new ApiResponse { Success = true });
         }
     }
 }

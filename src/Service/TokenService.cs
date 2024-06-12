@@ -24,7 +24,7 @@ namespace TucaAPI.Service
         private List<Claim> GetClaims(AppUser user)
         {
             if (string.IsNullOrEmpty(user.Email) || string.IsNullOrEmpty(user.UserName))
-                throw new Exception(Messages.REQUIRED_USER_INFOS);
+                throw new Exception(MessageKey.REQUIRED_USER_INFOS);
 
             var claims = new List<Claim>
             {

@@ -7,6 +7,7 @@ using TucaAPI.Extensions;
 using TucaAPI.Interfaces;
 using TucaAPI.Models;
 using TucaAPI.src.Common;
+using TucaAPI.src.Dtos.Common;
 
 namespace TucaAPI.Controllers
 {
@@ -36,11 +37,17 @@ namespace TucaAPI.Controllers
         {
             var email = User.GetEmail();
             var hasUser = await this.userManager.FindByEmailAsync(email ?? "");
-            if (hasUser is null) return Unauthorized();
+            if (hasUser is null) return Unauthorized(new ErrorApiResponse<string>
+            {
+                Errors = [MessageKey.USER_NOT_FOUND]
+            });
 
             var userPortFolio = await this.portfolioRepository.GetStocksFromUserPortfolio(hasUser);
 
-            return Ok(userPortFolio);
+            return Ok(new SuccessApiResponse<List<Stock>>
+            {
+                Content = userPortFolio
+            });
         }
 
         [HttpPost]
@@ -51,18 +58,26 @@ namespace TucaAPI.Controllers
         {
             var email = User.GetEmail();
             var hasUser = await this.userManager.FindByEmailAsync(email ?? "");
-            if (hasUser is null)
-                return Unauthorized();
+            if (hasUser is null) return Unauthorized(new ErrorApiResponse<string>
+            {
+                Errors = [MessageKey.USER_NOT_FOUND]
+            });
 
             var stock = await this.stockRepository.GetByIdAsync(stockId);
 
             if (stock is null)
-                return BadRequest(Messages.STOCK_NOT_FOUND);
+                return BadRequest(new ErrorApiResponse<string>
+                {
+                    Errors = [MessageKey.STOCK_NOT_FOUND]
+                });
 
             var userPortfolio = await this.portfolioRepository.GetStocksFromUserPortfolio(hasUser);
 
             if (userPortfolio.Any(i => i.Id == stock.Id))
-                return BadRequest(Messages.CANNOT_ADD_SAME_STOCK);
+                return BadRequest(new ErrorApiResponse<string>
+                {
+                    Errors = [MessageKey.CANNOT_ADD_SAME_STOCK]
+                });
 
             var portfolioModel = new Portfolio
             {
@@ -73,9 +88,12 @@ namespace TucaAPI.Controllers
             await this.portfolioRepository.CreateAsync(portfolioModel);
 
             if (portfolioModel is null)
-                return StatusCode(HttpStatus.INTERNAL_ERROR, Messages.COULD_NOT_CREATE);
+                return StatusCode(HttpStatus.INTERNAL_ERROR, new ErrorApiResponse<string>
+                {
+                    Errors = [MessageKey.COULD_NOT_CREATE]
+                });
 
-            return Created();
+            return StatusCode(HttpStatus.CREATED, new ApiResponse { Success = true });
         }
 
         [HttpDelete]
@@ -86,17 +104,22 @@ namespace TucaAPI.Controllers
         {
             var email = User.GetEmail();
             var hasUser = await this.userManager.FindByEmailAsync(email ?? "");
-            if (hasUser is null)
-                return Unauthorized();
+            if (hasUser is null) return Unauthorized(new ErrorApiResponse<string>
+            {
+                Errors = [MessageKey.USER_NOT_FOUND]
+            });
 
             var userPortfolio = await this.portfolioRepository.GetUserPortfolio(stockId, hasUser);
 
             if (userPortfolio is null)
-                return BadRequest(Messages.STOCK_NOT_IN_PORTFOLIO);
+                return BadRequest(new ErrorApiResponse<string>
+                {
+                    Errors = [MessageKey.STOCK_NOT_IN_PORTFOLIO]
+                });
 
             await this.portfolioRepository.DeleteAsync(userPortfolio);
 
-            return Ok();
+            return Ok(new ApiResponse { Success = true });
         }
     }
 }

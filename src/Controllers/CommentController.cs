@@ -8,6 +8,7 @@ using TucaAPI.Interfaces;
 using TucaAPI.Mappers;
 using TucaAPI.Models;
 using TucaAPI.src.Common;
+using TucaAPI.src.Dtos.Common;
 
 namespace TucaAPI.Controllers
 {
@@ -38,7 +39,10 @@ namespace TucaAPI.Controllers
             var comments = await this.commentRepository.GetAllAsync();
             var formatted = comments.Select(i => i.ToCommentDto());
 
-            return Ok(formatted);
+            return Ok(new SuccessApiResponse<IEnumerable<CommentDto>>
+            {
+                Content = formatted
+            });
         }
 
         [HttpGet]
@@ -49,9 +53,15 @@ namespace TucaAPI.Controllers
         {
             var comment = await this.commentRepository.GetByIdAsync(id);
 
-            if (comment is null) return NotFound();
+            if (comment is null) return NotFound(new ErrorApiResponse<string>
+            {
+                Errors = [MessageKey.COMMENT_NOT_FOUND]
+            });
 
-            return Ok(comment.ToCommentDto());
+            return Ok(new SuccessApiResponse<CommentDto>
+            {
+                Content = comment.ToCommentDto()
+            });
         }
 
         [HttpPost]
@@ -61,11 +71,17 @@ namespace TucaAPI.Controllers
         public async Task<IActionResult> Create([FromRoute] int stockId, [FromBody] CreateCommentRequestDto data)
         {
             if (!await this.stockRepository.StockExistsAsync(stockId))
-                return BadRequest(Messages.STOCK_NOT_FOUND);
+                return NotFound(new ErrorApiResponse<string>
+                {
+                    Errors = [MessageKey.STOCK_NOT_FOUND]
+                });
 
             var email = User.GetEmail();
             var hasUser = await this.userManager.FindByEmailAsync(email ?? "");
-            if (hasUser is null) return Unauthorized();
+            if (hasUser is null) return Unauthorized(new ErrorApiResponse<string>
+            {
+                Errors = [MessageKey.USER_NOT_FOUND]
+            });
 
             var comment = data.ToCommentFromRequestDto(stockId, hasUser.Id);
 
@@ -82,17 +98,26 @@ namespace TucaAPI.Controllers
         {
             var email = User.GetEmail();
             var hasUser = await this.userManager.FindByEmailAsync(email ?? "");
-            if (hasUser is null) return Unauthorized();
+            if (hasUser is null) return Unauthorized(new ErrorApiResponse<string>
+            {
+                Errors = [MessageKey.USER_NOT_FOUND]
+            });
 
             var comment = await this.commentRepository.GetByIdAsync(id);
 
-            if (comment is null) return NotFound();
+            if (comment is null) return NotFound(new ErrorApiResponse<string>
+            {
+                Errors = [MessageKey.COMMENT_NOT_FOUND]
+            });
 
-            if (comment.AppUserId != hasUser.Id) return Unauthorized();
+            if (comment.AppUserId != hasUser.Id) return Unauthorized(new ErrorApiResponse<string>
+            {
+                Errors = [MessageKey.USER_NOT_FOUND]
+            });
 
             await this.commentRepository.DeleteAsync(comment);
 
-            return NoContent();
+            return Ok(new ApiResponse { Success = true });
         }
 
         [HttpPut]
@@ -103,13 +128,22 @@ namespace TucaAPI.Controllers
         {
             var email = User.GetEmail();
             var hasUser = await this.userManager.FindByEmailAsync(email ?? "");
-            if (hasUser is null) return Unauthorized();
+            if (hasUser is null) return Unauthorized(new ErrorApiResponse<string>
+            {
+                Errors = [MessageKey.USER_NOT_FOUND]
+            });
 
             var comment = await this.commentRepository.UpdateAsync(id, data, hasUser);
 
-            if (comment is null) return NotFound();
+            if (comment is null) return NotFound(new ErrorApiResponse<string>
+            {
+                Errors = [MessageKey.COMMENT_NOT_FOUND]
+            });
 
-            return Ok(comment.ToCommentDto());
+            return Ok(new SuccessApiResponse<CommentDto>
+            {
+                Content = comment.ToCommentDto()
+            });
         }
     }
 }

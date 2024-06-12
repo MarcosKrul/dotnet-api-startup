@@ -4,6 +4,8 @@ using TucaAPI.Attributes;
 using TucaAPI.Dtos.Stock;
 using TucaAPI.Interfaces;
 using TucaAPI.Mappers;
+using TucaAPI.src.Common;
+using TucaAPI.src.Dtos.Common;
 
 namespace TucaAPI.Controllers
 {
@@ -26,7 +28,10 @@ namespace TucaAPI.Controllers
             var stocks = await this.repository.GetAllAsync(query);
             var formatted = stocks.Select(i => i.ToStockDto()).ToList();
 
-            return Ok(formatted);
+            return Ok(new SuccessApiResponse<List<StockDto>>
+            {
+                Content = formatted
+            });
         }
 
         [HttpGet("{id:int}")]
@@ -36,9 +41,15 @@ namespace TucaAPI.Controllers
         {
             var stock = await this.repository.GetByIdAsync(id);
 
-            if (stock is null) return NotFound();
+            if (stock is null) return NotFound(new ErrorApiResponse<string>
+            {
+                Errors = [MessageKey.STOCK_NOT_FOUND]
+            });
 
-            return Ok(stock.ToStockDto());
+            return Ok(new SuccessApiResponse<StockDto>
+            {
+                Content = stock.ToStockDto()
+            });
         }
 
         [HttpPost]
@@ -61,9 +72,15 @@ namespace TucaAPI.Controllers
         {
             var stock = await this.repository.UpdateAsync(id, data);
 
-            if (stock is null) return NotFound();
+            if (stock is null) return NotFound(new ErrorApiResponse<string>
+            {
+                Errors = [MessageKey.STOCK_NOT_FOUND]
+            });
 
-            return Ok(stock.ToStockDto());
+            return Ok(new SuccessApiResponse<StockDto>
+            {
+                Content = stock.ToStockDto()
+            });
         }
 
         [HttpDelete]
@@ -74,11 +91,14 @@ namespace TucaAPI.Controllers
         {
             var stock = await this.repository.GetByIdAsync(id);
 
-            if (stock is null) return NotFound();
+            if (stock is null) return NotFound(new ErrorApiResponse<string>
+            {
+                Errors = [MessageKey.STOCK_NOT_FOUND]
+            });
 
             await this.repository.DeleteAsync(stock);
 
-            return NoContent();
+            return Ok(new ApiResponse { Success = true });
         }
     }
 }

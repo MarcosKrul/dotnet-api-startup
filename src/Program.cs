@@ -29,7 +29,7 @@ builder.Services.AddSwaggerGen(option =>
     option.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         In = ParameterLocation.Header,
-        Description = Messages.PLEASE_ENTER_VALID_TOKEN,
+        Description = MessageKey.PLEASE_ENTER_VALID_TOKEN,
         Name = "Authorization",
         Type = SecuritySchemeType.Http,
         BearerFormat = "JWT",
