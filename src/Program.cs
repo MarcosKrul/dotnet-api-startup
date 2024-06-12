@@ -14,12 +14,18 @@ using TucaAPI.src.Common;
 using TucaAPI.src.Dtos.Mail;
 using TucaAPI.src.Interfaces;
 using TucaAPI.src.Service;
+using System.Net.Mime;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers(options =>
+builder.Services.AddControllers().ConfigureApiBehaviorOptions(options =>
 {
-    options.Filters.Add<ValidateModelStateAttribute>();
+    options.InvalidModelStateResponseFactory = context =>
+    {
+        var result = new ValidationFailedResult(context.ModelState);
+        result.ContentTypes.Add(MediaTypeNames.Application.Json);
+        return result;
+    };
 });
 builder.Services.AddEndpointsApiExplorer();
 
