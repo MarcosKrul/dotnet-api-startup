@@ -88,12 +88,12 @@ namespace TucaAPI.Controllers
             await this.portfolioRepository.CreateAsync(portfolioModel);
 
             if (portfolioModel is null)
-                return StatusCode(HttpStatus.INTERNAL_ERROR, new ErrorApiResponse<string>
+                return StatusCode(StatusCodes.Status500InternalServerError, new ErrorApiResponse<string>
                 {
                     Errors = [MessageKey.COULD_NOT_CREATE]
                 });
 
-            return StatusCode(HttpStatus.CREATED, new ApiResponse { Success = true });
+            return StatusCode(StatusCodes.Status201Created, new ApiResponse { Success = true });
         }
 
         [HttpDelete]
