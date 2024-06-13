@@ -70,6 +70,14 @@ namespace TucaAPI.Controllers
                     Errors = createdUser.Errors
                 });
 
+            var roleResult = await this.userManager.AddToRoleAsync(appUser, PermissionRoles.USER);
+
+            if (!roleResult.Succeeded)
+                return BadRequest(new ErrorApiResponse<IdentityError>
+                {
+                    Errors = roleResult.Errors
+                });
+
             var token = await this.userManager.GenerateEmailConfirmationTokenAsync(appUser);
 
             await this.mailService.SendAsync(new BaseMailData

@@ -37,13 +37,13 @@ namespace TucaAPI.Data
             {
                 new IdentityRole
                 {
-                    Name = PermissionClaims.ADM,
-                    NormalizedName = PermissionClaims.ADM.Normalize()
+                    Name = PermissionRoles.ADM,
+                    NormalizedName = PermissionRoles.ADM.Normalize()
                 },
                 new IdentityRole
                 {
-                    Name = PermissionClaims.USER,
-                    NormalizedName = PermissionClaims.USER.Normalize()
+                    Name = PermissionRoles.USER,
+                    NormalizedName = PermissionRoles.USER.Normalize()
                 }
             };
 

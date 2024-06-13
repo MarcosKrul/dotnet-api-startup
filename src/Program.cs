@@ -116,8 +116,8 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddAuthorization(options =>
 {
-    options.AddPolicy(AuthorizationPolicies.ADMIN_ONLY, policy => policy.RequireClaim(PermissionClaims.ADM));
-    options.AddPolicy(AuthorizationPolicies.USER_ONLY, policy => policy.RequireClaim(PermissionClaims.USER));
+    options.AddPolicy(AuthorizationPolicies.ADMIN_ONLY, policy => policy.RequireClaim(PermissionRoles.ADM));
+    options.AddPolicy(AuthorizationPolicies.USER_ONLY, policy => policy.RequireClaim(PermissionRoles.USER));
 });
 
 builder.Services.AddScoped<IStockRepository, StockRepository>();
