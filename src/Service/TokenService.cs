@@ -1,6 +1,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using TucaAPI.Common;
 using TucaAPI.Interfaces;
@@ -13,15 +14,17 @@ namespace TucaAPI.Service
     {
         private readonly IConfiguration configuration;
         private readonly SymmetricSecurityKey key;
+        private readonly UserManager<AppUser> userManager;
 
-        public TokenService(IConfiguration configuration)
+        public TokenService(IConfiguration configuration, UserManager<AppUser> userManager)
         {
+            this.userManager = userManager;
             this.configuration = configuration;
             var secretKey = this.configuration[EnvVariables.JWT_SIGNIN_KEY] ?? Constants.DEFAULT_JWT_SECRET;
             this.key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
         }
 
-        private List<Claim> GetClaims(AppUser user)
+        private async Task<List<Claim>> GetClaimsAsync(AppUser user)
         {
             if (string.IsNullOrEmpty(user.Email) || string.IsNullOrEmpty(user.UserName))
                 throw new Exception(MessageKey.REQUIRED_USER_INFOS);
@@ -31,6 +34,12 @@ namespace TucaAPI.Service
                 new(JwtRegisteredClaimNames.Email, user.Email),
                 new(JwtRegisteredClaimNames.GivenName, user.UserName),
             };
+
+            var roles = await this.userManager.GetRolesAsync(user);
+            foreach (var role in roles)
+            {
+                claims.Add(new(ClaimTypes.Role, role));
+            }
 
             return claims;
         }
@@ -42,13 +51,13 @@ namespace TucaAPI.Service
             return tokenHandler.WriteToken(token);
         }
 
-        public string Create(AppUser user)
+        public async Task<string> CreateAsync(AppUser user)
         {
             var credentials = new SigningCredentials(this.key, SecurityAlgorithms.HmacSha512Signature);
 
             var tokenDescription = new SecurityTokenDescriptor
             {
-                Subject = new ClaimsIdentity(this.GetClaims(user)),
+                Subject = new ClaimsIdentity(await this.GetClaimsAsync(user)),
                 Expires = DateTime.Now.AddDays(Constants.JWT_DAYS_TO_EXPIRES),
                 SigningCredentials = credentials,
                 Issuer = this.configuration[EnvVariables.JWT_ISSUER],

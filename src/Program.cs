@@ -15,6 +15,7 @@ using TucaAPI.src.Dtos.Mail;
 using TucaAPI.src.Interfaces;
 using TucaAPI.src.Service;
 using System.Net.Mime;
+using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -116,8 +117,14 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddAuthorization(options =>
 {
-    options.AddPolicy(AuthorizationPolicies.ADMIN_ONLY, policy => policy.RequireClaim(PermissionRoles.ADM));
-    options.AddPolicy(AuthorizationPolicies.USER_ONLY, policy => policy.RequireClaim(PermissionRoles.USER));
+    options.AddPolicy(
+        AuthorizationPolicies.ADMIN_ONLY,
+        policy => policy.RequireClaim(ClaimTypes.Role, PermissionRoles.ADM)
+    );
+    options.AddPolicy(
+        AuthorizationPolicies.USER_ONLY,
+        policy => policy.RequireClaim(ClaimTypes.Role, PermissionRoles.USER)
+    );
 });
 
 builder.Services.AddScoped<IStockRepository, StockRepository>();

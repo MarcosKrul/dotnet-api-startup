@@ -22,7 +22,7 @@ namespace TucaAPI.Controllers
         private readonly SignInManager<AppUser> signInManager;
         private readonly IMailSenderService mailService;
 
-        private IActionResult GetAuthenticatedUserAction(AppUser user)
+        private async Task<IActionResult> GetAuthenticatedUserAction(AppUser user)
         {
             return Ok(new SuccessApiResponse<AuthenticatedUserDto>
             {
@@ -30,7 +30,7 @@ namespace TucaAPI.Controllers
                 {
                     UserName = user.UserName ?? "",
                     Email = user.Email ?? "",
-                    Token = this.tokenService.Create(user)
+                    Token = await this.tokenService.CreateAsync(user)
                 }
             });
         }
@@ -110,7 +110,7 @@ namespace TucaAPI.Controllers
                 Errors = result.Errors
             });
 
-            return this.GetAuthenticatedUserAction(hasUser);
+            return await this.GetAuthenticatedUserAction(hasUser);
         }
 
         [HttpPost]
@@ -136,7 +136,7 @@ namespace TucaAPI.Controllers
 
             if (!result.Succeeded) return unauthorizedError;
 
-            return this.GetAuthenticatedUserAction(hasUser);
+            return await this.GetAuthenticatedUserAction(hasUser);
         }
 
         [HttpPost]

@@ -4,6 +4,6 @@ namespace TucaAPI.Interfaces
 {
     public interface ITokenService
     {
-        string Create(AppUser user);
+        Task<string> CreateAsync(AppUser user);
     }
 }
