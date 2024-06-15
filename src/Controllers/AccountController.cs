@@ -22,18 +22,21 @@ namespace TucaAPI.Controllers
         private readonly ITokenService tokenService;
         private readonly SignInManager<AppUser> signInManager;
         private readonly IMailSenderService mailService;
+        private readonly ITemplateRenderingService templateRenderingService;
 
         public AccountController(
             UserManager<AppUser> userManager,
             ITokenService tokenService,
             SignInManager<AppUser> signInManager,
-            IMailSenderService mailService
+            IMailSenderService mailService,
+            ITemplateRenderingService templateRenderingService
         )
         {
             this.tokenService = tokenService;
             this.userManager = userManager;
             this.signInManager = signInManager;
             this.mailService = mailService;
+            this.templateRenderingService = templateRenderingService;
         }
 
         private async Task<IActionResult> GetAuthenticatedUserAction(AppUser user)
@@ -77,13 +80,22 @@ namespace TucaAPI.Controllers
                 });
 
             var token = await this.userManager.GenerateEmailConfirmationTokenAsync(appUser);
+            var link = $"{data.Url}?token={token}";
+            var email = appUser.Email.GetNonNullable();
+            var userName = appUser.UserName.GetNonNullable();
 
-            await this.mailService.SendAsync(new BaseMailData
+            var templateWriter = this.templateRenderingService.Render(
+               Path.Combine("Templates", "Mail", "ConfirmAccount", "index.hbs"),
+               new { userName, link }
+           );
+
+            await this.mailService.SendHtmlAsync(new BaseHtmlMailData
             {
-                EmailToId = appUser.Email.GetNonNullable(),
-                EmailToName = appUser.UserName.GetNonNullable(),
-                EmailSubject = appUser.Email.GetNonNullable(),
-                EmailBody = String.Format("{0}: {1}?token={2}", MessageKey.MAIL_CONFIRM_ACCOUNT, data.Url, token)
+                EmailToId = email,
+                EmailToName = userName,
+                EmailSubject = email,
+                TemplateWriter = templateWriter,
+                EmailBody = $"{Messages.MAIL_CONFIRM_ACCOUNT}: {link}"
             });
 
             return Ok(new ApiResponse { Success = true });
@@ -150,13 +162,22 @@ namespace TucaAPI.Controllers
             });
 
             var token = await this.userManager.GeneratePasswordResetTokenAsync(hasUser);
+            var link = $"{data.Url}?token={token}";
+            var email = hasUser.Email.GetNonNullable();
+            var userName = hasUser.UserName.GetNonNullable();
 
-            await this.mailService.SendAsync(new BaseMailData
+            var templateWriter = this.templateRenderingService.Render(
+                Path.Combine("Templates", "Mail", "ForgotPassword", "index.hbs"),
+                new { userName, link }
+            );
+
+            await this.mailService.SendHtmlAsync(new BaseHtmlMailData
             {
-                EmailToId = hasUser.Email.GetNonNullable(),
-                EmailToName = hasUser.UserName.GetNonNullable(),
-                EmailSubject = hasUser.Email.GetNonNullable(),
-                EmailBody = String.Format("{0}: {1}?token={2}", MessageKey.MAIL_RESET_PASSWORD, data.Url, token)
+                EmailToId = email,
+                EmailToName = userName,
+                EmailSubject = email,
+                TemplateWriter = templateWriter,
+                EmailBody = $"{Messages.MAIL_RESET_PASSWORD}: {link}"
             });
 
             return Ok(new ApiResponse { Success = true });
