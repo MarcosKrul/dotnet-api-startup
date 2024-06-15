@@ -133,6 +133,7 @@ builder.Services.AddScoped<ICommentRepository, CommentRepository>();
 builder.Services.AddScoped<IPortfolioRepository, PortfolioRepository>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IMailSenderService, MailSenderService>();
+builder.Services.AddScoped<ITemplateRenderingService, TemplateRenderingService>();
 
 var app = builder.Build();
 
