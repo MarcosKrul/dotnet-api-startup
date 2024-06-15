@@ -16,6 +16,7 @@ using TucaAPI.src.Interfaces;
 using TucaAPI.src.Service;
 using System.Net.Mime;
 using System.Security.Claims;
+using TucaAPI.src.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -146,6 +147,8 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 
 app.UseAuthorization();
+
+app.UseMiddleware<ErrorHandlerMiddleware>();
 
 app.MapControllers();
 
