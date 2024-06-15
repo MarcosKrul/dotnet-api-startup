@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using TucaAPI.Data;
 using TucaAPI.Dtos.Stock;
-using TucaAPI.Interfaces;
 using TucaAPI.Models;
 
 namespace TucaAPI.Repositories

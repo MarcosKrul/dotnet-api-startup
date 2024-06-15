@@ -2,8 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using TucaAPI.Attributes;
 using TucaAPI.Dtos.Stock;
-using TucaAPI.Interfaces;
 using TucaAPI.Mappers;
+using TucaAPI.Repositories;
 using TucaAPI.src.Common;
 using TucaAPI.src.Dtos.Common;
 

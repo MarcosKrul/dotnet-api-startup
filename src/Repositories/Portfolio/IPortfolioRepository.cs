@@ -1,6 +1,6 @@
 using TucaAPI.Models;
 
-namespace TucaAPI.Interfaces
+namespace TucaAPI.Repositories
 {
     public interface IPortfolioRepository
     {

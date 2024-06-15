@@ -1,7 +1,7 @@
 using TucaAPI.Dtos.Stock;
 using TucaAPI.Models;
 
-namespace TucaAPI.Interfaces
+namespace TucaAPI.Repositories
 {
     public interface IStockRepository
     {
