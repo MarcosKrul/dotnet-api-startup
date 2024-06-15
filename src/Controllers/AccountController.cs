@@ -9,6 +9,7 @@ using TucaAPI.src.Common;
 using TucaAPI.src.Dtos.Account;
 using TucaAPI.src.Dtos.Common;
 using TucaAPI.src.Dtos.Mail;
+using TucaAPI.src.Extensions;
 using TucaAPI.src.Interfaces;
 
 namespace TucaAPI.Controllers
@@ -21,19 +22,6 @@ namespace TucaAPI.Controllers
         private readonly ITokenService tokenService;
         private readonly SignInManager<AppUser> signInManager;
         private readonly IMailSenderService mailService;
-
-        private async Task<IActionResult> GetAuthenticatedUserAction(AppUser user)
-        {
-            return Ok(new SuccessApiResponse<AuthenticatedUserDto>
-            {
-                Content = new AuthenticatedUserDto
-                {
-                    UserName = user.UserName ?? "",
-                    Email = user.Email ?? "",
-                    Token = await this.tokenService.CreateAsync(user)
-                }
-            });
-        }
 
         public AccountController(
             UserManager<AppUser> userManager,
@@ -48,21 +36,31 @@ namespace TucaAPI.Controllers
             this.mailService = mailService;
         }
 
+        private async Task<IActionResult> GetAuthenticatedUserAction(AppUser user)
+        {
+            return Ok(new SuccessApiResponse<AuthenticatedUserDto>
+            {
+                Content = new AuthenticatedUserDto
+                {
+                    UserName = user.UserName.GetNonNullable(),
+                    Email = user.Email.GetNonNullable(),
+                    Token = await this.tokenService.CreateAsync(user)
+                }
+            });
+        }
+
         [HttpPost]
         [Route("register")]
         [ValidateModelState]
         public async Task<IActionResult> Register([FromBody] RegisterDto data)
         {
-            if (string.IsNullOrEmpty(data.Password))
-                return BadRequest(new ApiResponse { Success = false });
-
             var appUser = new AppUser
             {
                 UserName = data.Username,
                 Email = data.Email
             };
 
-            var createdUser = await this.userManager.CreateAsync(appUser, data.Password);
+            var createdUser = await this.userManager.CreateAsync(appUser, data.Password.GetNonNullable());
 
             if (!createdUser.Succeeded)
                 return BadRequest(new ErrorApiResponse<IdentityError>
@@ -82,9 +80,9 @@ namespace TucaAPI.Controllers
 
             await this.mailService.SendAsync(new BaseMailData
             {
-                EmailToId = appUser.Email ?? "",
-                EmailToName = appUser.UserName ?? "",
-                EmailSubject = appUser.Email ?? "",
+                EmailToId = appUser.Email.GetNonNullable(),
+                EmailToName = appUser.UserName.GetNonNullable(),
+                EmailSubject = appUser.Email.GetNonNullable(),
                 EmailBody = String.Format("{0}: {1}?token={2}", MessageKey.MAIL_CONFIRM_ACCOUNT, data.Url, token)
             });
 
@@ -103,7 +101,7 @@ namespace TucaAPI.Controllers
                 Errors = [MessageKey.USER_NOT_FOUND]
             });
 
-            var result = await this.userManager.ConfirmEmailAsync(hasUser, data.Token ?? "");
+            var result = await this.userManager.ConfirmEmailAsync(hasUser, data.Token.GetNonNullable());
 
             if (!result.Succeeded) return Unauthorized(new ErrorApiResponse<IdentityError>
             {
@@ -127,7 +125,7 @@ namespace TucaAPI.Controllers
 
             if (hasUser is null) return unauthorizedError;
 
-            var result = await this.signInManager.CheckPasswordSignInAsync(hasUser, data.Password ?? "", true);
+            var result = await this.signInManager.CheckPasswordSignInAsync(hasUser, data.Password.GetNonNullable(), true);
 
             if (result.IsLockedOut) return Unauthorized(new ErrorApiResponse<string>
             {
@@ -155,9 +153,9 @@ namespace TucaAPI.Controllers
 
             await this.mailService.SendAsync(new BaseMailData
             {
-                EmailToId = hasUser.Email ?? "",
-                EmailToName = hasUser.UserName ?? "",
-                EmailSubject = hasUser.Email ?? "",
+                EmailToId = hasUser.Email.GetNonNullable(),
+                EmailToName = hasUser.UserName.GetNonNullable(),
+                EmailSubject = hasUser.Email.GetNonNullable(),
                 EmailBody = String.Format("{0}: {1}?token={2}", MessageKey.MAIL_RESET_PASSWORD, data.Url, token)
             });
 

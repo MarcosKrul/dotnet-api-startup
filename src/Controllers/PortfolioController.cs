@@ -8,6 +8,7 @@ using TucaAPI.Interfaces;
 using TucaAPI.Models;
 using TucaAPI.src.Common;
 using TucaAPI.src.Dtos.Common;
+using TucaAPI.src.Extensions;
 
 namespace TucaAPI.Controllers
 {
@@ -36,7 +37,7 @@ namespace TucaAPI.Controllers
         public async Task<IActionResult> GetStocksFromUserPortfolio()
         {
             var email = User.GetEmail();
-            var hasUser = await this.userManager.FindByEmailAsync(email ?? "");
+            var hasUser = await this.userManager.FindByEmailAsync(email.GetNonNullable());
             if (hasUser is null) return Unauthorized(new ErrorApiResponse<string>
             {
                 Errors = [MessageKey.USER_NOT_FOUND]
@@ -57,7 +58,7 @@ namespace TucaAPI.Controllers
         public async Task<IActionResult> AddPortfolio([FromRoute] int stockId)
         {
             var email = User.GetEmail();
-            var hasUser = await this.userManager.FindByEmailAsync(email ?? "");
+            var hasUser = await this.userManager.FindByEmailAsync(email.GetNonNullable());
             if (hasUser is null) return Unauthorized(new ErrorApiResponse<string>
             {
                 Errors = [MessageKey.USER_NOT_FOUND]
@@ -103,7 +104,7 @@ namespace TucaAPI.Controllers
         public async Task<IActionResult> Delete([FromRoute] int stockId)
         {
             var email = User.GetEmail();
-            var hasUser = await this.userManager.FindByEmailAsync(email ?? "");
+            var hasUser = await this.userManager.FindByEmailAsync(email.GetNonNullable());
             if (hasUser is null) return Unauthorized(new ErrorApiResponse<string>
             {
                 Errors = [MessageKey.USER_NOT_FOUND]

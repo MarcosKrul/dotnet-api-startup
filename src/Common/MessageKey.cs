@@ -15,5 +15,6 @@ namespace TucaAPI.src.Common
         public const string MAIL_CONFIRM_ACCOUNT = "MAIL_CONFIRM_ACCOUNT";
         public const string ACCOUNT_LOCKED = "ACCOUNT_LOCKED";
         public const string COMMENT_NOT_FOUND = "COMMENT_NOT_FOUND";
+        public const string INTERNAL_SERVER_ERROR = "INTERNAL_SERVER_ERROR";
     }
 }

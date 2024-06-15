@@ -9,6 +9,7 @@ using TucaAPI.Mappers;
 using TucaAPI.Models;
 using TucaAPI.src.Common;
 using TucaAPI.src.Dtos.Common;
+using TucaAPI.src.Extensions;
 
 namespace TucaAPI.Controllers
 {
@@ -77,7 +78,7 @@ namespace TucaAPI.Controllers
                 });
 
             var email = User.GetEmail();
-            var hasUser = await this.userManager.FindByEmailAsync(email ?? "");
+            var hasUser = await this.userManager.FindByEmailAsync(email.GetNonNullable());
             if (hasUser is null) return Unauthorized(new ErrorApiResponse<string>
             {
                 Errors = [MessageKey.USER_NOT_FOUND]
@@ -97,7 +98,7 @@ namespace TucaAPI.Controllers
         public async Task<IActionResult> Delete([FromRoute] int id)
         {
             var email = User.GetEmail();
-            var hasUser = await this.userManager.FindByEmailAsync(email ?? "");
+            var hasUser = await this.userManager.FindByEmailAsync(email.GetNonNullable());
             if (hasUser is null) return Unauthorized(new ErrorApiResponse<string>
             {
                 Errors = [MessageKey.USER_NOT_FOUND]
@@ -127,7 +128,7 @@ namespace TucaAPI.Controllers
         public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateCommentRequestDto data)
         {
             var email = User.GetEmail();
-            var hasUser = await this.userManager.FindByEmailAsync(email ?? "");
+            var hasUser = await this.userManager.FindByEmailAsync(email.GetNonNullable());
             if (hasUser is null) return Unauthorized(new ErrorApiResponse<string>
             {
                 Errors = [MessageKey.USER_NOT_FOUND]
