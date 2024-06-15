@@ -15,7 +15,7 @@ namespace TucaAPI.src.Service
             this.mailSettings = mailSettingsOptions.Value;
         }
 
-        public async Task<bool> SendAsync<T>(T mailData) where T : BaseMailData
+        private async Task<bool> BaseSendMailAsync<T>(T mailData, BodyBuilder emailBodyBuilder) where T : BaseMailData
         {
             try
             {
@@ -27,9 +27,6 @@ namespace TucaAPI.src.Service
                     emailMessage.To.Add(emailTo);
 
                     emailMessage.Subject = mailData.EmailSubject;
-
-                    BodyBuilder emailBodyBuilder = new BodyBuilder();
-                    emailBodyBuilder.TextBody = mailData.EmailBody;
 
                     emailMessage.Body = emailBodyBuilder.ToMessageBody();
                     using (SmtpClient mailClient = new SmtpClient())
@@ -47,6 +44,28 @@ namespace TucaAPI.src.Service
             {
                 return false;
             }
+        }
+
+        public async Task<bool> SendAsync<T>(T mailData) where T : BaseMailData
+        {
+            BodyBuilder emailBodyBuilder = new BodyBuilder();
+            emailBodyBuilder.TextBody = mailData.EmailBody;
+            return await this.BaseSendMailAsync<T>(mailData, emailBodyBuilder);
+        }
+
+        public async Task<bool> SendHtmlAsync<T>(T mailData) where T : BaseHtmlMailData
+        {
+            string relativePath = Path.Combine("Templates", "Mail", mailData.Template, "index.html");
+            string filePath = Path.Combine(Directory.GetCurrentDirectory(), relativePath);
+            string emailTemplateText = File.ReadAllText(filePath);
+
+            emailTemplateText = string.Format(emailTemplateText);
+
+            BodyBuilder emailBodyBuilder = new BodyBuilder();
+            emailBodyBuilder.HtmlBody = emailTemplateText;
+            emailBodyBuilder.TextBody = mailData.EmailBody;
+
+            return await this.BaseSendMailAsync<T>(mailData, emailBodyBuilder);
         }
     }
 }
