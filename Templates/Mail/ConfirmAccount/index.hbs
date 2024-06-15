@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .email-container {
+            max-width: 600px;
+            margin: 20px auto;
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            border: 1px solid #dddddd;
+        }
+        .header {
+            text-align: center;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #dddddd;
+        }
+        .header h1 {
+            color: #333333;
+            margin: 0;
+        }
+        .content {
+            padding: 20px 0;
+            text-align: center;
+            color: #555555;
+        }
+        .content p {
+            margin: 10px 0;
+            line-height: 1.6;
+        }
+        .button-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .confirm-button {
+            background-color: #28a745;
+            color: #ffffff;
+            padding: 15px 25px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 16px;
+            display: inline-block;
+        }
+        .confirm-button:hover {
+            background-color: #218838;
+        }
+        .link {
+            display: block;
+            margin-top: 10px;
+            color: #007bff;
+            text-decoration: none;
+            word-break: break-all; 
+        }
+        .link:hover {
+            text-decoration: underline;
+        }
+        .footer {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid #dddddd;
+            font-size: 12px;
+            color: #888888;
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <div class="header">
+            <h1>Confirmação de Conta</h1>
+        </div>
+        <div class="content">
+            <p>Olá, {{userName}}!!</p>
+            <p>Obrigado por criar uma conta conosco. Para completar seu cadastro, por favor, confirme sua conta clicando no botão abaixo:</p>
+            <div class="button-container">
+                <a href="{{link}}" class="confirm-button">Confirmar Conta</a>
+            </div>
+            <p>Se o botão acima não funcionar, copie e cole o link abaixo no seu navegador:</p>
+            <a href="{{link}}" class="link">{{link}}</a>
+            <p>Este link de confirmação possui tempo de expiração.</p>
+        </div>
+        <div class="footer">
+            <p>&copy; 2024 Tuca API. Todos os direitos reservados.</p>
+        </div>
+    </div>
+</body>
+</html>
