@@ -1,3 +1,4 @@
+using HandlebarsDotNet;
 using MailKit.Net.Smtp;
 using Microsoft.Extensions.Options;
 using MimeKit;
@@ -55,14 +56,8 @@ namespace TucaAPI.src.Service
 
         public async Task<bool> SendHtmlAsync<T>(T mailData) where T : BaseHtmlMailData
         {
-            string relativePath = Path.Combine("Templates", "Mail", mailData.Template, "index.html");
-            string filePath = Path.Combine(Directory.GetCurrentDirectory(), relativePath);
-            string emailTemplateText = File.ReadAllText(filePath);
-
-            emailTemplateText = string.Format(emailTemplateText, mailData.Args ?? []);
-
             BodyBuilder emailBodyBuilder = new BodyBuilder();
-            emailBodyBuilder.HtmlBody = emailTemplateText;
+            emailBodyBuilder.HtmlBody = mailData.TemplateWriter.ToString();
             emailBodyBuilder.TextBody = mailData.EmailBody;
 
             return await this.BaseSendMailAsync<T>(mailData, emailBodyBuilder);
