@@ -9,6 +9,7 @@
 * Email Sending with MailKit
 * Database Versioning with Migrations
 * Swagger
+* Handlebars
 
 ## Features
 
