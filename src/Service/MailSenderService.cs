@@ -59,7 +59,7 @@ namespace TucaAPI.src.Service
             string filePath = Path.Combine(Directory.GetCurrentDirectory(), relativePath);
             string emailTemplateText = File.ReadAllText(filePath);
 
-            emailTemplateText = string.Format(emailTemplateText);
+            emailTemplateText = string.Format(emailTemplateText, mailData.Args ?? []);
 
             BodyBuilder emailBodyBuilder = new BodyBuilder();
             emailBodyBuilder.HtmlBody = emailTemplateText;
