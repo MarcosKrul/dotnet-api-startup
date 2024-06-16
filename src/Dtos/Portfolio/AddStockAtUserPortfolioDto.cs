@@ -1,8 +1,9 @@
+using TucaAPI.src.Dtos.Common;
+
 namespace TucaAPI.src.Dtos.Portfolio
 {
-    public class AddStockAtUserPortfolioDto
+    public class AddStockAtUserPortfolioDto : UserAuthenticatedInfos
     {
-        public string? Email { get; set; }
         public int StockId { get; set; }
     }
 }

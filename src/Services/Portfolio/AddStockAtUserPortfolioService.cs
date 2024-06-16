@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Identity;
+using TucaAPI.Extensions;
 using TucaAPI.src.Common;
 using TucaAPI.src.Dtos.Common;
 using TucaAPI.src.Dtos.Portfolio;
@@ -28,7 +29,9 @@ namespace TucaAPI.src.Services.Portfolio
 
         public async Task<ApiResponse> ExecuteAsync(AddStockAtUserPortfolioDto data)
         {
-            var hasUser = await this.userManager.FindByEmailAsync(data.Email.GetNonNullable());
+            var hasUser = await this.userManager.FindByEmailAsync(
+                data.User.GetEmail().GetNonNullable()
+            );
             if (hasUser is null)
                 throw new AppException(
                     StatusCodes.Status401Unauthorized,

@@ -40,13 +40,12 @@ namespace TucaAPI.src.Controllers
         [Route("{stockId:int}")]
         public async Task<IActionResult> AddPortfolio([FromRoute] int stockId)
         {
-            var email = User.GetEmail();
             using (var scope = this.serviceProvider.CreateScope())
             {
                 var service =
                     scope.ServiceProvider.GetRequiredService<AddStockAtUserPortfolioService>();
                 var result = await service.ExecuteAsync(
-                    new AddStockAtUserPortfolioDto { Email = email, StockId = stockId }
+                    new AddStockAtUserPortfolioDto { User = User, StockId = stockId }
                 );
                 return Ok(result);
             }
@@ -58,13 +57,12 @@ namespace TucaAPI.src.Controllers
         [Route("{stockId:int}")]
         public async Task<IActionResult> Delete([FromRoute] int stockId)
         {
-            var email = User.GetEmail();
             using (var scope = this.serviceProvider.CreateScope())
             {
                 var service =
                     scope.ServiceProvider.GetRequiredService<DeleteUserPortfolioService>();
                 var result = await service.ExecuteAsync(
-                    new DeleteUserPortfolioDto { Email = email, StockId = stockId }
+                    new DeleteUserPortfolioDto { User = User, StockId = stockId }
                 );
                 return Ok(result);
             }
