@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TucaAPI.src.Attributes;
 using TucaAPI.src.Common;
+using TucaAPI.src.Dtos.UserManagement;
 using TucaAPI.src.Services.UserManagement;
 
 namespace TucaAPI.src.Controllers
@@ -26,7 +27,7 @@ namespace TucaAPI.src.Controllers
             using (var scope = this.serviceProvider.CreateScope())
             {
                 var service = scope.ServiceProvider.GetRequiredService<DeleteUserService>();
-                var result = await service.ExecuteAsync(id);
+                var result = await service.ExecuteAsync(new DeleteUserDto { Id = id });
                 return Ok(result);
             }
         }

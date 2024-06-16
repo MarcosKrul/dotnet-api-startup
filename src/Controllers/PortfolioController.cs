@@ -1,9 +1,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using TucaAPI.Extensions;
 using TucaAPI.src.Attributes;
+using TucaAPI.src.Dtos.Common;
 using TucaAPI.src.Dtos.Portfolio;
-using TucaAPI.src.Extensions;
 using TucaAPI.src.Services.Portfolio;
 
 namespace TucaAPI.src.Controllers
@@ -24,12 +23,11 @@ namespace TucaAPI.src.Controllers
         [ValidateModelState]
         public async Task<IActionResult> GetStocksFromUserPortfolio()
         {
-            var email = User.GetEmail();
             using (var scope = this.serviceProvider.CreateScope())
             {
                 var service =
                     scope.ServiceProvider.GetRequiredService<GetStocksFromUserPortfolioService>();
-                var result = await service.ExecuteAsync(email.GetNonNullable());
+                var result = await service.ExecuteAsync(new UserAuthenticatedInfos { User = User });
                 return Ok(result);
             }
         }
