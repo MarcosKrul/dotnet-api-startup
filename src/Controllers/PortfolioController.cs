@@ -7,6 +7,7 @@ using TucaAPI.Models;
 using TucaAPI.Repositories;
 using TucaAPI.src.Common;
 using TucaAPI.src.Dtos.Common;
+using TucaAPI.src.Dtos.Portfolio;
 using TucaAPI.src.Extensions;
 using TucaAPI.src.Services.Portfolio;
 
@@ -90,18 +91,15 @@ namespace TucaAPI.Controllers
         public async Task<IActionResult> Delete([FromRoute] int stockId)
         {
             var email = User.GetEmail();
-            var hasUser = await this.userManager.FindByEmailAsync(email.GetNonNullable());
-            if (hasUser is null)
-                return Unauthorized(new ErrorApiResponse(MessageKey.USER_NOT_FOUND));
-
-            var userPortfolio = await this.portfolioRepository.GetUserPortfolio(stockId, hasUser);
-
-            if (userPortfolio is null)
-                return BadRequest(new ErrorApiResponse(MessageKey.STOCK_NOT_IN_PORTFOLIO));
-
-            await this.portfolioRepository.DeleteAsync(userPortfolio);
-
-            return Ok(new ApiResponse { Success = true });
+            using (var scope = this.serviceProvider.CreateScope())
+            {
+                var service =
+                    scope.ServiceProvider.GetRequiredService<DeleteUserPortfolioService>();
+                var result = await service.ExecuteAsync(
+                    new DeleteUserPortfolioDto { Email = email, StockId = stockId }
+                );
+                return Ok(result);
+            }
         }
     }
 }

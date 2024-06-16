@@ -166,6 +166,7 @@ builder.Services.AddScoped<ForgotPasswordService>();
 builder.Services.AddScoped<ResetPasswordService>();
 builder.Services.AddScoped<DeleteUserService>();
 builder.Services.AddScoped<GetStocksFromUserPortfolioService>();
+builder.Services.AddScoped<DeleteUserPortfolioService>();
 
 var app = builder.Build();
 
