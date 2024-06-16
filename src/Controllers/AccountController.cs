@@ -1,13 +1,7 @@
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using TucaAPI.Attributes;
 using TucaAPI.Dtos.Account;
-using TucaAPI.Models;
-using TucaAPI.src.Common;
 using TucaAPI.src.Dtos.Account;
-using TucaAPI.src.Dtos.Common;
-using TucaAPI.src.Providers;
 using TucaAPI.src.Services.Account;
 using TucaAPI.Src.Services.Account;
 
@@ -17,17 +11,10 @@ namespace TucaAPI.Controllers
     [Route("api/[controller]")]
     public class AccountController : ControllerBase
     {
-        private readonly UserManager<AppUser> userManager;
         private readonly IServiceProvider serviceProvider;
 
-        public AccountController(
-            UserManager<AppUser> userManager,
-            IMailSenderProvider mailProvider,
-            ITemplateRenderingProvider templateRenderingProvider,
-            IServiceProvider serviceProvider
-        )
+        public AccountController(IServiceProvider serviceProvider)
         {
-            this.userManager = userManager;
             this.serviceProvider = serviceProvider;
         }
 
@@ -88,23 +75,12 @@ namespace TucaAPI.Controllers
         [ValidateModelState]
         public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequestDto data)
         {
-            var hasUser = await this.userManager.Users.FirstOrDefaultAsync(i =>
-                i.Email == data.Email
-            );
-
-            if (hasUser is null)
-                return Unauthorized(new ErrorApiResponse(MessageKey.INVALID_CREDENTIALS));
-
-            var result = await this.userManager.ResetPasswordAsync(
-                hasUser,
-                data.Token,
-                data.Password
-            );
-
-            if (!result.Succeeded)
-                return BadRequest(new SuccessApiResponse<IdentityResult> { Content = result });
-
-            return Ok(new ApiResponse { Success = true });
+            using (var scope = this.serviceProvider.CreateScope())
+            {
+                var service = scope.ServiceProvider.GetRequiredService<ResetPasswordService>();
+                var result = await service.ExecuteAsync(data);
+                return Ok(result);
+            }
         }
     }
 }

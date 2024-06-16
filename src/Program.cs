@@ -161,6 +161,7 @@ builder.Services.AddScoped<RegisterAccountService>();
 builder.Services.AddScoped<ConfirmAccountService>();
 builder.Services.AddScoped<LoginService>();
 builder.Services.AddScoped<ForgotPasswordService>();
+builder.Services.AddScoped<ResetPasswordService>();
 
 var app = builder.Build();
 
