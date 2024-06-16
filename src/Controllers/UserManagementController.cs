@@ -26,10 +26,7 @@ namespace TucaAPI.src.Controllers
         public async Task<IActionResult> DeleteUser([FromRoute] string id)
         {
             var hasUser = await this.userManager.FindByIdAsync(id);
-            if (hasUser is null) return NotFound(new ErrorApiResponse<string>
-            {
-                Errors = [MessageKey.USER_NOT_FOUND]
-            });
+            if (hasUser is null) return NotFound(new ErrorApiResponse(MessageKey.USER_NOT_FOUND));
 
             // delete
 

@@ -16,13 +16,19 @@ namespace TucaAPI.src.Dtos.Common
         }
     }
 
-    public class ErrorApiResponse<T> : ApiResponse
+    public class ErrorApiResponse : ApiResponse
     {
-        public IEnumerable<T>? Errors { get; set; }
+        public IEnumerable<AppErrorDescriptor>? Errors { get; set; }
 
         public ErrorApiResponse()
         {
             this.Success = false;
+        }
+
+        public ErrorApiResponse(string key)
+        {
+            this.Success = false;
+            this.Errors = [new AppErrorDescriptor { Key = key }];
         }
     }
 }

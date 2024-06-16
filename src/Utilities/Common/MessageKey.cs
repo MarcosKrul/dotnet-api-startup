@@ -15,5 +15,6 @@ namespace TucaAPI.src.Common
         public const string COMMENT_NOT_FOUND = "COMMENT_NOT_FOUND";
         public const string INTERNAL_SERVER_ERROR = "INTERNAL_SERVER_ERROR";
         public const string STRING_NON_NULLABLE = "STRING_NON_NULLABLE";
+        public const string INVALID_INPUT = "INVALID_INPUT";
     }
 }

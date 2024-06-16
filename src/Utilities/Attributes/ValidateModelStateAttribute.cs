@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using TucaAPI.src.Common;
 using TucaAPI.src.Dtos.Common;
 
 namespace TucaAPI.Attributes
@@ -8,11 +9,11 @@ namespace TucaAPI.Attributes
     public class ValidationFailedResult : ObjectResult
     {
         public ValidationFailedResult(ModelStateDictionary modelState)
-            : base(new ErrorApiResponse<string>
+            : base(new ErrorApiResponse
             {
                 Errors = modelState.Keys
                     .SelectMany(key => modelState[key].Errors.Select(x => x.ErrorMessage))
-                    .ToList()
+                    .ToList().Select(item => new AppErrorDescriptor { Key = MessageKey.INVALID_INPUT, Description = item })
             })
         {
             StatusCode = StatusCodes.Status422UnprocessableEntity;

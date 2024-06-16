@@ -66,17 +66,17 @@ namespace TucaAPI.Controllers
             var createdUser = await this.userManager.CreateAsync(appUser, data.Password.GetNonNullable());
 
             if (!createdUser.Succeeded)
-                return BadRequest(new ErrorApiResponse<IdentityError>
+                return BadRequest(new ErrorApiResponse
                 {
-                    Errors = createdUser.Errors
+                    Errors = createdUser.Errors.Select(item => new AppErrorDescriptor { Key = item.Code })
                 });
 
             var roleResult = await this.userManager.AddToRoleAsync(appUser, PermissionRoles.USER);
 
             if (!roleResult.Succeeded)
-                return BadRequest(new ErrorApiResponse<IdentityError>
+                return BadRequest(new ErrorApiResponse
                 {
-                    Errors = roleResult.Errors
+                    Errors = roleResult.Errors.Select(item => new AppErrorDescriptor { Key = item.Code })
                 });
 
             var token = await this.userManager.GenerateEmailConfirmationTokenAsync(appUser);
@@ -108,16 +108,14 @@ namespace TucaAPI.Controllers
         {
             var hasUser = await this.userManager.Users.FirstOrDefaultAsync(i => i.Email == data.Email);
 
-            if (hasUser is null) return Unauthorized(new ErrorApiResponse<string>
-            {
-                Errors = [MessageKey.USER_NOT_FOUND]
-            });
+            if (hasUser is null) return Unauthorized(new ErrorApiResponse(MessageKey.USER_NOT_FOUND));
 
             var result = await this.userManager.ConfirmEmailAsync(hasUser, data.Token.GetNonNullable());
 
-            if (!result.Succeeded) return Unauthorized(new ErrorApiResponse<IdentityError>
+            if (!result.Succeeded) return Unauthorized(new ErrorApiResponse
             {
-                Errors = result.Errors
+                Errors = []
+                // Errors = result.Errors
             });
 
             return await this.GetAuthenticatedUserAction(hasUser);
@@ -128,10 +126,7 @@ namespace TucaAPI.Controllers
         [ValidateModelState]
         public async Task<IActionResult> Login([FromBody] LoginDto data)
         {
-            var unauthorizedError = Unauthorized(new ErrorApiResponse<string>
-            {
-                Errors = [MessageKey.INVALID_CREDENTIALS]
-            });
+            var unauthorizedError = Unauthorized(new ErrorApiResponse(MessageKey.INVALID_CREDENTIALS));
 
             var hasUser = await this.userManager.Users.FirstOrDefaultAsync(i => i.Email == data.Email);
 
@@ -139,10 +134,7 @@ namespace TucaAPI.Controllers
 
             var result = await this.signInManager.CheckPasswordSignInAsync(hasUser, data.Password.GetNonNullable(), true);
 
-            if (result.IsLockedOut) return Unauthorized(new ErrorApiResponse<string>
-            {
-                Errors = [MessageKey.ACCOUNT_LOCKED]
-            });
+            if (result.IsLockedOut) return Unauthorized(new ErrorApiResponse(MessageKey.ACCOUNT_LOCKED));
 
             if (!result.Succeeded) return unauthorizedError;
 
@@ -156,10 +148,7 @@ namespace TucaAPI.Controllers
         {
             var hasUser = await this.userManager.Users.FirstOrDefaultAsync(i => i.Email == data.Email);
 
-            if (hasUser is null) return Unauthorized(new ErrorApiResponse<string>
-            {
-                Errors = [MessageKey.INVALID_CREDENTIALS]
-            });
+            if (hasUser is null) return Unauthorized(new ErrorApiResponse(MessageKey.INVALID_CREDENTIALS));
 
             var token = await this.userManager.GeneratePasswordResetTokenAsync(hasUser);
             var link = $"{data.Url}?token={token}";
@@ -190,10 +179,7 @@ namespace TucaAPI.Controllers
         {
             var hasUser = await this.userManager.Users.FirstOrDefaultAsync(i => i.Email == data.Email);
 
-            if (hasUser is null) return Unauthorized(new ErrorApiResponse<string>
-            {
-                Errors = [MessageKey.INVALID_CREDENTIALS]
-            });
+            if (hasUser is null) return Unauthorized(new ErrorApiResponse(MessageKey.INVALID_CREDENTIALS));
 
             var result = await this.userManager.ResetPasswordAsync(hasUser, data.Token, data.Password);
 

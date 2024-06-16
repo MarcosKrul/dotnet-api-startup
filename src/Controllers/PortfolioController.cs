@@ -37,10 +37,7 @@ namespace TucaAPI.Controllers
         {
             var email = User.GetEmail();
             var hasUser = await this.userManager.FindByEmailAsync(email.GetNonNullable());
-            if (hasUser is null) return Unauthorized(new ErrorApiResponse<string>
-            {
-                Errors = [MessageKey.USER_NOT_FOUND]
-            });
+            if (hasUser is null) return Unauthorized(new ErrorApiResponse(MessageKey.USER_NOT_FOUND));
 
             var userPortFolio = await this.portfolioRepository.GetStocksFromUserPortfolio(hasUser);
 
@@ -58,26 +55,17 @@ namespace TucaAPI.Controllers
         {
             var email = User.GetEmail();
             var hasUser = await this.userManager.FindByEmailAsync(email.GetNonNullable());
-            if (hasUser is null) return Unauthorized(new ErrorApiResponse<string>
-            {
-                Errors = [MessageKey.USER_NOT_FOUND]
-            });
+            if (hasUser is null) return Unauthorized(new ErrorApiResponse(MessageKey.USER_NOT_FOUND));
 
             var stock = await this.stockRepository.GetByIdAsync(stockId);
 
             if (stock is null)
-                return BadRequest(new ErrorApiResponse<string>
-                {
-                    Errors = [MessageKey.STOCK_NOT_FOUND]
-                });
+                return BadRequest(new ErrorApiResponse(MessageKey.STOCK_NOT_FOUND));
 
             var userPortfolio = await this.portfolioRepository.GetStocksFromUserPortfolio(hasUser);
 
             if (userPortfolio.Any(i => i.Id == stock.Id))
-                return BadRequest(new ErrorApiResponse<string>
-                {
-                    Errors = [MessageKey.CANNOT_ADD_SAME_STOCK]
-                });
+                return BadRequest(new ErrorApiResponse(MessageKey.CANNOT_ADD_SAME_STOCK));
 
             var portfolioModel = new Portfolio
             {
@@ -88,10 +76,7 @@ namespace TucaAPI.Controllers
             await this.portfolioRepository.CreateAsync(portfolioModel);
 
             if (portfolioModel is null)
-                return StatusCode(StatusCodes.Status500InternalServerError, new ErrorApiResponse<string>
-                {
-                    Errors = [MessageKey.COULD_NOT_CREATE]
-                });
+                return StatusCode(StatusCodes.Status500InternalServerError, new ErrorApiResponse(MessageKey.COULD_NOT_CREATE));
 
             return StatusCode(StatusCodes.Status201Created, new ApiResponse { Success = true });
         }
@@ -104,18 +89,12 @@ namespace TucaAPI.Controllers
         {
             var email = User.GetEmail();
             var hasUser = await this.userManager.FindByEmailAsync(email.GetNonNullable());
-            if (hasUser is null) return Unauthorized(new ErrorApiResponse<string>
-            {
-                Errors = [MessageKey.USER_NOT_FOUND]
-            });
+            if (hasUser is null) return Unauthorized(new ErrorApiResponse(MessageKey.USER_NOT_FOUND));
 
             var userPortfolio = await this.portfolioRepository.GetUserPortfolio(stockId, hasUser);
 
             if (userPortfolio is null)
-                return BadRequest(new ErrorApiResponse<string>
-                {
-                    Errors = [MessageKey.STOCK_NOT_IN_PORTFOLIO]
-                });
+                return BadRequest(new ErrorApiResponse(MessageKey.STOCK_NOT_IN_PORTFOLIO));
 
             await this.portfolioRepository.DeleteAsync(userPortfolio);
 

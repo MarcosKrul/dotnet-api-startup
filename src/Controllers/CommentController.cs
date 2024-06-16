@@ -54,10 +54,7 @@ namespace TucaAPI.Controllers
         {
             var comment = await this.commentRepository.GetByIdAsync(id);
 
-            if (comment is null) return NotFound(new ErrorApiResponse<string>
-            {
-                Errors = [MessageKey.COMMENT_NOT_FOUND]
-            });
+            if (comment is null) return NotFound(new ErrorApiResponse(MessageKey.COMMENT_NOT_FOUND));
 
             return Ok(new SuccessApiResponse<CommentDto>
             {
@@ -72,17 +69,11 @@ namespace TucaAPI.Controllers
         public async Task<IActionResult> Create([FromRoute] int stockId, [FromBody] CreateCommentRequestDto data)
         {
             if (!await this.stockRepository.StockExistsAsync(stockId))
-                return NotFound(new ErrorApiResponse<string>
-                {
-                    Errors = [MessageKey.STOCK_NOT_FOUND]
-                });
+                return NotFound(new ErrorApiResponse(MessageKey.STOCK_NOT_FOUND));
 
             var email = User.GetEmail();
             var hasUser = await this.userManager.FindByEmailAsync(email.GetNonNullable());
-            if (hasUser is null) return Unauthorized(new ErrorApiResponse<string>
-            {
-                Errors = [MessageKey.USER_NOT_FOUND]
-            });
+            if (hasUser is null) return Unauthorized(new ErrorApiResponse(MessageKey.USER_NOT_FOUND));
 
             var comment = data.ToCommentFromRequestDto(stockId, hasUser.Id);
 
@@ -99,22 +90,13 @@ namespace TucaAPI.Controllers
         {
             var email = User.GetEmail();
             var hasUser = await this.userManager.FindByEmailAsync(email.GetNonNullable());
-            if (hasUser is null) return Unauthorized(new ErrorApiResponse<string>
-            {
-                Errors = [MessageKey.USER_NOT_FOUND]
-            });
+            if (hasUser is null) return Unauthorized(new ErrorApiResponse(MessageKey.USER_NOT_FOUND));
 
             var comment = await this.commentRepository.GetByIdAsync(id);
 
-            if (comment is null) return NotFound(new ErrorApiResponse<string>
-            {
-                Errors = [MessageKey.COMMENT_NOT_FOUND]
-            });
+            if (comment is null) return NotFound(new ErrorApiResponse(MessageKey.COMMENT_NOT_FOUND));
 
-            if (comment.AppUserId != hasUser.Id) return Unauthorized(new ErrorApiResponse<string>
-            {
-                Errors = [MessageKey.USER_NOT_FOUND]
-            });
+            if (comment.AppUserId != hasUser.Id) return Unauthorized(new ErrorApiResponse(MessageKey.USER_NOT_FOUND));
 
             await this.commentRepository.DeleteAsync(comment);
 
@@ -129,17 +111,11 @@ namespace TucaAPI.Controllers
         {
             var email = User.GetEmail();
             var hasUser = await this.userManager.FindByEmailAsync(email.GetNonNullable());
-            if (hasUser is null) return Unauthorized(new ErrorApiResponse<string>
-            {
-                Errors = [MessageKey.USER_NOT_FOUND]
-            });
+            if (hasUser is null) return Unauthorized(new ErrorApiResponse(MessageKey.USER_NOT_FOUND));
 
             var comment = await this.commentRepository.UpdateAsync(id, data, hasUser);
 
-            if (comment is null) return NotFound(new ErrorApiResponse<string>
-            {
-                Errors = [MessageKey.COMMENT_NOT_FOUND]
-            });
+            if (comment is null) return NotFound(new ErrorApiResponse(MessageKey.COMMENT_NOT_FOUND));
 
             return Ok(new SuccessApiResponse<CommentDto>
             {

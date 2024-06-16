@@ -41,10 +41,7 @@ namespace TucaAPI.Controllers
         {
             var stock = await this.repository.GetByIdAsync(id);
 
-            if (stock is null) return NotFound(new ErrorApiResponse<string>
-            {
-                Errors = [MessageKey.STOCK_NOT_FOUND]
-            });
+            if (stock is null) return NotFound(new ErrorApiResponse(MessageKey.STOCK_NOT_FOUND));
 
             return Ok(new SuccessApiResponse<StockDto>
             {
@@ -72,10 +69,7 @@ namespace TucaAPI.Controllers
         {
             var stock = await this.repository.UpdateAsync(id, data);
 
-            if (stock is null) return NotFound(new ErrorApiResponse<string>
-            {
-                Errors = [MessageKey.STOCK_NOT_FOUND]
-            });
+            if (stock is null) return NotFound(new ErrorApiResponse(MessageKey.STOCK_NOT_FOUND));
 
             return Ok(new SuccessApiResponse<StockDto>
             {
@@ -91,10 +85,7 @@ namespace TucaAPI.Controllers
         {
             var stock = await this.repository.GetByIdAsync(id);
 
-            if (stock is null) return NotFound(new ErrorApiResponse<string>
-            {
-                Errors = [MessageKey.STOCK_NOT_FOUND]
-            });
+            if (stock is null) return NotFound(new ErrorApiResponse(MessageKey.STOCK_NOT_FOUND));
 
             await this.repository.DeleteAsync(stock);
 
