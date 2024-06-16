@@ -1,15 +1,15 @@
 using Microsoft.AspNetCore.Identity;
-using TucaAPI.Dtos.Account;
-using TucaAPI.Models;
 using TucaAPI.src.Common;
+using TucaAPI.src.Dtos.Account;
 using TucaAPI.src.Dtos.Common;
 using TucaAPI.src.Dtos.Mail;
 using TucaAPI.src.Exceptions;
 using TucaAPI.src.Extensions;
 using TucaAPI.src.Mappers;
+using TucaAPI.src.Models;
 using TucaAPI.src.Providers;
 
-namespace TucaAPI.Src.Services.Account
+namespace TucaAPI.src.Services.Account
 {
     public class RegisterAccountService : IService<RegisterDto, ApiResponse>
     {

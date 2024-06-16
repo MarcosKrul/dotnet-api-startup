@@ -1,4 +1,4 @@
-namespace TucaAPI.Dtos.Comment
+namespace TucaAPI.src.Dtos.Comment
 {
     public class CommentDto
     {

@@ -1,13 +1,13 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using TucaAPI.Attributes;
-using TucaAPI.Dtos.Stock;
-using TucaAPI.Mappers;
-using TucaAPI.Repositories;
+using TucaAPI.src.Attributes;
 using TucaAPI.src.Common;
 using TucaAPI.src.Dtos.Common;
+using TucaAPI.src.Dtos.Stock;
+using TucaAPI.src.Mappers;
+using TucaAPI.src.Repositories;
 
-namespace TucaAPI.Controllers
+namespace TucaAPI.src.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

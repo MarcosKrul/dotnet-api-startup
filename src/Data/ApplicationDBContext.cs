@@ -1,10 +1,10 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using TucaAPI.Models;
 using TucaAPI.src.Common;
+using TucaAPI.src.Models;
 
-namespace TucaAPI.Data
+namespace TucaAPI.src.Data
 {
     public class ApplicationDBContext : IdentityDbContext<AppUser>
     {

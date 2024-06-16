@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace TucaAPI.Dtos.Stock
+namespace TucaAPI.src.Dtos.Stock
 {
     public class CreateStockRequestDto
     {

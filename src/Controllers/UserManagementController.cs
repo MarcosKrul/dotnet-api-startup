@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using TucaAPI.Attributes;
+using TucaAPI.src.Attributes;
 using TucaAPI.src.Common;
 using TucaAPI.src.Services.UserManagement;
 

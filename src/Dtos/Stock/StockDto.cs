@@ -1,6 +1,6 @@
-using TucaAPI.Dtos.Comment;
+using TucaAPI.src.Dtos.Comment;
 
-namespace TucaAPI.Dtos.Stock
+namespace TucaAPI.src.Dtos.Stock
 {
     public class StockDto
     {

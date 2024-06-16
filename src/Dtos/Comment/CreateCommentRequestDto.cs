@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace TucaAPI.Dtos.Comment
+namespace TucaAPI.src.Dtos.Comment
 {
     public class CreateCommentRequestDto
     {

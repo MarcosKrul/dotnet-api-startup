@@ -1,6 +1,6 @@
-using TucaAPI.Models;
+using TucaAPI.src.Models;
 
-namespace TucaAPI.Providers
+namespace TucaAPI.src.Providers
 {
     public interface ITokenProvider
     {

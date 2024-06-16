@@ -1,4 +1,4 @@
-namespace TucaAPI.Common
+namespace TucaAPI.src.Common
 {
     public static class Constants
     {

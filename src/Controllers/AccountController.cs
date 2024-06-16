@@ -1,11 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
-using TucaAPI.Attributes;
-using TucaAPI.Dtos.Account;
+using TucaAPI.src.Attributes;
 using TucaAPI.src.Dtos.Account;
 using TucaAPI.src.Services.Account;
-using TucaAPI.Src.Services.Account;
 
-namespace TucaAPI.Controllers
+namespace TucaAPI.src.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]

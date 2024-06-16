@@ -1,4 +1,4 @@
-namespace TucaAPI.Dtos.Account
+namespace TucaAPI.src.Dtos.Account
 {
     public class AuthenticatedUserDto
     {

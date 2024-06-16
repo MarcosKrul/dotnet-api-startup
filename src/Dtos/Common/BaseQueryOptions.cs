@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
-using TucaAPI.Common;
+using TucaAPI.src.Common;
 
-namespace TucaAPI.Dtos.Common
+namespace TucaAPI.src.Dtos.Common
 {
     public class BaseQueryOptions
     {

@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
-using TucaAPI.Data;
-using TucaAPI.Models;
+using TucaAPI.src.Data;
+using TucaAPI.src.Models;
 
-namespace TucaAPI.Repositories
+namespace TucaAPI.src.Repositories
 {
     public class PortfolioRepository : IPortfolioRepository
     {

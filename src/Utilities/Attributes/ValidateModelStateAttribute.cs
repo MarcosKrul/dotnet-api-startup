@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using TucaAPI.src.Common;
 using TucaAPI.src.Dtos.Common;
 
-namespace TucaAPI.Attributes
+namespace TucaAPI.src.Attributes
 {
     public class ValidationFailedResult : ObjectResult
     {

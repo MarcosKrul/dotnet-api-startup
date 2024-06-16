@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 
-namespace TucaAPI.Models
+namespace TucaAPI.src.Models
 {
     public class AppUser : IdentityUser
     {

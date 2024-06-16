@@ -1,6 +1,6 @@
-using TucaAPI.Dtos.Common;
+using TucaAPI.src.Dtos.Common;
 
-namespace TucaAPI.Dtos.Stock
+namespace TucaAPI.src.Dtos.Stock
 {
     public class QueryStockDto : BaseQueryOptions
     {

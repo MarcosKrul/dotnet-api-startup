@@ -1,14 +1,13 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using TucaAPI.Models;
 using TucaAPI.src.Common;
 using TucaAPI.src.Dtos.Account;
 using TucaAPI.src.Dtos.Common;
 using TucaAPI.src.Dtos.Mail;
 using TucaAPI.src.Exceptions;
 using TucaAPI.src.Extensions;
+using TucaAPI.src.Models;
 using TucaAPI.src.Providers;
-using TucaAPI.Src.Services;
 
 namespace TucaAPI.src.Services.Account
 {

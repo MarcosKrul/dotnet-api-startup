@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace TucaAPI.Models
+namespace TucaAPI.src.Models
 {
     [Table("Stocks")]
     public class Stock

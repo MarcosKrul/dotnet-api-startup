@@ -3,12 +3,12 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
-using TucaAPI.Common;
-using TucaAPI.Models;
-using TucaAPI.Providers;
 using TucaAPI.src.Common;
+using TucaAPI.src.Common;
+using TucaAPI.src.Models;
+using TucaAPI.src.Providers;
 
-namespace TucaAPI.Providers
+namespace TucaAPI.src.Providers
 {
     public class TokenProvider : ITokenProvider
     {

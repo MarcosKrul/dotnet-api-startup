@@ -1,11 +1,10 @@
 using Microsoft.AspNetCore.Identity;
-using TucaAPI.Models;
-using TucaAPI.Repositories;
 using TucaAPI.src.Common;
 using TucaAPI.src.Dtos.Common;
 using TucaAPI.src.Exceptions;
 using TucaAPI.src.Extensions;
-using TucaAPI.Src.Services;
+using TucaAPI.src.Models;
+using TucaAPI.src.Repositories;
 
 namespace TucaAPI.src.Services.Portfolio
 {

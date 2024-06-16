@@ -1,9 +1,9 @@
 using Microsoft.EntityFrameworkCore;
-using TucaAPI.Data;
-using TucaAPI.Dtos.Comment;
-using TucaAPI.Models;
+using TucaAPI.src.Data;
+using TucaAPI.src.Dtos.Comment;
+using TucaAPI.src.Models;
 
-namespace TucaAPI.Repositories
+namespace TucaAPI.src.Repositories
 {
     public class CommentRepository : ICommentRepository
     {
