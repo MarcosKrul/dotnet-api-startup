@@ -12,6 +12,7 @@ using TucaAPI.src.Dtos.Mail;
 using TucaAPI.src.Extensions;
 using TucaAPI.src.Providers;
 using TucaAPI.Src.Services.Account;
+using TucaAPI.src.Mappers;
 
 namespace TucaAPI.Controllers
 {
@@ -82,7 +83,7 @@ namespace TucaAPI.Controllers
 
             if (!result.Succeeded) return Unauthorized(new ErrorApiResponse
             {
-                Errors = result.Errors.Select(item => new AppErrorDescriptor { Key = item.Code, Description = item.Description })
+                Errors = result.Errors.Select(item => item.ToAppErrorDescriptor())
             });
 
             return await this.GetAuthenticatedUserAction(hasUser);

@@ -6,6 +6,7 @@ using TucaAPI.src.Dtos.Common;
 using TucaAPI.src.Dtos.Mail;
 using TucaAPI.src.Exceptions;
 using TucaAPI.src.Extensions;
+using TucaAPI.src.Mappers;
 using TucaAPI.src.Providers;
 
 namespace TucaAPI.Src.Services.Account
@@ -40,7 +41,7 @@ namespace TucaAPI.Src.Services.Account
             if (!createdUser.Succeeded)
                 throw new AppException(
                     StatusCodes.Status400BadRequest,
-                    createdUser.Errors.Select(item => new AppErrorDescriptor { Key = item.Code.ToErrorKeyFormat(), Description = item.Description })
+                    createdUser.Errors.Select(item => item.ToAppErrorDescriptor())
                 );
 
             var roleResult = await this.userManager.AddToRoleAsync(appUser, PermissionRoles.USER);
@@ -48,7 +49,7 @@ namespace TucaAPI.Src.Services.Account
             if (!roleResult.Succeeded)
                 throw new AppException(
                     StatusCodes.Status400BadRequest,
-                    roleResult.Errors.Select(item => new AppErrorDescriptor { Key = item.Code.ToErrorKeyFormat(), Description = item.Description })
+                    roleResult.Errors.Select(item => item.ToAppErrorDescriptor())
                 );
 
             var token = await this.userManager.GenerateEmailConfirmationTokenAsync(appUser);
