@@ -18,6 +18,7 @@ using TucaAPI.src.Provider;
 using TucaAPI.src.Providers;
 using TucaAPI.src.Services.Account;
 using TucaAPI.Src.Services.Account;
+using TucaAPI.src.Services.UserManagement;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -162,6 +163,7 @@ builder.Services.AddScoped<ConfirmAccountService>();
 builder.Services.AddScoped<LoginService>();
 builder.Services.AddScoped<ForgotPasswordService>();
 builder.Services.AddScoped<ResetPasswordService>();
+builder.Services.AddScoped<DeleteUserService>();
 
 var app = builder.Build();
 

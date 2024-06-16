@@ -1,10 +1,8 @@
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using TucaAPI.Attributes;
-using TucaAPI.Models;
 using TucaAPI.src.Common;
-using TucaAPI.src.Dtos.Common;
+using TucaAPI.src.Services.UserManagement;
 
 namespace TucaAPI.src.Controllers
 {
@@ -12,11 +10,11 @@ namespace TucaAPI.src.Controllers
     [Route("api/[controller]")]
     public class UserManagementController : ControllerBase
     {
-        private readonly UserManager<AppUser> userManager;
+        private readonly IServiceProvider serviceProvider;
 
-        public UserManagementController(UserManager<AppUser> userManager)
+        public UserManagementController(IServiceProvider serviceProvider)
         {
-            this.userManager = userManager;
+            this.serviceProvider = serviceProvider;
         }
 
         [HttpDelete]
@@ -25,13 +23,12 @@ namespace TucaAPI.src.Controllers
         [Route("{id}")]
         public async Task<IActionResult> DeleteUser([FromRoute] string id)
         {
-            var hasUser = await this.userManager.FindByIdAsync(id);
-            if (hasUser is null)
-                return NotFound(new ErrorApiResponse(MessageKey.USER_NOT_FOUND));
-
-            // delete
-
-            return Ok();
+            using (var scope = this.serviceProvider.CreateScope())
+            {
+                var service = scope.ServiceProvider.GetRequiredService<DeleteUserService>();
+                var result = await service.ExecuteAsync(id);
+                return Ok(result);
+            }
         }
     }
 }
