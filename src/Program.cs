@@ -160,6 +160,7 @@ builder.Services.AddScoped<ITemplateRenderingProvider, TemplateRenderingProvider
 builder.Services.AddScoped<RegisterAccountService>();
 builder.Services.AddScoped<ConfirmAccountService>();
 builder.Services.AddScoped<LoginService>();
+builder.Services.AddScoped<ForgotPasswordService>();
 
 var app = builder.Build();
 
