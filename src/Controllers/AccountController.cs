@@ -10,8 +10,8 @@ using TucaAPI.src.Dtos.Account;
 using TucaAPI.src.Dtos.Common;
 using TucaAPI.src.Dtos.Mail;
 using TucaAPI.src.Extensions;
-using TucaAPI.src.Mappers;
 using TucaAPI.src.Providers;
+using TucaAPI.src.Services.Account;
 using TucaAPI.Src.Services.Account;
 
 namespace TucaAPI.Controllers
@@ -77,27 +77,12 @@ namespace TucaAPI.Controllers
         [ValidateModelState]
         public async Task<IActionResult> Confirm([FromBody] ConfirmDto data)
         {
-            var hasUser = await this.userManager.Users.FirstOrDefaultAsync(i =>
-                i.Email == data.Email
-            );
-
-            if (hasUser is null)
-                return Unauthorized(new ErrorApiResponse(MessageKey.USER_NOT_FOUND));
-
-            var result = await this.userManager.ConfirmEmailAsync(
-                hasUser,
-                data.Token.GetNonNullable()
-            );
-
-            if (!result.Succeeded)
-                return Unauthorized(
-                    new ErrorApiResponse
-                    {
-                        Errors = result.Errors.Select(item => item.ToAppErrorDescriptor())
-                    }
-                );
-
-            return await this.GetAuthenticatedUserAction(hasUser);
+            using (var scope = this.serviceProvider.CreateScope())
+            {
+                var service = scope.ServiceProvider.GetRequiredService<ConfirmAccountService>();
+                var result = await service.ExecuteAsync(data);
+                return Ok(result);
+            }
         }
 
         [HttpPost]

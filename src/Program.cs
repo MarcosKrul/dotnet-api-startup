@@ -16,6 +16,7 @@ using TucaAPI.src.Dtos.Mail;
 using TucaAPI.src.Middlewares;
 using TucaAPI.src.Provider;
 using TucaAPI.src.Providers;
+using TucaAPI.src.Services.Account;
 using TucaAPI.Src.Services.Account;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -157,6 +158,7 @@ builder.Services.AddScoped<ITokenProvider, TokenProvider>();
 builder.Services.AddScoped<IMailSenderProvider, MailSenderProvider>();
 builder.Services.AddScoped<ITemplateRenderingProvider, TemplateRenderingProvider>();
 builder.Services.AddScoped<RegisterAccountService>();
+builder.Services.AddScoped<ConfirmAccountService>();
 
 var app = builder.Build();
 
