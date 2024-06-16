@@ -11,7 +11,7 @@ using TucaAPI.src.Providers;
 
 namespace TucaAPI.Src.Services.Account
 {
-    public class RegisterService : IService<ApiResponse, RegisterDto>
+    public class RegisterService : IService<RegisterDto, ApiResponse>
     {
         private readonly UserManager<AppUser> userManager;
         private readonly IMailSenderProvider mailProvider;
@@ -60,7 +60,7 @@ namespace TucaAPI.Src.Services.Account
             var templateWriter = this.templateRenderingProvider.Render(
                Path.Combine("Templates", "Mail", "ConfirmAccount", "index.hbs"),
                new { userName, link }
-           );
+            );
 
             await this.mailProvider.SendHtmlAsync(new BaseHtmlMailData
             {
