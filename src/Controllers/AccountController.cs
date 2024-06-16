@@ -11,6 +11,7 @@ using TucaAPI.src.Dtos.Common;
 using TucaAPI.src.Dtos.Mail;
 using TucaAPI.src.Extensions;
 using TucaAPI.src.Providers;
+using TucaAPI.Src.Services.Account;
 
 namespace TucaAPI.Controllers
 {
@@ -23,13 +24,15 @@ namespace TucaAPI.Controllers
         private readonly SignInManager<AppUser> signInManager;
         private readonly IMailSenderProvider mailProvider;
         private readonly ITemplateRenderingProvider templateRenderingProvider;
+        private readonly IServiceProvider serviceProvider;
 
         public AccountController(
             UserManager<AppUser> userManager,
             ITokenProvider tokenProvider,
             SignInManager<AppUser> signInManager,
             IMailSenderProvider mailProvider,
-            ITemplateRenderingProvider templateRenderingProvider
+            ITemplateRenderingProvider templateRenderingProvider,
+            IServiceProvider serviceProvider
         )
         {
             this.tokenProvider = tokenProvider;
@@ -37,6 +40,7 @@ namespace TucaAPI.Controllers
             this.signInManager = signInManager;
             this.mailProvider = mailProvider;
             this.templateRenderingProvider = templateRenderingProvider;
+            this.serviceProvider = serviceProvider;
         }
 
         private async Task<IActionResult> GetAuthenticatedUserAction(AppUser user)
@@ -57,48 +61,12 @@ namespace TucaAPI.Controllers
         [ValidateModelState]
         public async Task<IActionResult> Register([FromBody] RegisterDto data)
         {
-            var appUser = new AppUser
+            using (var scope = this.serviceProvider.CreateScope())
             {
-                UserName = data.Username,
-                Email = data.Email
-            };
-
-            var createdUser = await this.userManager.CreateAsync(appUser, data.Password.GetNonNullable());
-
-            if (!createdUser.Succeeded)
-                return BadRequest(new ErrorApiResponse
-                {
-                    Errors = createdUser.Errors.Select(item => new AppErrorDescriptor { Key = item.Code })
-                });
-
-            var roleResult = await this.userManager.AddToRoleAsync(appUser, PermissionRoles.USER);
-
-            if (!roleResult.Succeeded)
-                return BadRequest(new ErrorApiResponse
-                {
-                    Errors = roleResult.Errors.Select(item => new AppErrorDescriptor { Key = item.Code })
-                });
-
-            var token = await this.userManager.GenerateEmailConfirmationTokenAsync(appUser);
-            var link = $"{data.Url}?token={token}";
-            var email = appUser.Email.GetNonNullable();
-            var userName = appUser.UserName.GetNonNullable();
-
-            var templateWriter = this.templateRenderingProvider.Render(
-               Path.Combine("Templates", "Mail", "ConfirmAccount", "index.hbs"),
-               new { userName, link }
-           );
-
-            await this.mailProvider.SendHtmlAsync(new BaseHtmlMailData
-            {
-                EmailToId = email,
-                EmailToName = userName,
-                EmailSubject = email,
-                TemplateWriter = templateWriter,
-                EmailBody = $"{Messages.MAIL_CONFIRM_ACCOUNT}: {link}"
-            });
-
-            return Ok(new ApiResponse { Success = true });
+                var service = scope.ServiceProvider.GetRequiredService<RegisterService>();
+                var result = await service.ExecuteAsync(data);
+                return Ok(result);
+            }
         }
 
         [HttpPost]
@@ -114,8 +82,7 @@ namespace TucaAPI.Controllers
 
             if (!result.Succeeded) return Unauthorized(new ErrorApiResponse
             {
-                Errors = []
-                // Errors = result.Errors
+                Errors = result.Errors.Select(item => new AppErrorDescriptor { Key = item.Code, Description = item.Description })
             });
 
             return await this.GetAuthenticatedUserAction(hasUser);
