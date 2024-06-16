@@ -156,7 +156,7 @@ builder.Services.AddScoped<IPortfolioRepository, PortfolioRepository>();
 builder.Services.AddScoped<ITokenProvider, TokenProvider>();
 builder.Services.AddScoped<IMailSenderProvider, MailSenderProvider>();
 builder.Services.AddScoped<ITemplateRenderingProvider, TemplateRenderingProvider>();
-builder.Services.AddScoped<RegisterService>();
+builder.Services.AddScoped<RegisterAccountService>();
 
 var app = builder.Build();
 

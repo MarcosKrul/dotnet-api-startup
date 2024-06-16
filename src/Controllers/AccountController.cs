@@ -66,7 +66,7 @@ namespace TucaAPI.Controllers
         {
             using (var scope = this.serviceProvider.CreateScope())
             {
-                var service = scope.ServiceProvider.GetRequiredService<RegisterService>();
+                var service = scope.ServiceProvider.GetRequiredService<RegisterAccountService>();
                 var result = await service.ExecuteAsync(data);
                 return Ok(result);
             }

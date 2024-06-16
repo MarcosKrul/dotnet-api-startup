@@ -11,13 +11,13 @@ using TucaAPI.src.Providers;
 
 namespace TucaAPI.Src.Services.Account
 {
-    public class RegisterService : IService<RegisterDto, ApiResponse>
+    public class RegisterAccountService : IService<RegisterDto, ApiResponse>
     {
         private readonly UserManager<AppUser> userManager;
         private readonly IMailSenderProvider mailProvider;
         private readonly ITemplateRenderingProvider templateRenderingProvider;
 
-        public RegisterService(
+        public RegisterAccountService(
             UserManager<AppUser> userManager,
             IMailSenderProvider mailProvider,
             ITemplateRenderingProvider templateRenderingProvider
