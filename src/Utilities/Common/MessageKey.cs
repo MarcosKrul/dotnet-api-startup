@@ -1,4 +1,3 @@
-
 namespace TucaAPI.src.Common
 {
     public static class MessageKey

@@ -1,120 +1,142 @@
-using Microsoft.EntityFrameworkCore;
-using TucaAPI.Data;
-using TucaAPI.Attributes;
-using TucaAPI.Repositories;
-using TucaAPI.Models;
-using Microsoft.AspNetCore.Identity;
-using TucaAPI.Common;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
-using TucaAPI.src.Common;
-using TucaAPI.src.Dtos.Mail;
 using System.Net.Mime;
 using System.Security.Claims;
-using TucaAPI.src.Middlewares;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using TucaAPI.Attributes;
+using TucaAPI.Common;
+using TucaAPI.Data;
+using TucaAPI.Models;
 using TucaAPI.Providers;
-using TucaAPI.src.Providers;
+using TucaAPI.Repositories;
+using TucaAPI.src.Common;
+using TucaAPI.src.Dtos.Mail;
+using TucaAPI.src.Middlewares;
 using TucaAPI.src.Provider;
+using TucaAPI.src.Providers;
 using TucaAPI.Src.Services.Account;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers().ConfigureApiBehaviorOptions(options =>
-{
-    options.InvalidModelStateResponseFactory = context =>
+builder
+    .Services.AddControllers()
+    .ConfigureApiBehaviorOptions(options =>
     {
-        var result = new ValidationFailedResult(context.ModelState);
-        result.ContentTypes.Add(MediaTypeNames.Application.Json);
-        return result;
-    };
-});
+        options.InvalidModelStateResponseFactory = context =>
+        {
+            var result = new ValidationFailedResult(context.ModelState);
+            result.ContentTypes.Add(MediaTypeNames.Application.Json);
+            return result;
+        };
+    });
 builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddSwaggerGen(option =>
 {
     option.SwaggerDoc("v1", new OpenApiInfo { Title = "Demo API", Version = "v1" });
-    option.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-    {
-        In = ParameterLocation.Header,
-        Description = MessageKey.PLEASE_ENTER_VALID_TOKEN,
-        Name = "Authorization",
-        Type = SecuritySchemeType.Http,
-        BearerFormat = "JWT",
-        Scheme = "Bearer"
-    });
-    option.AddSecurityRequirement(new OpenApiSecurityRequirement
-    {
+    option.AddSecurityDefinition(
+        "Bearer",
+        new OpenApiSecurityScheme
         {
-            new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference
-                {
-                    Type=ReferenceType.SecurityScheme,
-                    Id="Bearer"
-                }
-            },
-            new string[]{}
+            In = ParameterLocation.Header,
+            Description = MessageKey.PLEASE_ENTER_VALID_TOKEN,
+            Name = "Authorization",
+            Type = SecuritySchemeType.Http,
+            BearerFormat = "JWT",
+            Scheme = "Bearer"
         }
-    });
+    );
+    option.AddSecurityRequirement(
+        new OpenApiSecurityRequirement
+        {
+            {
+                new OpenApiSecurityScheme
+                {
+                    Reference = new OpenApiReference
+                    {
+                        Type = ReferenceType.SecurityScheme,
+                        Id = "Bearer"
+                    }
+                },
+                new string[] { }
+            }
+        }
+    );
 });
 
-builder.Services.AddControllers().AddNewtonsoftJson(options =>
-{
-    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
-});
+builder
+    .Services.AddControllers()
+    .AddNewtonsoftJson(options =>
+    {
+        options.SerializerSettings.ReferenceLoopHandling = Newtonsoft
+            .Json
+            .ReferenceLoopHandling
+            .Ignore;
+    });
 
 builder.Services.AddDbContext<ApplicationDBContext>(options =>
 {
-    options.UseSqlServer(builder.Configuration.GetConnectionString(EnvVariables.DB_CONNECTION_STRING));
+    options.UseSqlServer(
+        builder.Configuration.GetConnectionString(EnvVariables.DB_CONNECTION_STRING)
+    );
 });
 
-builder.Services.Configure<MailSettings>(builder.Configuration.GetSection(EnvVariables.MAIL_SETTINGS));
+builder.Services.Configure<MailSettings>(
+    builder.Configuration.GetSection(EnvVariables.MAIL_SETTINGS)
+);
 
-builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
-{
-    options.Password.RequireDigit = true;
-    options.Password.RequireUppercase = true;
-    options.Password.RequireLowercase = true;
-    options.Password.RequireNonAlphanumeric = true;
-    options.Password.RequiredLength = Constants.MIN_PASSWORD_LENGTH;
-    options.Lockout.AllowedForNewUsers = true;
-    options.Lockout.MaxFailedAccessAttempts = Constants.MAX_LOGIN_ATTEMPTS;
-    options.Lockout.DefaultLockoutTimeSpan = Constants.RESET_LOGIN_ATTEMPTS;
-    options.SignIn.RequireConfirmedEmail = true;
-    options.User.RequireUniqueEmail = true;
-})
-.AddEntityFrameworkStores<ApplicationDBContext>()
-.AddTokenProvider<DataProtectorTokenProvider<AppUser>>(TokenOptions.DefaultProvider);
+builder
+    .Services.AddIdentity<AppUser, IdentityRole>(options =>
+    {
+        options.Password.RequireDigit = true;
+        options.Password.RequireUppercase = true;
+        options.Password.RequireLowercase = true;
+        options.Password.RequireNonAlphanumeric = true;
+        options.Password.RequiredLength = Constants.MIN_PASSWORD_LENGTH;
+        options.Lockout.AllowedForNewUsers = true;
+        options.Lockout.MaxFailedAccessAttempts = Constants.MAX_LOGIN_ATTEMPTS;
+        options.Lockout.DefaultLockoutTimeSpan = Constants.RESET_LOGIN_ATTEMPTS;
+        options.SignIn.RequireConfirmedEmail = true;
+        options.User.RequireUniqueEmail = true;
+    })
+    .AddEntityFrameworkStores<ApplicationDBContext>()
+    .AddTokenProvider<DataProtectorTokenProvider<AppUser>>(TokenOptions.DefaultProvider);
 
 builder.Services.Configure<DataProtectionTokenProviderOptions>(options =>
 {
     options.TokenLifespan = Constants.TOKEN_EXPIRES_IN;
 });
 
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme =
-    options.DefaultChallengeScheme =
-    options.DefaultForbidScheme =
-    options.DefaultScheme =
-    options.DefaultSignInScheme =
-    options.DefaultSignOutScheme = JwtBearerDefaults.AuthenticationScheme;
-})
-.AddJwtBearer(options =>
-{
-    options.TokenValidationParameters = new TokenValidationParameters
+builder
+    .Services.AddAuthentication(options =>
     {
-        ValidateIssuer = true,
-        ValidIssuer = builder.Configuration[EnvVariables.JWT_ISSUER],
-        ValidateAudience = true,
-        ValidAudience = builder.Configuration[EnvVariables.JWT_AUDIENCE],
-        ValidateIssuerSigningKey = true,
-        IssuerSigningKey = new SymmetricSecurityKey(
-            System.Text.Encoding.UTF8.GetBytes(builder.Configuration[EnvVariables.JWT_SIGNIN_KEY] ?? Constants.DEFAULT_JWT_SECRET)
-        )
-    };
-});
+        options.DefaultAuthenticateScheme =
+            options.DefaultChallengeScheme =
+            options.DefaultForbidScheme =
+            options.DefaultScheme =
+            options.DefaultSignInScheme =
+            options.DefaultSignOutScheme =
+                JwtBearerDefaults.AuthenticationScheme;
+    })
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidIssuer = builder.Configuration[EnvVariables.JWT_ISSUER],
+            ValidateAudience = true,
+            ValidAudience = builder.Configuration[EnvVariables.JWT_AUDIENCE],
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(
+                System.Text.Encoding.UTF8.GetBytes(
+                    builder.Configuration[EnvVariables.JWT_SIGNIN_KEY]
+                        ?? Constants.DEFAULT_JWT_SECRET
+                )
+            )
+        };
+    });
 
 builder.Services.AddAuthorization(options =>
 {

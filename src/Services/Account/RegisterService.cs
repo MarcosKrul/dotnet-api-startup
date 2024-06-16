@@ -30,13 +30,12 @@ namespace TucaAPI.Src.Services.Account
 
         public async Task<ApiResponse> ExecuteAsync(RegisterDto data)
         {
-            var appUser = new AppUser
-            {
-                UserName = data.Username,
-                Email = data.Email
-            };
+            var appUser = new AppUser { UserName = data.Username, Email = data.Email };
 
-            var createdUser = await this.userManager.CreateAsync(appUser, data.Password.GetNonNullable());
+            var createdUser = await this.userManager.CreateAsync(
+                appUser,
+                data.Password.GetNonNullable()
+            );
 
             if (!createdUser.Succeeded)
                 throw new AppException(
@@ -58,18 +57,20 @@ namespace TucaAPI.Src.Services.Account
             var userName = appUser.UserName.GetNonNullable();
 
             var templateWriter = this.templateRenderingProvider.Render(
-               Path.Combine("Templates", "Mail", "ConfirmAccount", "index.hbs"),
-               new { userName, link }
+                Path.Combine("Templates", "Mail", "ConfirmAccount", "index.hbs"),
+                new { userName, link }
             );
 
-            await this.mailProvider.SendHtmlAsync(new BaseHtmlMailData
-            {
-                EmailToId = email,
-                EmailToName = userName,
-                EmailSubject = email,
-                TemplateWriter = templateWriter,
-                EmailBody = $"{Messages.MAIL_CONFIRM_ACCOUNT}: {link}"
-            });
+            await this.mailProvider.SendHtmlAsync(
+                new BaseHtmlMailData
+                {
+                    EmailToId = email,
+                    EmailToName = userName,
+                    EmailSubject = email,
+                    TemplateWriter = templateWriter,
+                    EmailBody = $"{Messages.MAIL_CONFIRM_ACCOUNT}: {link}"
+                }
+            );
 
             return new ApiResponse { Success = true };
         }

@@ -6,8 +6,10 @@ namespace TucaAPI.src.Dtos.Account
     {
         [Required]
         public string Token { get; set; } = string.Empty;
+
         [Required]
         public string? Email { get; set; }
+
         [Required]
         public string Password { get; set; } = string.Empty;
     }

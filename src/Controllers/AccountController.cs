@@ -3,16 +3,16 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TucaAPI.Attributes;
 using TucaAPI.Dtos.Account;
-using TucaAPI.Providers;
 using TucaAPI.Models;
+using TucaAPI.Providers;
 using TucaAPI.src.Common;
 using TucaAPI.src.Dtos.Account;
 using TucaAPI.src.Dtos.Common;
 using TucaAPI.src.Dtos.Mail;
 using TucaAPI.src.Extensions;
+using TucaAPI.src.Mappers;
 using TucaAPI.src.Providers;
 using TucaAPI.Src.Services.Account;
-using TucaAPI.src.Mappers;
 
 namespace TucaAPI.Controllers
 {
@@ -46,15 +46,17 @@ namespace TucaAPI.Controllers
 
         private async Task<IActionResult> GetAuthenticatedUserAction(AppUser user)
         {
-            return Ok(new SuccessApiResponse<AuthenticatedUserDto>
-            {
-                Content = new AuthenticatedUserDto
+            return Ok(
+                new SuccessApiResponse<AuthenticatedUserDto>
                 {
-                    UserName = user.UserName.GetNonNullable(),
-                    Email = user.Email.GetNonNullable(),
-                    Token = await this.tokenProvider.CreateAsync(user)
+                    Content = new AuthenticatedUserDto
+                    {
+                        UserName = user.UserName.GetNonNullable(),
+                        Email = user.Email.GetNonNullable(),
+                        Token = await this.tokenProvider.CreateAsync(user)
+                    }
                 }
-            });
+            );
         }
 
         [HttpPost]
@@ -75,16 +77,25 @@ namespace TucaAPI.Controllers
         [ValidateModelState]
         public async Task<IActionResult> Confirm([FromBody] ConfirmDto data)
         {
-            var hasUser = await this.userManager.Users.FirstOrDefaultAsync(i => i.Email == data.Email);
+            var hasUser = await this.userManager.Users.FirstOrDefaultAsync(i =>
+                i.Email == data.Email
+            );
 
-            if (hasUser is null) return Unauthorized(new ErrorApiResponse(MessageKey.USER_NOT_FOUND));
+            if (hasUser is null)
+                return Unauthorized(new ErrorApiResponse(MessageKey.USER_NOT_FOUND));
 
-            var result = await this.userManager.ConfirmEmailAsync(hasUser, data.Token.GetNonNullable());
+            var result = await this.userManager.ConfirmEmailAsync(
+                hasUser,
+                data.Token.GetNonNullable()
+            );
 
-            if (!result.Succeeded) return Unauthorized(new ErrorApiResponse
-            {
-                Errors = result.Errors.Select(item => item.ToAppErrorDescriptor())
-            });
+            if (!result.Succeeded)
+                return Unauthorized(
+                    new ErrorApiResponse
+                    {
+                        Errors = result.Errors.Select(item => item.ToAppErrorDescriptor())
+                    }
+                );
 
             return await this.GetAuthenticatedUserAction(hasUser);
         }
@@ -94,17 +105,28 @@ namespace TucaAPI.Controllers
         [ValidateModelState]
         public async Task<IActionResult> Login([FromBody] LoginDto data)
         {
-            var unauthorizedError = Unauthorized(new ErrorApiResponse(MessageKey.INVALID_CREDENTIALS));
+            var unauthorizedError = Unauthorized(
+                new ErrorApiResponse(MessageKey.INVALID_CREDENTIALS)
+            );
 
-            var hasUser = await this.userManager.Users.FirstOrDefaultAsync(i => i.Email == data.Email);
+            var hasUser = await this.userManager.Users.FirstOrDefaultAsync(i =>
+                i.Email == data.Email
+            );
 
-            if (hasUser is null) return unauthorizedError;
+            if (hasUser is null)
+                return unauthorizedError;
 
-            var result = await this.signInManager.CheckPasswordSignInAsync(hasUser, data.Password.GetNonNullable(), true);
+            var result = await this.signInManager.CheckPasswordSignInAsync(
+                hasUser,
+                data.Password.GetNonNullable(),
+                true
+            );
 
-            if (result.IsLockedOut) return Unauthorized(new ErrorApiResponse(MessageKey.ACCOUNT_LOCKED));
+            if (result.IsLockedOut)
+                return Unauthorized(new ErrorApiResponse(MessageKey.ACCOUNT_LOCKED));
 
-            if (!result.Succeeded) return unauthorizedError;
+            if (!result.Succeeded)
+                return unauthorizedError;
 
             return await this.GetAuthenticatedUserAction(hasUser);
         }
@@ -114,9 +136,12 @@ namespace TucaAPI.Controllers
         [ValidateModelState]
         public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequestDto data)
         {
-            var hasUser = await this.userManager.Users.FirstOrDefaultAsync(i => i.Email == data.Email);
+            var hasUser = await this.userManager.Users.FirstOrDefaultAsync(i =>
+                i.Email == data.Email
+            );
 
-            if (hasUser is null) return Unauthorized(new ErrorApiResponse(MessageKey.INVALID_CREDENTIALS));
+            if (hasUser is null)
+                return Unauthorized(new ErrorApiResponse(MessageKey.INVALID_CREDENTIALS));
 
             var token = await this.userManager.GeneratePasswordResetTokenAsync(hasUser);
             var link = $"{data.Url}?token={token}";
@@ -128,14 +153,16 @@ namespace TucaAPI.Controllers
                 new { userName, link }
             );
 
-            await this.mailProvider.SendHtmlAsync(new BaseHtmlMailData
-            {
-                EmailToId = email,
-                EmailToName = userName,
-                EmailSubject = email,
-                TemplateWriter = templateWriter,
-                EmailBody = $"{Messages.MAIL_RESET_PASSWORD}: {link}"
-            });
+            await this.mailProvider.SendHtmlAsync(
+                new BaseHtmlMailData
+                {
+                    EmailToId = email,
+                    EmailToName = userName,
+                    EmailSubject = email,
+                    TemplateWriter = templateWriter,
+                    EmailBody = $"{Messages.MAIL_RESET_PASSWORD}: {link}"
+                }
+            );
 
             return Ok(new ApiResponse { Success = true });
         }
@@ -145,16 +172,21 @@ namespace TucaAPI.Controllers
         [ValidateModelState]
         public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequestDto data)
         {
-            var hasUser = await this.userManager.Users.FirstOrDefaultAsync(i => i.Email == data.Email);
+            var hasUser = await this.userManager.Users.FirstOrDefaultAsync(i =>
+                i.Email == data.Email
+            );
 
-            if (hasUser is null) return Unauthorized(new ErrorApiResponse(MessageKey.INVALID_CREDENTIALS));
+            if (hasUser is null)
+                return Unauthorized(new ErrorApiResponse(MessageKey.INVALID_CREDENTIALS));
 
-            var result = await this.userManager.ResetPasswordAsync(hasUser, data.Token, data.Password);
+            var result = await this.userManager.ResetPasswordAsync(
+                hasUser,
+                data.Token,
+                data.Password
+            );
 
-            if (!result.Succeeded) return BadRequest(new SuccessApiResponse<IdentityResult>
-            {
-                Content = result
-            });
+            if (!result.Succeeded)
+                return BadRequest(new SuccessApiResponse<IdentityResult> { Content = result });
 
             return Ok(new ApiResponse { Success = true });
         }

@@ -1,4 +1,3 @@
-
 namespace TucaAPI.src.Dtos.Mail
 {
     public class MailSettings

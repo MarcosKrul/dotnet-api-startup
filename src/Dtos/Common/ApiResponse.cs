@@ -1,4 +1,3 @@
-
 namespace TucaAPI.src.Dtos.Common
 {
     public class ApiResponse

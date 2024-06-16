@@ -28,10 +28,7 @@ namespace TucaAPI.Controllers
             var stocks = await this.repository.GetAllAsync(query);
             var formatted = stocks.Select(i => i.ToStockDto()).ToList();
 
-            return Ok(new SuccessApiResponse<List<StockDto>>
-            {
-                Content = formatted
-            });
+            return Ok(new SuccessApiResponse<List<StockDto>> { Content = formatted });
         }
 
         [HttpGet("{id:int}")]
@@ -41,12 +38,10 @@ namespace TucaAPI.Controllers
         {
             var stock = await this.repository.GetByIdAsync(id);
 
-            if (stock is null) return NotFound(new ErrorApiResponse(MessageKey.STOCK_NOT_FOUND));
+            if (stock is null)
+                return NotFound(new ErrorApiResponse(MessageKey.STOCK_NOT_FOUND));
 
-            return Ok(new SuccessApiResponse<StockDto>
-            {
-                Content = stock.ToStockDto()
-            });
+            return Ok(new SuccessApiResponse<StockDto> { Content = stock.ToStockDto() });
         }
 
         [HttpPost]
@@ -65,16 +60,17 @@ namespace TucaAPI.Controllers
         [Authorize]
         [ValidateModelState]
         [Route("{id:int}")]
-        public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateStockRequestDto data)
+        public async Task<IActionResult> Update(
+            [FromRoute] int id,
+            [FromBody] UpdateStockRequestDto data
+        )
         {
             var stock = await this.repository.UpdateAsync(id, data);
 
-            if (stock is null) return NotFound(new ErrorApiResponse(MessageKey.STOCK_NOT_FOUND));
+            if (stock is null)
+                return NotFound(new ErrorApiResponse(MessageKey.STOCK_NOT_FOUND));
 
-            return Ok(new SuccessApiResponse<StockDto>
-            {
-                Content = stock.ToStockDto()
-            });
+            return Ok(new SuccessApiResponse<StockDto> { Content = stock.ToStockDto() });
         }
 
         [HttpDelete]
@@ -85,7 +81,8 @@ namespace TucaAPI.Controllers
         {
             var stock = await this.repository.GetByIdAsync(id);
 
-            if (stock is null) return NotFound(new ErrorApiResponse(MessageKey.STOCK_NOT_FOUND));
+            if (stock is null)
+                return NotFound(new ErrorApiResponse(MessageKey.STOCK_NOT_FOUND));
 
             await this.repository.DeleteAsync(stock);
 

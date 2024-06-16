@@ -18,7 +18,11 @@ namespace TucaAPI.Mappers
             };
         }
 
-        public static Comment ToCommentFromRequestDto(this CreateCommentRequestDto comment, int stockId, string userId)
+        public static Comment ToCommentFromRequestDto(
+            this CreateCommentRequestDto comment,
+            int stockId,
+            string userId
+        )
         {
             return new Comment
             {

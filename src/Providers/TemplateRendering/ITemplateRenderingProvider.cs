@@ -1,4 +1,3 @@
-
 namespace TucaAPI.src.Providers
 {
     public interface ITemplateRenderingProvider

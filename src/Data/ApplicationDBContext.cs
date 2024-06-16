@@ -8,10 +8,8 @@ namespace TucaAPI.Data
 {
     public class ApplicationDBContext : IdentityDbContext<AppUser>
     {
-        public ApplicationDBContext(DbContextOptions dbContextOptions) : base(dbContextOptions)
-        {
-
-        }
+        public ApplicationDBContext(DbContextOptions dbContextOptions)
+            : base(dbContextOptions) { }
 
         public DbSet<Stock> Stocks { get; set; }
         public DbSet<Comment> Comments { get; set; }
@@ -23,12 +21,14 @@ namespace TucaAPI.Data
 
             builder.Entity<Portfolio>(i => i.HasKey(p => new { p.AppUserId, p.StockId }));
 
-            builder.Entity<Portfolio>()
+            builder
+                .Entity<Portfolio>()
                 .HasOne(i => i.AppUser)
                 .WithMany(i => i.Portfolios)
                 .HasForeignKey(i => i.AppUserId);
 
-            builder.Entity<Portfolio>()
+            builder
+                .Entity<Portfolio>()
                 .HasOne(i => i.Stock)
                 .WithMany(i => i.Portfolios)
                 .HasForeignKey(i => i.StockId);

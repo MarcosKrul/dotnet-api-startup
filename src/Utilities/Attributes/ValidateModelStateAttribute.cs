@@ -9,12 +9,19 @@ namespace TucaAPI.Attributes
     public class ValidationFailedResult : ObjectResult
     {
         public ValidationFailedResult(ModelStateDictionary modelState)
-            : base(new ErrorApiResponse
-            {
-                Errors = modelState.Keys
-                    .SelectMany(key => modelState[key].Errors.Select(x => x.ErrorMessage))
-                    .ToList().Select(item => new AppErrorDescriptor { Key = MessageKey.INVALID_INPUT, Description = item })
-            })
+            : base(
+                new ErrorApiResponse
+                {
+                    Errors = modelState
+                        .Keys.SelectMany(key => modelState[key].Errors.Select(x => x.ErrorMessage))
+                        .ToList()
+                        .Select(item => new AppErrorDescriptor
+                        {
+                            Key = MessageKey.INVALID_INPUT,
+                            Description = item
+                        })
+                }
+            )
         {
             StatusCode = StatusCodes.Status422UnprocessableEntity;
         }

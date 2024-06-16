@@ -29,7 +29,8 @@ namespace TucaAPI.src.Middlewares
                 await HandleExceptionAsync(
                     context,
                     StatusCodes.Status500InternalServerError,
-                    new ErrorApiResponse(MessageKey.INTERNAL_SERVER_ERROR));
+                    new ErrorApiResponse(MessageKey.INTERNAL_SERVER_ERROR)
+                );
             }
         }
 

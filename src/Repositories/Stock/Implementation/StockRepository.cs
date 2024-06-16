@@ -29,8 +29,8 @@ namespace TucaAPI.Repositories
 
         public async Task<List<Stock>> GetAllAsync(QueryStockDto query)
         {
-            var stockQuery = this.context.Stocks
-                .Include(i => i.Comments)
+            var stockQuery = this
+                .context.Stocks.Include(i => i.Comments)
                 .ThenInclude(i => i.AppUser)
                 .AsQueryable();
 
@@ -40,20 +40,21 @@ namespace TucaAPI.Repositories
             if (!string.IsNullOrWhiteSpace(query.Symbol))
                 stockQuery = stockQuery.Where(i => i.Symbol.Contains(query.Symbol));
 
-
-            if (!string.IsNullOrWhiteSpace(query.SortBy) && query.SortBy.Equals("Symbol", StringComparison.OrdinalIgnoreCase))
+            if (
+                !string.IsNullOrWhiteSpace(query.SortBy)
+                && query.SortBy.Equals("Symbol", StringComparison.OrdinalIgnoreCase)
+            )
                 stockQuery = query.Asc
                     ? stockQuery.OrderBy(i => i.Symbol)
                     : stockQuery.OrderByDescending(i => i.Symbol);
-
 
             return await stockQuery.Skip(query.Limit * query.Page).Take(query.Limit).ToListAsync();
         }
 
         public async Task<Stock?> GetByIdAsync(int id)
         {
-            return await this.context.Stocks
-                .Include(c => c.Comments)
+            return await this
+                .context.Stocks.Include(c => c.Comments)
                 .ThenInclude(i => i.AppUser)
                 .FirstOrDefaultAsync(i => i.Id == id);
         }
@@ -67,7 +68,8 @@ namespace TucaAPI.Repositories
         {
             var stock = await this.GetByIdAsync(id);
 
-            if (stock is null) return null;
+            if (stock is null)
+                return null;
 
             stock.Symbol = stockDto.Symbol;
             stock.CompanyName = stockDto.CompanyName;

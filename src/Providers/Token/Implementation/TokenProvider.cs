@@ -4,8 +4,8 @@ using System.Text;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using TucaAPI.Common;
-using TucaAPI.Providers;
 using TucaAPI.Models;
+using TucaAPI.Providers;
 using TucaAPI.src.Common;
 
 namespace TucaAPI.Providers
@@ -20,7 +20,8 @@ namespace TucaAPI.Providers
         {
             this.userManager = userManager;
             this.configuration = configuration;
-            var secretKey = this.configuration[EnvVariables.JWT_SIGNIN_KEY] ?? Constants.DEFAULT_JWT_SECRET;
+            var secretKey =
+                this.configuration[EnvVariables.JWT_SIGNIN_KEY] ?? Constants.DEFAULT_JWT_SECRET;
             this.key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
         }
 
@@ -53,7 +54,10 @@ namespace TucaAPI.Providers
 
         public async Task<string> CreateAsync(AppUser user)
         {
-            var credentials = new SigningCredentials(this.key, SecurityAlgorithms.HmacSha512Signature);
+            var credentials = new SigningCredentials(
+                this.key,
+                SecurityAlgorithms.HmacSha512Signature
+            );
 
             var tokenDescription = new SecurityTokenDescriptor
             {
