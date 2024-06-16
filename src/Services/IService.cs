@@ -7,4 +7,10 @@ namespace TucaAPI.Src.Services
     {
         Task<K> ExecuteAsync(T data);
     }
+
+    public interface IService<K>
+        where K : ApiResponse
+    {
+        Task<K> ExecuteAsync();
+    }
 }

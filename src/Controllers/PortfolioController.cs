@@ -8,6 +8,7 @@ using TucaAPI.Repositories;
 using TucaAPI.src.Common;
 using TucaAPI.src.Dtos.Common;
 using TucaAPI.src.Extensions;
+using TucaAPI.src.Services.Portfolio;
 
 namespace TucaAPI.Controllers
 {
@@ -18,16 +19,19 @@ namespace TucaAPI.Controllers
         private readonly IStockRepository stockRepository;
         private readonly IPortfolioRepository portfolioRepository;
         private readonly UserManager<AppUser> userManager;
+        private readonly IServiceProvider serviceProvider;
 
         public PortfolioController(
             UserManager<AppUser> userManager,
             IStockRepository stockRepository,
-            IPortfolioRepository portfolioRepository
+            IPortfolioRepository portfolioRepository,
+            IServiceProvider serviceProvider
         )
         {
             this.stockRepository = stockRepository;
             this.userManager = userManager;
             this.portfolioRepository = portfolioRepository;
+            this.serviceProvider = serviceProvider;
         }
 
         [HttpGet]
@@ -36,13 +40,13 @@ namespace TucaAPI.Controllers
         public async Task<IActionResult> GetStocksFromUserPortfolio()
         {
             var email = User.GetEmail();
-            var hasUser = await this.userManager.FindByEmailAsync(email.GetNonNullable());
-            if (hasUser is null)
-                return Unauthorized(new ErrorApiResponse(MessageKey.USER_NOT_FOUND));
-
-            var userPortFolio = await this.portfolioRepository.GetStocksFromUserPortfolio(hasUser);
-
-            return Ok(new SuccessApiResponse<List<Stock>> { Content = userPortFolio });
+            using (var scope = this.serviceProvider.CreateScope())
+            {
+                var service =
+                    scope.ServiceProvider.GetRequiredService<GetStocksFromUserPortfolioService>();
+                var result = await service.ExecuteAsync(email.GetNonNullable());
+                return Ok(result);
+            }
         }
 
         [HttpPost]
