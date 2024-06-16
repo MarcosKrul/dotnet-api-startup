@@ -159,6 +159,7 @@ builder.Services.AddScoped<IMailSenderProvider, MailSenderProvider>();
 builder.Services.AddScoped<ITemplateRenderingProvider, TemplateRenderingProvider>();
 builder.Services.AddScoped<RegisterAccountService>();
 builder.Services.AddScoped<ConfirmAccountService>();
+builder.Services.AddScoped<LoginService>();
 
 var app = builder.Build();
 
