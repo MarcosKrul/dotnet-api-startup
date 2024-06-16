@@ -1,8 +1,8 @@
 using TucaAPI.Models;
 
-namespace TucaAPI.Interfaces
+namespace TucaAPI.Providers
 {
-    public interface ITokenService
+    public interface ITokenProvider
     {
         Task<string> CreateAsync(AppUser user);
     }

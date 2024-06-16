@@ -3,14 +3,14 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TucaAPI.Attributes;
 using TucaAPI.Dtos.Account;
-using TucaAPI.Interfaces;
+using TucaAPI.Providers;
 using TucaAPI.Models;
 using TucaAPI.src.Common;
 using TucaAPI.src.Dtos.Account;
 using TucaAPI.src.Dtos.Common;
 using TucaAPI.src.Dtos.Mail;
 using TucaAPI.src.Extensions;
-using TucaAPI.src.Interfaces;
+using TucaAPI.src.Providers;
 
 namespace TucaAPI.Controllers
 {
@@ -19,24 +19,24 @@ namespace TucaAPI.Controllers
     public class AccountController : ControllerBase
     {
         private readonly UserManager<AppUser> userManager;
-        private readonly ITokenService tokenService;
+        private readonly ITokenProvider tokenProvider;
         private readonly SignInManager<AppUser> signInManager;
-        private readonly IMailSenderService mailService;
-        private readonly ITemplateRenderingService templateRenderingService;
+        private readonly IMailSenderProvider mailProvider;
+        private readonly ITemplateRenderingProvider templateRenderingProvider;
 
         public AccountController(
             UserManager<AppUser> userManager,
-            ITokenService tokenService,
+            ITokenProvider tokenProvider,
             SignInManager<AppUser> signInManager,
-            IMailSenderService mailService,
-            ITemplateRenderingService templateRenderingService
+            IMailSenderProvider mailProvider,
+            ITemplateRenderingProvider templateRenderingProvider
         )
         {
-            this.tokenService = tokenService;
+            this.tokenProvider = tokenProvider;
             this.userManager = userManager;
             this.signInManager = signInManager;
-            this.mailService = mailService;
-            this.templateRenderingService = templateRenderingService;
+            this.mailProvider = mailProvider;
+            this.templateRenderingProvider = templateRenderingProvider;
         }
 
         private async Task<IActionResult> GetAuthenticatedUserAction(AppUser user)
@@ -47,7 +47,7 @@ namespace TucaAPI.Controllers
                 {
                     UserName = user.UserName.GetNonNullable(),
                     Email = user.Email.GetNonNullable(),
-                    Token = await this.tokenService.CreateAsync(user)
+                    Token = await this.tokenProvider.CreateAsync(user)
                 }
             });
         }
@@ -84,12 +84,12 @@ namespace TucaAPI.Controllers
             var email = appUser.Email.GetNonNullable();
             var userName = appUser.UserName.GetNonNullable();
 
-            var templateWriter = this.templateRenderingService.Render(
+            var templateWriter = this.templateRenderingProvider.Render(
                Path.Combine("Templates", "Mail", "ConfirmAccount", "index.hbs"),
                new { userName, link }
            );
 
-            await this.mailService.SendHtmlAsync(new BaseHtmlMailData
+            await this.mailProvider.SendHtmlAsync(new BaseHtmlMailData
             {
                 EmailToId = email,
                 EmailToName = userName,
@@ -166,12 +166,12 @@ namespace TucaAPI.Controllers
             var email = hasUser.Email.GetNonNullable();
             var userName = hasUser.UserName.GetNonNullable();
 
-            var templateWriter = this.templateRenderingService.Render(
+            var templateWriter = this.templateRenderingProvider.Render(
                 Path.Combine("Templates", "Mail", "ForgotPassword", "index.hbs"),
                 new { userName, link }
             );
 
-            await this.mailService.SendHtmlAsync(new BaseHtmlMailData
+            await this.mailProvider.SendHtmlAsync(new BaseHtmlMailData
             {
                 EmailToId = email,
                 EmailToName = userName,

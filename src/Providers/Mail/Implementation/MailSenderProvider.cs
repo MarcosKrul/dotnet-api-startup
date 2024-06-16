@@ -1,17 +1,16 @@
-using HandlebarsDotNet;
 using MailKit.Net.Smtp;
 using Microsoft.Extensions.Options;
 using MimeKit;
 using TucaAPI.src.Dtos.Mail;
-using TucaAPI.src.Interfaces;
+using TucaAPI.src.Providers;
 
-namespace TucaAPI.src.Service
+namespace TucaAPI.src.Provider
 {
-    public class MailSenderService : IMailSenderService
+    public class MailSenderProvider : IMailSenderProvider
     {
         private readonly MailSettings mailSettings;
 
-        public MailSenderService(IOptions<MailSettings> mailSettingsOptions)
+        public MailSenderProvider(IOptions<MailSettings> mailSettingsOptions)
         {
             this.mailSettings = mailSettingsOptions.Value;
         }

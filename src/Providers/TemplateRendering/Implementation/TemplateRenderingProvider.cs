@@ -1,9 +1,9 @@
 using HandlebarsDotNet;
-using TucaAPI.src.Interfaces;
+using TucaAPI.src.Providers;
 
-namespace TucaAPI.src.Service
+namespace TucaAPI.src.Provider
 {
-    public class TemplateRenderingService : ITemplateRenderingService
+    public class TemplateRenderingProvider : ITemplateRenderingProvider
     {
         public StringWriter Render(string relativePath, object data)
         {

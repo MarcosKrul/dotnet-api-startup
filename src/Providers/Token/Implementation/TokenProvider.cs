@@ -4,19 +4,19 @@ using System.Text;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using TucaAPI.Common;
-using TucaAPI.Interfaces;
+using TucaAPI.Providers;
 using TucaAPI.Models;
 using TucaAPI.src.Common;
 
-namespace TucaAPI.Service
+namespace TucaAPI.Providers
 {
-    public class TokenService : ITokenService
+    public class TokenProvider : ITokenProvider
     {
         private readonly IConfiguration configuration;
         private readonly SymmetricSecurityKey key;
         private readonly UserManager<AppUser> userManager;
 
-        public TokenService(IConfiguration configuration, UserManager<AppUser> userManager)
+        public TokenProvider(IConfiguration configuration, UserManager<AppUser> userManager)
         {
             this.userManager = userManager;
             this.configuration = configuration;

@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using TucaAPI.Data;
-using TucaAPI.Interfaces;
 using TucaAPI.Attributes;
 using TucaAPI.Repositories;
 using TucaAPI.Models;
@@ -8,15 +7,15 @@ using Microsoft.AspNetCore.Identity;
 using TucaAPI.Common;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using TucaAPI.Service;
 using Microsoft.OpenApi.Models;
 using TucaAPI.src.Common;
 using TucaAPI.src.Dtos.Mail;
-using TucaAPI.src.Interfaces;
-using TucaAPI.src.Service;
 using System.Net.Mime;
 using System.Security.Claims;
 using TucaAPI.src.Middlewares;
+using TucaAPI.Providers;
+using TucaAPI.src.Providers;
+using TucaAPI.src.Provider;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -131,9 +130,9 @@ builder.Services.AddAuthorization(options =>
 builder.Services.AddScoped<IStockRepository, StockRepository>();
 builder.Services.AddScoped<ICommentRepository, CommentRepository>();
 builder.Services.AddScoped<IPortfolioRepository, PortfolioRepository>();
-builder.Services.AddScoped<ITokenService, TokenService>();
-builder.Services.AddScoped<IMailSenderService, MailSenderService>();
-builder.Services.AddScoped<ITemplateRenderingService, TemplateRenderingService>();
+builder.Services.AddScoped<ITokenProvider, TokenProvider>();
+builder.Services.AddScoped<IMailSenderProvider, MailSenderProvider>();
+builder.Services.AddScoped<ITemplateRenderingProvider, TemplateRenderingProvider>();
 
 var app = builder.Build();
 
