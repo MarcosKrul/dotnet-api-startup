@@ -5,8 +5,7 @@ using TucaAPI.src.Repositories;
 
 namespace TucaAPI.src.Services.Comment
 {
-    public class GetAllCommentService
-        : IService<object?, SuccessApiResponse<IEnumerable<CommentDto>>>
+    public class GetAllCommentService : IService<SuccessApiResponse<IEnumerable<CommentDto>>>
     {
         private readonly ICommentRepository commentRepository;
 
@@ -15,7 +14,7 @@ namespace TucaAPI.src.Services.Comment
             this.commentRepository = repository;
         }
 
-        public async Task<SuccessApiResponse<IEnumerable<CommentDto>>> ExecuteAsync(object? data)
+        public async Task<SuccessApiResponse<IEnumerable<CommentDto>>> ExecuteAsync()
         {
             var comments = await this.commentRepository.GetAllAsync();
             var formatted = comments.Select(i => i.ToCommentDto());
