@@ -16,6 +16,7 @@ using TucaAPI.src.Providers;
 using TucaAPI.src.Repositories;
 using TucaAPI.src.Services.Account;
 using TucaAPI.src.Services.Portfolio;
+using TucaAPI.src.Services.Stock;
 using TucaAPI.src.Services.UserManagement;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -165,6 +166,11 @@ builder.Services.AddScoped<DeleteUserService>();
 builder.Services.AddScoped<GetStocksFromUserPortfolioService>();
 builder.Services.AddScoped<DeleteUserPortfolioService>();
 builder.Services.AddScoped<AddStockAtUserPortfolioService>();
+builder.Services.AddScoped<CreateStockService>();
+builder.Services.AddScoped<DeleteStockService>();
+builder.Services.AddScoped<UpdateStockService>();
+builder.Services.AddScoped<GetStockByIdService>();
+builder.Services.AddScoped<GetAllStockService>();
 
 var app = builder.Build();
 
