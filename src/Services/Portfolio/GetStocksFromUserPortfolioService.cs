@@ -10,7 +10,7 @@ using TucaAPI.src.Repositories;
 namespace TucaAPI.src.Services.Portfolio
 {
     public class GetStocksFromUserPortfolioService
-        : IService<UserAuthenticatedInfos, SuccessApiResponse<List<Stock>>>
+        : IService<UserAuthenticatedInfos, SuccessApiResponse<List<Models.Stock>>>
     {
         private readonly IPortfolioRepository portfolioRepository;
         private readonly UserManager<AppUser> userManager;
@@ -24,7 +24,9 @@ namespace TucaAPI.src.Services.Portfolio
             this.portfolioRepository = portfolioRepository;
         }
 
-        public async Task<SuccessApiResponse<List<Stock>>> ExecuteAsync(UserAuthenticatedInfos data)
+        public async Task<SuccessApiResponse<List<Models.Stock>>> ExecuteAsync(
+            UserAuthenticatedInfos data
+        )
         {
             var hasUser = await this.userManager.FindByEmailAsync(
                 data.User.GetEmail().GetNonNullable()
@@ -37,7 +39,7 @@ namespace TucaAPI.src.Services.Portfolio
 
             var userPortFolio = await this.portfolioRepository.GetStocksFromUserPortfolio(hasUser);
 
-            return new SuccessApiResponse<List<Stock>> { Content = userPortFolio };
+            return new SuccessApiResponse<List<Models.Stock>> { Content = userPortFolio };
         }
     }
 }

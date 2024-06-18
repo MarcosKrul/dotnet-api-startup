@@ -64,9 +64,9 @@ namespace TucaAPI.src.Repositories
             return this.context.Stocks.AnyAsync(i => i.Id == id);
         }
 
-        public async Task<Stock?> UpdateAsync(int id, UpdateStockRequestDto stockDto)
+        public async Task<Stock?> UpdateAsync(UpdateStockRequestDto stockDto)
         {
-            var stock = await this.GetByIdAsync(id);
+            var stock = await this.GetByIdAsync(stockDto.Id);
 
             if (stock is null)
                 return null;

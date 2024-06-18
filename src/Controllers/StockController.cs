@@ -1,11 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TucaAPI.src.Attributes;
-using TucaAPI.src.Common;
-using TucaAPI.src.Dtos.Common;
 using TucaAPI.src.Dtos.Stock;
-using TucaAPI.src.Mappers;
-using TucaAPI.src.Repositories;
+using TucaAPI.src.Services.Stock;
 
 namespace TucaAPI.src.Controllers
 {
@@ -13,11 +10,11 @@ namespace TucaAPI.src.Controllers
     [ApiController]
     public class StockController : ControllerBase
     {
-        private readonly IStockRepository repository;
+        private readonly IServiceProvider serviceProvider;
 
-        public StockController(IStockRepository repository)
+        public StockController(IServiceProvider serviceProvider)
         {
-            this.repository = repository;
+            this.serviceProvider = serviceProvider;
         }
 
         [HttpGet]
@@ -25,10 +22,12 @@ namespace TucaAPI.src.Controllers
         [ValidateModelState]
         public async Task<IActionResult> GetAll([FromQuery] QueryStockDto query)
         {
-            var stocks = await this.repository.GetAllAsync(query);
-            var formatted = stocks.Select(i => i.ToStockDto()).ToList();
-
-            return Ok(new SuccessApiResponse<List<StockDto>> { Content = formatted });
+            using (var scope = this.serviceProvider.CreateScope())
+            {
+                var service = scope.ServiceProvider.GetRequiredService<GetAllStockService>();
+                var result = await service.ExecuteAsync(query);
+                return Ok(result);
+            }
         }
 
         [HttpGet("{id:int}")]
@@ -36,12 +35,12 @@ namespace TucaAPI.src.Controllers
         [ValidateModelState]
         public async Task<IActionResult> GetById([FromRoute] int id)
         {
-            var stock = await this.repository.GetByIdAsync(id);
-
-            if (stock is null)
-                return NotFound(new ErrorApiResponse(MessageKey.STOCK_NOT_FOUND));
-
-            return Ok(new SuccessApiResponse<StockDto> { Content = stock.ToStockDto() });
+            using (var scope = this.serviceProvider.CreateScope())
+            {
+                var service = scope.ServiceProvider.GetRequiredService<GetStockByIdService>();
+                var result = await service.ExecuteAsync(new GetStockByIdRequestDto { Id = id });
+                return Ok(result);
+            }
         }
 
         [HttpPost]
@@ -49,28 +48,25 @@ namespace TucaAPI.src.Controllers
         [ValidateModelState]
         public async Task<IActionResult> Create([FromBody] CreateStockRequestDto data)
         {
-            var stock = data.ToStockFromCreateDTO();
-
-            await this.repository.CreateAsync(stock);
-
-            return CreatedAtAction(nameof(GetById), new { id = stock.Id }, stock.ToStockDto());
+            using (var scope = this.serviceProvider.CreateScope())
+            {
+                var service = scope.ServiceProvider.GetRequiredService<CreateStockService>();
+                var result = await service.ExecuteAsync(data);
+                return Ok(result);
+            }
         }
 
         [HttpPut]
         [Authorize]
         [ValidateModelState]
-        [Route("{id:int}")]
-        public async Task<IActionResult> Update(
-            [FromRoute] int id,
-            [FromBody] UpdateStockRequestDto data
-        )
+        public async Task<IActionResult> Update([FromBody] UpdateStockRequestDto data)
         {
-            var stock = await this.repository.UpdateAsync(id, data);
-
-            if (stock is null)
-                return NotFound(new ErrorApiResponse(MessageKey.STOCK_NOT_FOUND));
-
-            return Ok(new SuccessApiResponse<StockDto> { Content = stock.ToStockDto() });
+            using (var scope = this.serviceProvider.CreateScope())
+            {
+                var service = scope.ServiceProvider.GetRequiredService<UpdateStockService>();
+                var result = await service.ExecuteAsync(data);
+                return Ok(result);
+            }
         }
 
         [HttpDelete]
@@ -79,14 +75,12 @@ namespace TucaAPI.src.Controllers
         [Route("{id:int}")]
         public async Task<IActionResult> Delete([FromRoute] int id)
         {
-            var stock = await this.repository.GetByIdAsync(id);
-
-            if (stock is null)
-                return NotFound(new ErrorApiResponse(MessageKey.STOCK_NOT_FOUND));
-
-            await this.repository.DeleteAsync(stock);
-
-            return Ok(new ApiResponse { Success = true });
+            using (var scope = this.serviceProvider.CreateScope())
+            {
+                var service = scope.ServiceProvider.GetRequiredService<DeleteStockService>();
+                var result = await service.ExecuteAsync(new DeleteStockRequestDto { Id = id });
+                return Ok(result);
+            }
         }
     }
 }
