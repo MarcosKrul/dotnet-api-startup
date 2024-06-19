@@ -6,6 +6,7 @@ using TucaAPI.src.Exceptions;
 using TucaAPI.src.Extensions;
 using TucaAPI.src.Models;
 using TucaAPI.src.Repositories;
+using TucaAPI.src.Utilities.Extensions;
 
 namespace TucaAPI.src.Services.Portfolio
 {
@@ -29,7 +30,7 @@ namespace TucaAPI.src.Services.Portfolio
         )
         {
             var hasUser = await this.userManager.FindByEmailAsync(
-                data.User.GetEmail().GetNonNullable()
+                data.GetNonNullableUser().GetEmail().GetNonNullable()
             );
             if (hasUser is null)
                 throw new AppException(

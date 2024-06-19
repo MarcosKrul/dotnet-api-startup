@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using TucaAPI.src.Attributes;
 using TucaAPI.src.Dtos.Comment;
 using TucaAPI.src.Services.Comment;
+using TucaAPI.src.Utilities.Extensions;
 
 namespace TucaAPI.src.Controllers
 {
@@ -51,6 +52,7 @@ namespace TucaAPI.src.Controllers
         {
             using (var scope = this.serviceProvider.CreateScope())
             {
+                data.AggregateUser(User);
                 var service = scope.ServiceProvider.GetRequiredService<CreateCommentService>();
                 var result = await service.ExecuteAsync(data);
                 return Ok(result);
@@ -66,6 +68,7 @@ namespace TucaAPI.src.Controllers
             using (var scope = this.serviceProvider.CreateScope())
             {
                 var data = new DeleteCommentRequestDto { Id = id };
+                data.AggregateUser(User);
                 var service = scope.ServiceProvider.GetRequiredService<DeleteCommentService>();
                 var result = await service.ExecuteAsync(data);
                 return Ok(result);
@@ -79,6 +82,7 @@ namespace TucaAPI.src.Controllers
         {
             using (var scope = this.serviceProvider.CreateScope())
             {
+                data.AggregateUser(User);
                 var service = scope.ServiceProvider.GetRequiredService<UpdateCommentService>();
                 var result = await service.ExecuteAsync(data);
                 return Ok(result);

@@ -8,6 +8,7 @@ using TucaAPI.src.Extensions;
 using TucaAPI.src.Mappers;
 using TucaAPI.src.Models;
 using TucaAPI.src.Repositories;
+using TucaAPI.src.Utilities.Extensions;
 
 namespace TucaAPI.src.Services.Comment
 {
@@ -25,7 +26,7 @@ namespace TucaAPI.src.Services.Comment
 
         public async Task<SuccessApiResponse<CommentDto>> ExecuteAsync(UpdateCommentRequestDto data)
         {
-            var email = data.User.GetEmail();
+            var email = data.GetNonNullableUser().GetEmail();
             var hasUser = await this.userManager.FindByEmailAsync(email.GetNonNullable());
             if (hasUser is null)
                 throw new AppException(
