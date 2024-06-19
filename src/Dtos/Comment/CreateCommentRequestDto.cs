@@ -1,9 +1,13 @@
 using System.ComponentModel.DataAnnotations;
+using TucaAPI.src.Dtos.Common;
 
 namespace TucaAPI.src.Dtos.Comment
 {
-    public class CreateCommentRequestDto
+    public class CreateCommentRequestDto : UserAuthenticatedInfos
     {
+        [Required]
+        public int StockId { get; set; }
+
         [Required]
         [MinLength(5, ErrorMessage = "Title must be 5 characters")]
         [MaxLength(180, ErrorMessage = "Title cannot be over 180 characters")]
