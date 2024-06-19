@@ -1,15 +1,8 @@
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using TucaAPI.Extensions;
 using TucaAPI.src.Attributes;
-using TucaAPI.src.Common;
 using TucaAPI.src.Dtos.Comment;
-using TucaAPI.src.Dtos.Common;
-using TucaAPI.src.Extensions;
-using TucaAPI.src.Mappers;
-using TucaAPI.src.Models;
-using TucaAPI.src.Repositories;
+using TucaAPI.src.Services.Comment;
 
 namespace TucaAPI.src.Controllers
 {
@@ -17,19 +10,11 @@ namespace TucaAPI.src.Controllers
     [Route("api/[controller]")]
     public class CommentController : ControllerBase
     {
-        private readonly ICommentRepository commentRepository;
-        private readonly IStockRepository stockRepository;
-        private readonly UserManager<AppUser> userManager;
+        private readonly IServiceProvider serviceProvider;
 
-        public CommentController(
-            ICommentRepository repository,
-            IStockRepository stockRepository,
-            UserManager<AppUser> userManager
-        )
+        public CommentController(IServiceProvider serviceProvider)
         {
-            this.commentRepository = repository;
-            this.stockRepository = stockRepository;
-            this.userManager = userManager;
+            this.serviceProvider = serviceProvider;
         }
 
         [HttpGet]
@@ -37,10 +22,12 @@ namespace TucaAPI.src.Controllers
         [ValidateModelState]
         public async Task<IActionResult> GetAll()
         {
-            var comments = await this.commentRepository.GetAllAsync();
-            var formatted = comments.Select(i => i.ToCommentDto());
-
-            return Ok(new SuccessApiResponse<IEnumerable<CommentDto>> { Content = formatted });
+            using (var scope = this.serviceProvider.CreateScope())
+            {
+                var service = scope.ServiceProvider.GetRequiredService<GetAllCommentService>();
+                var result = await service.ExecuteAsync();
+                return Ok(result);
+            }
         }
 
         [HttpGet]
@@ -49,40 +36,25 @@ namespace TucaAPI.src.Controllers
         [Route("{id:int}")]
         public async Task<IActionResult> GetById([FromRoute] int id)
         {
-            var comment = await this.commentRepository.GetByIdAsync(id);
-
-            if (comment is null)
-                return NotFound(new ErrorApiResponse(MessageKey.COMMENT_NOT_FOUND));
-
-            return Ok(new SuccessApiResponse<CommentDto> { Content = comment.ToCommentDto() });
+            using (var scope = this.serviceProvider.CreateScope())
+            {
+                var service = scope.ServiceProvider.GetRequiredService<GetCommentByIdService>();
+                var result = await service.ExecuteAsync(new GetCommentByIdRequestDto { Id = id });
+                return Ok(result);
+            }
         }
 
         [HttpPost]
         [Authorize]
         [ValidateModelState]
-        [Route("{stockId:int}")]
-        public async Task<IActionResult> Create(
-            [FromRoute] int stockId,
-            [FromBody] CreateCommentRequestDto data
-        )
+        public async Task<IActionResult> Create([FromBody] CreateCommentRequestDto data)
         {
-            if (!await this.stockRepository.StockExistsAsync(stockId))
-                return NotFound(new ErrorApiResponse(MessageKey.STOCK_NOT_FOUND));
-
-            var email = User.GetEmail();
-            var hasUser = await this.userManager.FindByEmailAsync(email.GetNonNullable());
-            if (hasUser is null)
-                return Unauthorized(new ErrorApiResponse(MessageKey.USER_NOT_FOUND));
-
-            var comment = data.ToCommentFromRequestDto(stockId, hasUser.Id);
-
-            await this.commentRepository.CreateAsync(comment);
-
-            return CreatedAtAction(
-                nameof(GetById),
-                new { id = comment.Id },
-                comment.ToCommentDto()
-            );
+            using (var scope = this.serviceProvider.CreateScope())
+            {
+                var service = scope.ServiceProvider.GetRequiredService<CreateCommentService>();
+                var result = await service.ExecuteAsync(data);
+                return Ok(result);
+            }
         }
 
         [HttpDelete]
@@ -91,44 +63,26 @@ namespace TucaAPI.src.Controllers
         [Route("{id:int}")]
         public async Task<IActionResult> Delete([FromRoute] int id)
         {
-            var email = User.GetEmail();
-            var hasUser = await this.userManager.FindByEmailAsync(email.GetNonNullable());
-            if (hasUser is null)
-                return Unauthorized(new ErrorApiResponse(MessageKey.USER_NOT_FOUND));
-
-            var comment = await this.commentRepository.GetByIdAsync(id);
-
-            if (comment is null)
-                return NotFound(new ErrorApiResponse(MessageKey.COMMENT_NOT_FOUND));
-
-            if (comment.AppUserId != hasUser.Id)
-                return Unauthorized(new ErrorApiResponse(MessageKey.USER_NOT_FOUND));
-
-            await this.commentRepository.DeleteAsync(comment);
-
-            return Ok(new ApiResponse { Success = true });
+            using (var scope = this.serviceProvider.CreateScope())
+            {
+                var data = new DeleteCommentRequestDto { Id = id };
+                var service = scope.ServiceProvider.GetRequiredService<DeleteCommentService>();
+                var result = await service.ExecuteAsync(data);
+                return Ok(result);
+            }
         }
 
         [HttpPut]
         [Authorize]
         [ValidateModelState]
-        [Route("{id:int}")]
-        public async Task<IActionResult> Update(
-            [FromRoute] int id,
-            [FromBody] UpdateCommentRequestDto data
-        )
+        public async Task<IActionResult> Update([FromBody] UpdateCommentRequestDto data)
         {
-            var email = User.GetEmail();
-            var hasUser = await this.userManager.FindByEmailAsync(email.GetNonNullable());
-            if (hasUser is null)
-                return Unauthorized(new ErrorApiResponse(MessageKey.USER_NOT_FOUND));
-
-            var comment = await this.commentRepository.UpdateAsync(id, data, hasUser);
-
-            if (comment is null)
-                return NotFound(new ErrorApiResponse(MessageKey.COMMENT_NOT_FOUND));
-
-            return Ok(new SuccessApiResponse<CommentDto> { Content = comment.ToCommentDto() });
+            using (var scope = this.serviceProvider.CreateScope())
+            {
+                var service = scope.ServiceProvider.GetRequiredService<UpdateCommentService>();
+                var result = await service.ExecuteAsync(data);
+                return Ok(result);
+            }
         }
     }
 }

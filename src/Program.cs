@@ -15,6 +15,7 @@ using TucaAPI.src.Provider;
 using TucaAPI.src.Providers;
 using TucaAPI.src.Repositories;
 using TucaAPI.src.Services.Account;
+using TucaAPI.src.Services.Comment;
 using TucaAPI.src.Services.Portfolio;
 using TucaAPI.src.Services.Stock;
 using TucaAPI.src.Services.UserManagement;
@@ -171,6 +172,11 @@ builder.Services.AddScoped<DeleteStockService>();
 builder.Services.AddScoped<UpdateStockService>();
 builder.Services.AddScoped<GetStockByIdService>();
 builder.Services.AddScoped<GetAllStockService>();
+builder.Services.AddScoped<CreateCommentService>();
+builder.Services.AddScoped<DeleteCommentService>();
+builder.Services.AddScoped<GetAllCommentService>();
+builder.Services.AddScoped<GetCommentByIdService>();
+builder.Services.AddScoped<UpdateCommentService>();
 
 var app = builder.Build();
 
