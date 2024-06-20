@@ -11,7 +11,7 @@ using TucaAPI.src.Providers;
 
 namespace TucaAPI.src.Services.Account
 {
-    public class RegisterAccountService : IService<RegisterDto, ApiResponse>
+    public class RegisterAccountService : IService<RegisterRequestDto, ApiResponse>
     {
         private readonly UserManager<AppUser> userManager;
         private readonly IMailSenderProvider mailProvider;
@@ -28,7 +28,7 @@ namespace TucaAPI.src.Services.Account
             this.templateRenderingProvider = templateRenderingProvider;
         }
 
-        public async Task<ApiResponse> ExecuteAsync(RegisterDto data)
+        public async Task<ApiResponse> ExecuteAsync(RegisterRequestDto data)
         {
             var appUser = new AppUser { UserName = data.Username, Email = data.Email };
 

@@ -19,7 +19,7 @@ namespace TucaAPI.src.Controllers
         [HttpPost]
         [Route("register")]
         [ValidateModelState]
-        public async Task<IActionResult> Register([FromBody] RegisterDto data)
+        public async Task<IActionResult> Register([FromBody] RegisterRequestDto data)
         {
             using (var scope = this.serviceProvider.CreateScope())
             {
@@ -32,7 +32,7 @@ namespace TucaAPI.src.Controllers
         [HttpPost]
         [Route("confirm")]
         [ValidateModelState]
-        public async Task<IActionResult> Confirm([FromBody] ConfirmDto data)
+        public async Task<IActionResult> Confirm([FromBody] ConfirmRequestDto data)
         {
             using (var scope = this.serviceProvider.CreateScope())
             {
@@ -45,7 +45,7 @@ namespace TucaAPI.src.Controllers
         [HttpPost]
         [Route("login")]
         [ValidateModelState]
-        public async Task<IActionResult> Login([FromBody] LoginDto data)
+        public async Task<IActionResult> Login([FromBody] LoginRequestDto data)
         {
             using (var scope = this.serviceProvider.CreateScope())
             {

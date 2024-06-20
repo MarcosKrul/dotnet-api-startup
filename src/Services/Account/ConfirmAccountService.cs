@@ -12,7 +12,7 @@ using TucaAPI.src.Providers;
 namespace TucaAPI.src.Services.Account
 {
     public class ConfirmAccountService
-        : IService<ConfirmDto, SuccessApiResponse<AuthenticatedUserDto>>
+        : IService<ConfirmRequestDto, SuccessApiResponse<AuthenticatedUserDto>>
     {
         private readonly UserManager<AppUser> userManager;
         private readonly ITokenProvider tokenProvider;
@@ -23,7 +23,9 @@ namespace TucaAPI.src.Services.Account
             this.tokenProvider = tokenProvider;
         }
 
-        public async Task<SuccessApiResponse<AuthenticatedUserDto>> ExecuteAsync(ConfirmDto data)
+        public async Task<SuccessApiResponse<AuthenticatedUserDto>> ExecuteAsync(
+            ConfirmRequestDto data
+        )
         {
             var hasUser = await this.userManager.Users.FirstOrDefaultAsync(i =>
                 i.Email == data.Email

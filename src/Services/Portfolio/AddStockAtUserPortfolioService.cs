@@ -11,7 +11,8 @@ using TucaAPI.src.Utilities.Extensions;
 
 namespace TucaAPI.src.Services.Portfolio
 {
-    public class AddStockAtUserPortfolioService : IService<AddStockAtUserPortfolioDto, ApiResponse>
+    public class AddStockAtUserPortfolioService
+        : IService<AddStockAtUserPortfolioRequestDto, ApiResponse>
     {
         private readonly IStockRepository stockRepository;
         private readonly IPortfolioRepository portfolioRepository;
@@ -28,7 +29,7 @@ namespace TucaAPI.src.Services.Portfolio
             this.portfolioRepository = portfolioRepository;
         }
 
-        public async Task<ApiResponse> ExecuteAsync(AddStockAtUserPortfolioDto data)
+        public async Task<ApiResponse> ExecuteAsync(AddStockAtUserPortfolioRequestDto data)
         {
             var hasUser = await this.userManager.FindByEmailAsync(
                 data.GetNonNullableUser().GetEmail().GetNonNullable()

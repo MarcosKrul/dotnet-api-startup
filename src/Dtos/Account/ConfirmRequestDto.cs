@@ -2,19 +2,13 @@ using System.ComponentModel.DataAnnotations;
 
 namespace TucaAPI.src.Dtos.Account
 {
-    public class RegisterDto
+    public class ConfirmRequestDto
     {
-        [Required]
-        public string? Username { get; set; }
-
         [Required]
         [EmailAddress]
         public string? Email { get; set; }
 
         [Required]
-        public string? Password { get; set; }
-
-        [Required]
-        public string? Url { get; set; }
+        public string? Token { get; set; }
     }
 }

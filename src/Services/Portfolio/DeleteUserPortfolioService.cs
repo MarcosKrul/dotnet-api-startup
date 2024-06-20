@@ -11,7 +11,7 @@ using TucaAPI.src.Utilities.Extensions;
 
 namespace TucaAPI.src.Services.Portfolio
 {
-    public class DeleteUserPortfolioService : IService<DeleteUserPortfolioDto, ApiResponse>
+    public class DeleteUserPortfolioService : IService<DeleteUserPortfolioRequestDto, ApiResponse>
     {
         private readonly IPortfolioRepository portfolioRepository;
         private readonly UserManager<AppUser> userManager;
@@ -25,7 +25,7 @@ namespace TucaAPI.src.Services.Portfolio
             this.portfolioRepository = portfolioRepository;
         }
 
-        public async Task<ApiResponse> ExecuteAsync(DeleteUserPortfolioDto data)
+        public async Task<ApiResponse> ExecuteAsync(DeleteUserPortfolioRequestDto data)
         {
             var hasUser = await this.userManager.FindByEmailAsync(
                 data.GetNonNullableUser().GetEmail().GetNonNullable()

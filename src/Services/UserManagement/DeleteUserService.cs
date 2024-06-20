@@ -7,7 +7,7 @@ using TucaAPI.src.Models;
 
 namespace TucaAPI.src.Services.UserManagement
 {
-    public class DeleteUserService : IService<DeleteUserDto, ApiResponse>
+    public class DeleteUserService : IService<DeleteUserRequestDto, ApiResponse>
     {
         private readonly UserManager<AppUser> userManager;
 
@@ -16,7 +16,7 @@ namespace TucaAPI.src.Services.UserManagement
             this.userManager = userManager;
         }
 
-        public async Task<ApiResponse> ExecuteAsync(DeleteUserDto data)
+        public async Task<ApiResponse> ExecuteAsync(DeleteUserRequestDto data)
         {
             var hasUser = await this.userManager.FindByIdAsync(data.Id);
             if (hasUser is null)

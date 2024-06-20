@@ -27,7 +27,7 @@ namespace TucaAPI.src.Controllers
             using (var scope = this.serviceProvider.CreateScope())
             {
                 var service = scope.ServiceProvider.GetRequiredService<DeleteUserService>();
-                var result = await service.ExecuteAsync(new DeleteUserDto { Id = id });
+                var result = await service.ExecuteAsync(new DeleteUserRequestDto { Id = id });
                 return Ok(result);
             }
         }

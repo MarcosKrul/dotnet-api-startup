@@ -10,7 +10,7 @@ using TucaAPI.src.Providers;
 
 namespace TucaAPI.src.Services.Account
 {
-    public class LoginService : IService<LoginDto, SuccessApiResponse<AuthenticatedUserDto>>
+    public class LoginService : IService<LoginRequestDto, SuccessApiResponse<AuthenticatedUserDto>>
     {
         private readonly UserManager<AppUser> userManager;
         private readonly ITokenProvider tokenProvider;
@@ -27,7 +27,9 @@ namespace TucaAPI.src.Services.Account
             this.signInManager = signInManager;
         }
 
-        public async Task<SuccessApiResponse<AuthenticatedUserDto>> ExecuteAsync(LoginDto data)
+        public async Task<SuccessApiResponse<AuthenticatedUserDto>> ExecuteAsync(
+            LoginRequestDto data
+        )
         {
             var unauthorizedError = new AppException(
                 StatusCodes.Status401Unauthorized,

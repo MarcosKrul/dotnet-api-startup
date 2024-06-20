@@ -43,7 +43,7 @@ namespace TucaAPI.src.Controllers
                 var service =
                     scope.ServiceProvider.GetRequiredService<AddStockAtUserPortfolioService>();
                 var result = await service.ExecuteAsync(
-                    new AddStockAtUserPortfolioDto { User = User, StockId = stockId }
+                    new AddStockAtUserPortfolioRequestDto { User = User, StockId = stockId }
                 );
                 return Ok(result);
             }
@@ -60,7 +60,7 @@ namespace TucaAPI.src.Controllers
                 var service =
                     scope.ServiceProvider.GetRequiredService<DeleteUserPortfolioService>();
                 var result = await service.ExecuteAsync(
-                    new DeleteUserPortfolioDto { User = User, StockId = stockId }
+                    new DeleteUserPortfolioRequestDto { User = User, StockId = stockId }
                 );
                 return Ok(result);
             }
