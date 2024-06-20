@@ -24,20 +24,16 @@ namespace TucaAPI.src.Services.Comment
 
         public async Task<ApiResponse> ExecuteAsync(DeleteCommentRequestDto data)
         {
-            var email = data.GetNonNullableUser().GetEmail();
-            var hasUser = await this.userManager.FindByEmailAsync(email.GetNonNullable());
-            if (hasUser is null)
-                throw new AppException(
-                    StatusCodes.Status401Unauthorized,
-                    MessageKey.USER_NOT_FOUND
-                );
+            var user = await this.userManager.FindNonNullableUserAsync(
+                data.GetNonNullableUser().GetEmail().GetNonNullable()
+            );
 
             var comment = await this.commentRepository.GetByIdAsync(data.Id);
 
             if (comment is null)
                 throw new AppException(StatusCodes.Status404NotFound, MessageKey.COMMENT_NOT_FOUND);
 
-            if (comment.AppUserId != hasUser.Id)
+            if (comment.AppUserId != user.Id)
                 throw new AppException(
                     StatusCodes.Status401Unauthorized,
                     MessageKey.USER_NOT_FOUND

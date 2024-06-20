@@ -27,19 +27,11 @@ namespace TucaAPI.src.Services.Portfolio
 
         public async Task<ApiResponse> ExecuteAsync(DeleteUserPortfolioRequestDto data)
         {
-            var hasUser = await this.userManager.FindByEmailAsync(
+            var user = await this.userManager.FindNonNullableUserAsync(
                 data.GetNonNullableUser().GetEmail().GetNonNullable()
             );
-            if (hasUser is null)
-                throw new AppException(
-                    StatusCodes.Status401Unauthorized,
-                    MessageKey.USER_NOT_FOUND
-                );
 
-            var userPortfolio = await this.portfolioRepository.GetUserPortfolio(
-                data.StockId,
-                hasUser
-            );
+            var userPortfolio = await this.portfolioRepository.GetUserPortfolio(data.StockId, user);
 
             if (userPortfolio is null)
                 throw new AppException(

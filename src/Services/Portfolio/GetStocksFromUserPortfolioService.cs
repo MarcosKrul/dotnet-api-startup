@@ -1,8 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using TucaAPI.Extensions;
-using TucaAPI.src.Common;
 using TucaAPI.src.Dtos.Common;
-using TucaAPI.src.Exceptions;
 using TucaAPI.src.Extensions;
 using TucaAPI.src.Models;
 using TucaAPI.src.Repositories;
@@ -29,16 +27,11 @@ namespace TucaAPI.src.Services.Portfolio
             UserAuthenticatedInfos data
         )
         {
-            var hasUser = await this.userManager.FindByEmailAsync(
+            var user = await this.userManager.FindNonNullableUserAsync(
                 data.GetNonNullableUser().GetEmail().GetNonNullable()
             );
-            if (hasUser is null)
-                throw new AppException(
-                    StatusCodes.Status401Unauthorized,
-                    MessageKey.USER_NOT_FOUND
-                );
 
-            var userPortFolio = await this.portfolioRepository.GetStocksFromUserPortfolio(hasUser);
+            var userPortFolio = await this.portfolioRepository.GetStocksFromUserPortfolio(user);
 
             return new SuccessApiResponse<List<Models.Stock>> { Content = userPortFolio };
         }

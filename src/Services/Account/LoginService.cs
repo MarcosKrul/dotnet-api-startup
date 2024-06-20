@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using TucaAPI.src.Common;
 using TucaAPI.src.Dtos.Account;
 using TucaAPI.src.Dtos.Common;
@@ -7,6 +6,7 @@ using TucaAPI.src.Exceptions;
 using TucaAPI.src.Extensions;
 using TucaAPI.src.Models;
 using TucaAPI.src.Providers;
+using TucaAPI.src.Utilities.Extensions;
 
 namespace TucaAPI.src.Services.Account
 {
@@ -31,20 +31,13 @@ namespace TucaAPI.src.Services.Account
             LoginRequestDto data
         )
         {
-            var unauthorizedError = new AppException(
-                StatusCodes.Status401Unauthorized,
+            var user = await this.userManager.FindNonNullableUserAsync(
+                data.Email.GetNonNullable(),
                 MessageKey.INVALID_CREDENTIALS
             );
 
-            var hasUser = await this.userManager.Users.FirstOrDefaultAsync(i =>
-                i.Email == data.Email
-            );
-
-            if (hasUser is null)
-                throw unauthorizedError;
-
             var result = await this.signInManager.CheckPasswordSignInAsync(
-                hasUser,
+                user,
                 data.Password.GetNonNullable(),
                 true
             );
@@ -56,16 +49,20 @@ namespace TucaAPI.src.Services.Account
                 );
 
             if (!result.Succeeded)
-                throw unauthorizedError;
+                throw new AppException(
+                    StatusCodes.Status401Unauthorized,
+                    MessageKey.INVALID_CREDENTIALS
+                );
+            ;
 
-            var token = await this.tokenProvider.CreateAsync(hasUser);
+            var token = await this.tokenProvider.CreateAsync(user);
 
             return new SuccessApiResponse<AuthenticatedUserDto>
             {
                 Content = new AuthenticatedUserDto
                 {
-                    UserName = hasUser.UserName.GetNonNullable(),
-                    Email = hasUser.Email.GetNonNullable(),
+                    UserName = user.UserName.GetNonNullable(),
+                    Email = user.Email.GetNonNullable(),
                     Token = token
                 }
             };

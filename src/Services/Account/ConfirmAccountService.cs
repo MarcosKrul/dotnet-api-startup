@@ -1,6 +1,4 @@
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using TucaAPI.src.Common;
 using TucaAPI.src.Dtos.Account;
 using TucaAPI.src.Dtos.Common;
 using TucaAPI.src.Exceptions;
@@ -8,6 +6,7 @@ using TucaAPI.src.Extensions;
 using TucaAPI.src.Mappers;
 using TucaAPI.src.Models;
 using TucaAPI.src.Providers;
+using TucaAPI.src.Utilities.Extensions;
 
 namespace TucaAPI.src.Services.Account
 {
@@ -27,18 +26,10 @@ namespace TucaAPI.src.Services.Account
             ConfirmRequestDto data
         )
         {
-            var hasUser = await this.userManager.Users.FirstOrDefaultAsync(i =>
-                i.Email == data.Email
-            );
-
-            if (hasUser is null)
-                throw new AppException(
-                    StatusCodes.Status401Unauthorized,
-                    MessageKey.USER_NOT_FOUND
-                );
+            var user = await this.userManager.FindNonNullableUserAsync(data.Email.GetNonNullable());
 
             var result = await this.userManager.ConfirmEmailAsync(
-                hasUser,
+                user,
                 data.Token.GetNonNullable()
             );
 
@@ -48,14 +39,14 @@ namespace TucaAPI.src.Services.Account
                     result.Errors.Select(item => item.ToAppErrorDescriptor())
                 );
 
-            var token = await this.tokenProvider.CreateAsync(hasUser);
+            var token = await this.tokenProvider.CreateAsync(user);
 
             return new SuccessApiResponse<AuthenticatedUserDto>
             {
                 Content = new AuthenticatedUserDto
                 {
-                    UserName = hasUser.UserName.GetNonNullable(),
-                    Email = hasUser.Email.GetNonNullable(),
+                    UserName = user.UserName.GetNonNullable(),
+                    Email = user.Email.GetNonNullable(),
                     Token = token
                 }
             };

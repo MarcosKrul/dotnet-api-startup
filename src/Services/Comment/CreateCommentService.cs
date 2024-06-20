@@ -35,15 +35,11 @@ namespace TucaAPI.src.Services.Comment
             if (!await this.stockRepository.StockExistsAsync(data.StockId))
                 throw new AppException(StatusCodes.Status404NotFound, MessageKey.STOCK_NOT_FOUND);
 
-            var email = data.GetNonNullableUser().GetEmail();
-            var hasUser = await this.userManager.FindByEmailAsync(email.GetNonNullable());
-            if (hasUser is null)
-                throw new AppException(
-                    StatusCodes.Status401Unauthorized,
-                    MessageKey.USER_NOT_FOUND
-                );
+            var user = await this.userManager.FindNonNullableUserAsync(
+                data.GetNonNullableUser().GetEmail().GetNonNullable()
+            );
 
-            var comment = data.ToCommentFromRequestDto(data.StockId, hasUser.Id);
+            var comment = data.ToCommentFromRequestDto(data.StockId, user.Id);
 
             await this.commentRepository.CreateAsync(comment);
 

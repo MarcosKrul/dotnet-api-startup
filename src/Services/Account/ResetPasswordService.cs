@@ -1,11 +1,12 @@
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using TucaAPI.src.Common;
 using TucaAPI.src.Dtos.Account;
 using TucaAPI.src.Dtos.Common;
 using TucaAPI.src.Exceptions;
+using TucaAPI.src.Extensions;
 using TucaAPI.src.Mappers;
 using TucaAPI.src.Models;
+using TucaAPI.src.Utilities.Extensions;
 
 namespace TucaAPI.src.Services.Account
 {
@@ -20,21 +21,12 @@ namespace TucaAPI.src.Services.Account
 
         public async Task<ApiResponse> ExecuteAsync(ResetPasswordRequestDto data)
         {
-            var hasUser = await this.userManager.Users.FirstOrDefaultAsync(i =>
-                i.Email == data.Email
+            var user = await this.userManager.FindNonNullableUserAsync(
+                data.Email.GetNonNullable(),
+                MessageKey.INVALID_CREDENTIALS
             );
 
-            if (hasUser is null)
-                throw new AppException(
-                    StatusCodes.Status401Unauthorized,
-                    MessageKey.INVALID_CREDENTIALS
-                );
-
-            var result = await this.userManager.ResetPasswordAsync(
-                hasUser,
-                data.Token,
-                data.Password
-            );
+            var result = await this.userManager.ResetPasswordAsync(user, data.Token, data.Password);
 
             if (!result.Succeeded)
                 throw new AppException(

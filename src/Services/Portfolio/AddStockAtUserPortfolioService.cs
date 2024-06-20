@@ -31,21 +31,16 @@ namespace TucaAPI.src.Services.Portfolio
 
         public async Task<ApiResponse> ExecuteAsync(AddStockAtUserPortfolioRequestDto data)
         {
-            var hasUser = await this.userManager.FindByEmailAsync(
+            var user = await this.userManager.FindNonNullableUserAsync(
                 data.GetNonNullableUser().GetEmail().GetNonNullable()
             );
-            if (hasUser is null)
-                throw new AppException(
-                    StatusCodes.Status401Unauthorized,
-                    MessageKey.USER_NOT_FOUND
-                );
 
             var stock = await this.stockRepository.GetByIdAsync(data.StockId);
 
             if (stock is null)
                 throw new AppException(StatusCodes.Status400BadRequest, MessageKey.STOCK_NOT_FOUND);
 
-            var userPortfolio = await this.portfolioRepository.GetStocksFromUserPortfolio(hasUser);
+            var userPortfolio = await this.portfolioRepository.GetStocksFromUserPortfolio(user);
 
             if (userPortfolio.Any(i => i.Id == stock.Id))
                 throw new AppException(
@@ -53,11 +48,7 @@ namespace TucaAPI.src.Services.Portfolio
                     MessageKey.CANNOT_ADD_SAME_STOCK
                 );
 
-            var portfolioModel = new Models.Portfolio
-            {
-                StockId = stock.Id,
-                AppUserId = hasUser.Id
-            };
+            var portfolioModel = new Models.Portfolio { StockId = stock.Id, AppUserId = user.Id };
 
             await this.portfolioRepository.CreateAsync(portfolioModel);
 
