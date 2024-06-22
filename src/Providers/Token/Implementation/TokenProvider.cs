@@ -4,9 +4,7 @@ using System.Text;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using TucaAPI.src.Common;
-using TucaAPI.src.Common;
 using TucaAPI.src.Models;
-using TucaAPI.src.Providers;
 
 namespace TucaAPI.src.Providers
 {
