@@ -20,6 +20,7 @@ using TucaAPI.src.Services.Account;
 using TucaAPI.src.Services.Comment;
 using TucaAPI.src.Services.Portfolio;
 using TucaAPI.src.Services.Stock;
+using TucaAPI.src.Services.TwoFactorAuthentication;
 using TucaAPI.src.Services.UserManagement;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -180,6 +181,7 @@ builder.Services.AddScoped<DeleteCommentService>();
 builder.Services.AddScoped<GetAllCommentService>();
 builder.Services.AddScoped<GetCommentByIdService>();
 builder.Services.AddScoped<UpdateCommentService>();
+builder.Services.AddScoped<GetGoogleAuthenticatorQRCodeService>();
 
 var app = builder.Build();
 
