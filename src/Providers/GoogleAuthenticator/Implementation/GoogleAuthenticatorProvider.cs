@@ -28,5 +28,10 @@ namespace TucaAPI.src.Providers.GoogleAuthenticator.Implementation
                 Token = token
             };
         }
+
+        public bool ValidatePin(string secretKey, string pin)
+        {
+            return this.twoFactorAuthenticator.ValidateTwoFactorPIN(secretKey, pin);
+        }
     }
 }
