@@ -18,10 +18,10 @@ namespace TucaAPI.src.Controllers
             this.serviceProvider = serviceProvider;
         }
 
-        [HttpGet("enableGoogleAuthenticator2FA")]
+        [HttpPost("enableGoogleAuthenticator2FA")]
         [Authorize]
         [ValidateModelState]
-        public async Task<IActionResult> GetById()
+        public async Task<IActionResult> EnableGoogleAuthenticator2FA()
         {
             using (var scope = this.serviceProvider.CreateScope())
             {
