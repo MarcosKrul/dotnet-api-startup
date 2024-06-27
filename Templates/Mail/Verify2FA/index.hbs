@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .email-container {
+            max-width: 600px;
+            margin: 20px auto;
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            border: 1px solid #dddddd;
+        }
+        .header {
+            text-align: center;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #dddddd;
+        }
+        .header h1 {
+            color: #333333;
+            margin: 0;
+        }
+        .content {
+            padding: 20px 0;
+            text-align: center;
+            color: #555555;
+        }
+        .content p {
+            margin: 10px 0;
+            line-height: 1.6;
+        }
+        .button-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .confirm-button {
+            background-color: #007bff;
+            color: #ffffff;
+            padding: 15px 25px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 16px;
+            display: inline-block;
+        }
+        .confirm-button:hover {
+            background-color: #0056b3;
+        }
+        .link {
+            display: block;
+            margin-top: 10px;
+            color: #007bff;
+            text-decoration: none;
+            word-break: break-all;
+        }
+        .link:hover {
+            text-decoration: underline;
+        }
+        .qr-code {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .qr-code img {
+            max-width: 100%;
+            height: auto;
+        }
+        .footer {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid #dddddd;
+            font-size: 12px;
+            color: #888888;
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <div class="header">
+            <h1>Confirmação de Autenticação em Dois Fatores</h1>
+        </div>
+        <div class="content">
+            <p>Olá, {{userName}}!</p>
+            <p>Para concluir a configuração de autenticação em dois fatores na sua conta, utilize o QR code abaixo no aplicativo Google Authenticator:</p>
+            <div class="qr-code">
+                <img src="{{qrCodeBase64}}" alt="QR Code" />
+            </div>
+        </div>
+        <div class="footer">
+            <p>&copy; 2024 Tuca API. Todos os direitos reservados.</p>
+        </div>
+    </div>
+</body>
+</html>
