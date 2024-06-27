@@ -19,7 +19,7 @@ namespace TucaAPI.src.Controllers
             this.serviceProvider = serviceProvider;
         }
 
-        [HttpPost("enableGoogleAuthenticator2FA")]
+        [HttpPost("enable/googleAuthenticator")]
         [Authorize]
         [ValidateModelState]
         public async Task<IActionResult> EnableGoogleAuthenticator2FA()
@@ -36,7 +36,7 @@ namespace TucaAPI.src.Controllers
         }
 
         [HttpPost]
-        [Route("loginGoogleAuthenticator2FA")]
+        [Route("login/googleAuthenticator")]
         [ValidateModelState]
         public async Task<IActionResult> Login(
             [FromBody] LoginGoogleAuthenticator2FARequestDto data
