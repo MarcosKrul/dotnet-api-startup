@@ -49,6 +49,16 @@ namespace TucaAPI.src.Services.TwoFactorAuthentication
 
             var infos = this.googleAuthenticatorProvider.GetUserSetupInfos(email);
 
+            user.TwoFactorSecret = infos.Token;
+            user.TwoFactorEnabled = true;
+            var result = await this.userManager.UpdateAsync(user);
+
+            if (!result.Succeeded)
+                throw new AppException(
+                    StatusCodes.Status500InternalServerError,
+                    MessageKey.ERROR_UPDATE_USER
+                );
+
             var userName = user.UserName.GetNonNullable();
 
             var templateWriter = this.templateRenderingProvider.Render(

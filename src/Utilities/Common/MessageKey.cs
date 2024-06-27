@@ -15,5 +15,8 @@ namespace TucaAPI.src.Common
         public const string INTERNAL_SERVER_ERROR = "INTERNAL_SERVER_ERROR";
         public const string STRING_NON_NULLABLE = "STRING_NON_NULLABLE";
         public const string INVALID_INPUT = "INVALID_INPUT";
+        public const string TWO_FACTOR_ALREADY_ENABLED = "TWO_FACTOR_ALREADY_ENABLED";
+        public const string ERROR_UPDATE_USER = "ERROR_UPDATE_USER";
+        public const string TWO_FACTOR_REQUIRED = "TWO_FACTOR_REQUIRED";
     }
 }
