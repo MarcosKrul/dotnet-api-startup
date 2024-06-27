@@ -21,7 +21,7 @@ namespace TucaAPI.src.Controllers
         [HttpGet("getGoogleAuthenticatorQRCode")]
         [Authorize]
         [ValidateModelState]
-        public async Task<IActionResult> GetById([FromRoute] int id)
+        public async Task<IActionResult> GetById()
         {
             using (var scope = this.serviceProvider.CreateScope())
             {
