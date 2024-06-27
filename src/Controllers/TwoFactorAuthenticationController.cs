@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TucaAPI.src.Attributes;
 using TucaAPI.src.Dtos.Common;
+using TucaAPI.src.Dtos.TwoFactorAuthentication;
 using TucaAPI.src.Services.TwoFactorAuthentication;
 using TucaAPI.src.Utilities.Extensions;
 
@@ -29,6 +30,22 @@ namespace TucaAPI.src.Controllers
                 data.AggregateUser(User);
                 var service =
                     scope.ServiceProvider.GetRequiredService<EnableGoogleAuthenticator2FAService>();
+                var result = await service.ExecuteAsync(data);
+                return Ok(result);
+            }
+        }
+
+        [HttpPost]
+        [Route("loginGoogleAuthenticator2FA")]
+        [ValidateModelState]
+        public async Task<IActionResult> Login(
+            [FromBody] LoginGoogleAuthenticator2FARequestDto data
+        )
+        {
+            using (var scope = this.serviceProvider.CreateScope())
+            {
+                var service =
+                    scope.ServiceProvider.GetRequiredService<LoginGoogleAuthenticator2FAService>();
                 var result = await service.ExecuteAsync(data);
                 return Ok(result);
             }

@@ -183,6 +183,7 @@ builder.Services.AddScoped<GetAllCommentService>();
 builder.Services.AddScoped<GetCommentByIdService>();
 builder.Services.AddScoped<UpdateCommentService>();
 builder.Services.AddScoped<EnableGoogleAuthenticator2FAService>();
+builder.Services.AddScoped<LoginGoogleAuthenticator2FAService>();
 
 var app = builder.Build();
 
