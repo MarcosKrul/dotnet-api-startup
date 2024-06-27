@@ -10,7 +10,8 @@ using TucaAPI.src.Utilities.Extensions;
 
 namespace TucaAPI.src.Services.Account
 {
-    public class LoginService : IService<LoginRequestDto, SuccessApiResponse<AuthenticatedUserDto>>
+    public class LoginService<T> : IService<T, SuccessApiResponse<AuthenticatedUserDto>>
+        where T : LoginRequestDto
     {
         private readonly UserManager<AppUser> userManager;
         private readonly ITokenProvider tokenProvider;
@@ -27,14 +28,23 @@ namespace TucaAPI.src.Services.Account
             this.signInManager = signInManager;
         }
 
-        public async Task<SuccessApiResponse<AuthenticatedUserDto>> ExecuteAsync(
-            LoginRequestDto data
-        )
+        protected virtual void VerifyTwoFactorAuthentication(AppUser user, T data)
+        {
+            if (user.TwoFactorEnabled)
+                throw new AppException(
+                    StatusCodes.Status401Unauthorized,
+                    MessageKey.TWO_FACTOR_REQUIRED
+                );
+        }
+
+        public async Task<SuccessApiResponse<AuthenticatedUserDto>> ExecuteAsync(T data)
         {
             var user = await this.userManager.FindNonNullableUserAsync(
                 data.Email.GetNonNullable(),
                 MessageKey.INVALID_CREDENTIALS
             );
+
+            this.VerifyTwoFactorAuthentication(user, data);
 
             var result = await this.signInManager.CheckPasswordSignInAsync(
                 user,
