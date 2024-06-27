@@ -181,7 +181,7 @@ builder.Services.AddScoped<DeleteCommentService>();
 builder.Services.AddScoped<GetAllCommentService>();
 builder.Services.AddScoped<GetCommentByIdService>();
 builder.Services.AddScoped<UpdateCommentService>();
-builder.Services.AddScoped<GetGoogleAuthenticatorQRCodeService>();
+builder.Services.AddScoped<EnableGoogleAuthenticator2FAService>();
 
 var app = builder.Build();
 

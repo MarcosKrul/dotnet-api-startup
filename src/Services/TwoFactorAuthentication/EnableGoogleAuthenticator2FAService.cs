@@ -12,7 +12,7 @@ using TucaAPI.src.Utilities.Extensions;
 
 namespace TucaAPI.src.Services.TwoFactorAuthentication
 {
-    public class GetGoogleAuthenticatorQRCodeService
+    public class EnableGoogleAuthenticator2FAService
         : IService<UserAuthenticatedInfos, SuccessApiResponse<string>>
     {
         private readonly IGoogleAuthenticatorProvider googleAuthenticatorProvider;
@@ -20,7 +20,7 @@ namespace TucaAPI.src.Services.TwoFactorAuthentication
         private readonly IMailSenderProvider mailProvider;
         private readonly ITemplateRenderingProvider templateRenderingProvider;
 
-        public GetGoogleAuthenticatorQRCodeService(
+        public EnableGoogleAuthenticator2FAService(
             IGoogleAuthenticatorProvider googleAuthenticatorProvider,
             UserManager<AppUser> userManager,
             IMailSenderProvider mailProvider,

@@ -18,7 +18,7 @@ namespace TucaAPI.src.Controllers
             this.serviceProvider = serviceProvider;
         }
 
-        [HttpGet("getGoogleAuthenticatorQRCode")]
+        [HttpGet("enableGoogleAuthenticator2FA")]
         [Authorize]
         [ValidateModelState]
         public async Task<IActionResult> GetById()
@@ -28,7 +28,7 @@ namespace TucaAPI.src.Controllers
                 var data = new UserAuthenticatedInfos();
                 data.AggregateUser(User);
                 var service =
-                    scope.ServiceProvider.GetRequiredService<GetGoogleAuthenticatorQRCodeService>();
+                    scope.ServiceProvider.GetRequiredService<EnableGoogleAuthenticator2FAService>();
                 var result = await service.ExecuteAsync(data);
                 return Ok(result);
             }
