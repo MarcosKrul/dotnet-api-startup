@@ -38,7 +38,7 @@ namespace TucaAPI.src.Controllers
         [HttpPost]
         [Route("login/googleAuthenticator")]
         [ValidateModelState]
-        public async Task<IActionResult> Login(
+        public async Task<IActionResult> LoginGoogleAuthenticator2FA(
             [FromBody] LoginGoogleAuthenticator2FARequestDto data
         )
         {
@@ -46,6 +46,23 @@ namespace TucaAPI.src.Controllers
             {
                 var service =
                     scope.ServiceProvider.GetRequiredService<LoginGoogleAuthenticator2FAService>();
+                var result = await service.ExecuteAsync(data);
+                return Ok(result);
+            }
+        }
+
+        [HttpPost]
+        [Route("disable/googleAuthenticator/request")]
+        [ValidateModelState]
+        public async Task<IActionResult> DisableGoogleAuthenticator2FA(
+            [FromBody] RequestDisableGoogleAuthenticator2FARequestDto data
+        )
+        {
+            using (var scope = this.serviceProvider.CreateScope())
+            {
+                data.AggregateUser(User);
+                var service =
+                    scope.ServiceProvider.GetRequiredService<RequestDisableGoogleAuthenticator2FAService>();
                 var result = await service.ExecuteAsync(data);
                 return Ok(result);
             }
