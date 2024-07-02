@@ -67,5 +67,22 @@ namespace TucaAPI.src.Controllers
                 return Ok(result);
             }
         }
+
+        [HttpPost]
+        [Route("disable/googleAuthenticator/confirm")]
+        [ValidateModelState]
+        public async Task<IActionResult> ConfirmGoogleAuthenticator2FA(
+            [FromBody] ConfirmDisableGoogleAuthenticator2FARequestDto data
+        )
+        {
+            using (var scope = this.serviceProvider.CreateScope())
+            {
+                data.AggregateUser(User);
+                var service =
+                    scope.ServiceProvider.GetRequiredService<ConfirmDisableGoogleAuthenticator2FAService>();
+                var result = await service.ExecuteAsync(data);
+                return Ok(result);
+            }
+        }
     }
 }
