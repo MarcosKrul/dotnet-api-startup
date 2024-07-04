@@ -49,7 +49,9 @@ namespace TucaAPI.src.Controllers
         {
             using (var scope = this.serviceProvider.CreateScope())
             {
-                var service = scope.ServiceProvider.GetRequiredService<LoginService>();
+                var service = scope.ServiceProvider.GetRequiredService<
+                    LoginService<LoginRequestDto>
+                >();
                 var result = await service.ExecuteAsync(data);
                 return Ok(result);
             }
