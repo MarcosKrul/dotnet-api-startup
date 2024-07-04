@@ -20,5 +20,6 @@ namespace TucaAPI.src.Common
         public const string TWO_FACTOR_INVALID_CREDENTIALS = "TWO_FACTOR_INVALID_CREDENTIALS";
         public const string ERROR_UPDATE_USER = "ERROR_UPDATE_USER";
         public const string TWO_FACTOR_REQUIRED = "TWO_FACTOR_REQUIRED";
+        public const string INVALID_TOKEN = "INVALID_TOKEN";
     }
 }
