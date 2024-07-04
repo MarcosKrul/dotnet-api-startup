@@ -21,3 +21,4 @@
 * One-to-Many and Many-to-Many Relationships
 * Repository Pattern
 * Standardized Responses
+* Google authenticator 2FA
