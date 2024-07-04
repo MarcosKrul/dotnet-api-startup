@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using TucaAPI.src.Common;
 using TucaAPI.src.Dtos.Account;
 using TucaAPI.src.Dtos.Common;
+using TucaAPI.src.Dtos.Mail;
 using TucaAPI.src.Exceptions;
 using TucaAPI.src.Extensions;
 using TucaAPI.src.Models;
@@ -16,16 +17,22 @@ namespace TucaAPI.src.Services.Account
         private readonly UserManager<AppUser> userManager;
         private readonly ITokenProvider tokenProvider;
         private readonly SignInManager<AppUser> signInManager;
+        private readonly IMailSenderProvider mailProvider;
+        private readonly ITemplateRenderingProvider templateRenderingProvider;
 
         public LoginService(
             UserManager<AppUser> userManager,
             ITokenProvider tokenProvider,
-            SignInManager<AppUser> signInManager
+            SignInManager<AppUser> signInManager,
+            IMailSenderProvider mailProvider,
+            ITemplateRenderingProvider templateRenderingProvider
         )
         {
             this.tokenProvider = tokenProvider;
             this.userManager = userManager;
             this.signInManager = signInManager;
+            this.mailProvider = mailProvider;
+            this.templateRenderingProvider = templateRenderingProvider;
         }
 
         protected virtual void VerifyTwoFactorAuthentication(AppUser user, T data)
@@ -53,10 +60,31 @@ namespace TucaAPI.src.Services.Account
             );
 
             if (result.IsLockedOut)
+            {
+                var email = user.Email.GetNonNullable();
+                var userName = user.UserName.GetNonNullable();
+
+                var templateWriter = this.templateRenderingProvider.Render(
+                    Path.Combine("Templates", "Mail", "AccountLockedOut", "index.hbs"),
+                    new { userName }
+                );
+
+                await this.mailProvider.SendHtmlAsync(
+                    new BaseHtmlMailData
+                    {
+                        EmailToId = email,
+                        EmailToName = userName,
+                        EmailSubject = email,
+                        TemplateWriter = templateWriter,
+                        EmailBody = Messages.ACCOUNT_LOCKED_OUT
+                    }
+                );
+
                 throw new AppException(
                     StatusCodes.Status401Unauthorized,
                     MessageKey.ACCOUNT_LOCKED
                 );
+            }
 
             if (!result.Succeeded)
                 throw new AppException(

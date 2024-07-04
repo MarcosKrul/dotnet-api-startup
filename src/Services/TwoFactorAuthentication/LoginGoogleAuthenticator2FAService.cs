@@ -19,9 +19,17 @@ namespace TucaAPI.src.Services.TwoFactorAuthentication
             IGoogleAuthenticatorProvider googleAuthenticatorProvider,
             UserManager<AppUser> userManager,
             ITokenProvider tokenProvider,
-            SignInManager<AppUser> signInManager
+            SignInManager<AppUser> signInManager,
+            IMailSenderProvider mailProvider,
+            ITemplateRenderingProvider templateRenderingProvider
         )
-            : base(userManager, tokenProvider, signInManager)
+            : base(
+                userManager,
+                tokenProvider,
+                signInManager,
+                mailProvider,
+                templateRenderingProvider
+            )
         {
             this.googleAuthenticatorProvider = googleAuthenticatorProvider;
         }
