@@ -1,4 +1,5 @@
 using Google.Authenticator;
+using TucaAPI.src.Common;
 using TucaAPI.src.Dtos.TwoFactorAuthentication;
 
 namespace TucaAPI.src.Providers.GoogleAuthenticator.Implementation
@@ -31,7 +32,11 @@ namespace TucaAPI.src.Providers.GoogleAuthenticator.Implementation
 
         public bool ValidatePin(string secretKey, string pin)
         {
-            return this.twoFactorAuthenticator.ValidateTwoFactorPIN(secretKey, pin);
+            return this.twoFactorAuthenticator.ValidateTwoFactorPIN(
+                secretKey,
+                pin,
+                Constants.GOOGLE_AUTHENTICATOR_TIME_TOLERANCE
+            );
         }
     }
 }
