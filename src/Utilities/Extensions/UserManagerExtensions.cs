@@ -9,7 +9,7 @@ namespace TucaAPI.src.Utilities.Extensions
     {
         public static async Task<AppUser> FindNonNullableUserAsync(
             this UserManager<AppUser> userManager,
-            string email = MessageKey.USER_NOT_FOUND
+            string email
         )
         {
             var hasUser = await userManager.FindByEmailAsync(email);

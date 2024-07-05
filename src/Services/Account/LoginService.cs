@@ -91,7 +91,6 @@ namespace TucaAPI.src.Services.Account
                     StatusCodes.Status401Unauthorized,
                     MessageKey.INVALID_CREDENTIALS
                 );
-            ;
 
             var token = await this.tokenProvider.CreateAsync(user);
 
