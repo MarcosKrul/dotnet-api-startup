@@ -6,6 +6,7 @@ using TucaAPI.src.Dtos.Mail;
 using TucaAPI.src.Extensions;
 using TucaAPI.src.Models;
 using TucaAPI.src.Providers;
+using TucaAPI.src.Utilities.Common;
 using TucaAPI.src.Utilities.Extensions;
 
 namespace TucaAPI.src.Services.Account
@@ -46,7 +47,7 @@ namespace TucaAPI.src.Services.Account
                 {
                     EmailToId = email,
                     EmailToName = userName,
-                    EmailSubject = email,
+                    EmailSubject = EmailSubject.FORGOT_PASSWORD,
                     TemplateWriter = templateWriter,
                     EmailBody = $"{Messages.MAIL_RESET_PASSWORD}: {link}"
                 }

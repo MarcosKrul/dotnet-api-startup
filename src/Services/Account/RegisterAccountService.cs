@@ -8,6 +8,7 @@ using TucaAPI.src.Extensions;
 using TucaAPI.src.Mappers;
 using TucaAPI.src.Models;
 using TucaAPI.src.Providers;
+using TucaAPI.src.Utilities.Common;
 
 namespace TucaAPI.src.Services.Account
 {
@@ -66,7 +67,7 @@ namespace TucaAPI.src.Services.Account
                 {
                     EmailToId = email,
                     EmailToName = userName,
-                    EmailSubject = email,
+                    EmailSubject = EmailSubject.CONFIRM_ACCOUNT,
                     TemplateWriter = templateWriter,
                     EmailBody = $"{Messages.MAIL_CONFIRM_ACCOUNT}: {link}"
                 }

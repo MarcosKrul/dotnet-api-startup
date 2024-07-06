@@ -8,6 +8,7 @@ using TucaAPI.src.Exceptions;
 using TucaAPI.src.Extensions;
 using TucaAPI.src.Models;
 using TucaAPI.src.Providers;
+using TucaAPI.src.Utilities.Common;
 using TucaAPI.src.Utilities.Extensions;
 
 namespace TucaAPI.src.Services.TwoFactorAuthentication
@@ -63,7 +64,7 @@ namespace TucaAPI.src.Services.TwoFactorAuthentication
                 {
                     EmailToId = email,
                     EmailToName = userName,
-                    EmailSubject = email,
+                    EmailSubject = EmailSubject.REQUEST_DISABLED_2FA,
                     TemplateWriter = templateWriter,
                     EmailBody = $"{Messages.MAIL_DISABLE_2FA}: {link}"
                 }

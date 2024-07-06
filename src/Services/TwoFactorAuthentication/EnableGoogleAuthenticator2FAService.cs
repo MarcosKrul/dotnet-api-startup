@@ -8,6 +8,7 @@ using TucaAPI.src.Extensions;
 using TucaAPI.src.Models;
 using TucaAPI.src.Providers;
 using TucaAPI.src.Providers.GoogleAuthenticator;
+using TucaAPI.src.Utilities.Common;
 using TucaAPI.src.Utilities.Extensions;
 
 namespace TucaAPI.src.Services.TwoFactorAuthentication
@@ -71,7 +72,7 @@ namespace TucaAPI.src.Services.TwoFactorAuthentication
                 {
                     EmailToId = email,
                     EmailToName = userName,
-                    EmailSubject = email,
+                    EmailSubject = EmailSubject.VERIFY_2FA,
                     TemplateWriter = templateWriter,
                     EmailBody = $"{Messages.MAIL_VERIFY_2FA}"
                 }

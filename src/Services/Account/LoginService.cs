@@ -7,6 +7,7 @@ using TucaAPI.src.Exceptions;
 using TucaAPI.src.Extensions;
 using TucaAPI.src.Models;
 using TucaAPI.src.Providers;
+using TucaAPI.src.Utilities.Common;
 using TucaAPI.src.Utilities.Extensions;
 
 namespace TucaAPI.src.Services.Account
@@ -74,7 +75,7 @@ namespace TucaAPI.src.Services.Account
                     {
                         EmailToId = email,
                         EmailToName = userName,
-                        EmailSubject = email,
+                        EmailSubject = EmailSubject.ACCOUNT_LOCKED_OUT,
                         TemplateWriter = templateWriter,
                         EmailBody = Messages.ACCOUNT_LOCKED_OUT
                     }
