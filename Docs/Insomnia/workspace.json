@@ -1,8 +1,8 @@
 {
   "_type": "export",
   "__export_format": 4,
-  "__export_date": "2024-07-04T00:06:40.805Z",
-  "__export_source": "insomnia.desktop.app:v9.3.1",
+  "__export_date": "2024-07-09T23:21:31.055Z",
+  "__export_source": "insomnia.desktop.app:v9.3.2",
   "resources": [
     {
       "_id": "req_e3c4c5acf0ed4207bfb6f34b6a62c5e6",
@@ -745,6 +745,57 @@
       "_type": "request"
     },
     {
+      "_id": "req_a997ff13a6cf4ddca9301b6875add277",
+      "parentId": "fld_8d2e83c7b08b494fae4dca3b6141ae0c",
+      "modified": 1720567063960,
+      "created": 1720566257456,
+      "url": "{{ _.base_url }}/{% request 'folder', '', 0 %}/{% request 'name', '', 0 %}",
+      "name": "password",
+      "description": "",
+      "method": "PATCH",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n\t\"newPassword\": \"SenhaPadrao123@\",\n\t\"oldPassword\": \"daw\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "User-Agent",
+          "value": "insomnia/9.3.2"
+        }
+      ],
+      "authentication": {
+        "type": "bearer",
+        "token": "{% response 'body', 'req_8e8b1108de9544f997a98bfbeff614a9', 'b64::JC5jb250ZW50LnRva2Vu::46b', 'never', 60 %}"
+      },
+      "metaSortKey": -1720566257456,
+      "isPrivate": false,
+      "pathParameters": [],
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "fld_8d2e83c7b08b494fae4dca3b6141ae0c",
+      "parentId": "wrk_f7a33908cdff4bc097166f29f16da4cc",
+      "modified": 1716504992213,
+      "created": 1716504992213,
+      "name": "Account",
+      "description": "",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": -1716504992213,
+      "_type": "request_group"
+    },
+    {
       "_id": "req_87e17d9c1f634c07b1c4a2986cbd2440",
       "parentId": "fld_8d2e83c7b08b494fae4dca3b6141ae0c",
       "modified": 1718926771119,
@@ -780,18 +831,6 @@
       "settingRebuildPath": true,
       "settingFollowRedirects": "global",
       "_type": "request"
-    },
-    {
-      "_id": "fld_8d2e83c7b08b494fae4dca3b6141ae0c",
-      "parentId": "wrk_f7a33908cdff4bc097166f29f16da4cc",
-      "modified": 1716504992213,
-      "created": 1716504992213,
-      "name": "Account",
-      "description": "",
-      "environment": {},
-      "environmentPropertyOrder": null,
-      "metaSortKey": -1716504992213,
-      "_type": "request_group"
     },
     {
       "_id": "req_5ffc94945803427ab6561c34aa15b652",
@@ -907,7 +946,7 @@
     {
       "_id": "req_8e8b1108de9544f997a98bfbeff614a9",
       "parentId": "fld_8d2e83c7b08b494fae4dca3b6141ae0c",
-      "modified": 1719960815067,
+      "modified": 1720567072058,
       "created": 1716504995785,
       "url": "{{ _.base_url }}/{% request 'folder', '', 0 %}/{% request 'name', '', 0 %}",
       "name": "login",
