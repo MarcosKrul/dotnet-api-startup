@@ -186,6 +186,7 @@ builder.Services.AddScoped<EnableGoogleAuthenticator2FAService>();
 builder.Services.AddScoped<LoginGoogleAuthenticator2FAService>();
 builder.Services.AddScoped<RequestDisableGoogleAuthenticator2FAService>();
 builder.Services.AddScoped<ConfirmDisableGoogleAuthenticator2FAService>();
+builder.Services.AddScoped<UpdatePasswordService>();
 
 var app = builder.Build();
 

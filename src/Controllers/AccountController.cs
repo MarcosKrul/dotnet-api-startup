@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using TucaAPI.src.Attributes;
 using TucaAPI.src.Dtos.Account;
 using TucaAPI.src.Services.Account;
+using TucaAPI.src.Utilities.Extensions;
 
 namespace TucaAPI.src.Controllers
 {
@@ -78,6 +79,20 @@ namespace TucaAPI.src.Controllers
             using (var scope = this.serviceProvider.CreateScope())
             {
                 var service = scope.ServiceProvider.GetRequiredService<ResetPasswordService>();
+                var result = await service.ExecuteAsync(data);
+                return Ok(result);
+            }
+        }
+
+        [HttpPatch]
+        [Route("password")]
+        [ValidateModelState]
+        public async Task<IActionResult> UpdatePassword([FromBody] UpdatePasswordRequestDto data)
+        {
+            using (var scope = this.serviceProvider.CreateScope())
+            {
+                data.AggregateUser(User);
+                var service = scope.ServiceProvider.GetRequiredService<UpdatePasswordService>();
                 var result = await service.ExecuteAsync(data);
                 return Ok(result);
             }
