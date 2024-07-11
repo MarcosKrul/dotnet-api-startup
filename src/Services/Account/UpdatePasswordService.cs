@@ -7,6 +7,7 @@ using TucaAPI.src.Exceptions;
 using TucaAPI.src.Extensions;
 using TucaAPI.src.Mappers;
 using TucaAPI.src.Models;
+using TucaAPI.src.Repositories;
 using TucaAPI.src.Utilities.Extensions;
 
 namespace TucaAPI.src.Services.Account
@@ -14,10 +15,15 @@ namespace TucaAPI.src.Services.Account
     public class UpdatePasswordService : IService<UpdatePasswordRequestDto, ApiResponse>
     {
         private readonly UserManager<AppUser> userManager;
+        private readonly IPasswordHistoryRepository passwordHistoryRepository;
 
-        public UpdatePasswordService(UserManager<AppUser> userManager)
+        public UpdatePasswordService(
+            UserManager<AppUser> userManager,
+            IPasswordHistoryRepository passwordHistoryRepository
+        )
         {
             this.userManager = userManager;
+            this.passwordHistoryRepository = passwordHistoryRepository;
         }
 
         public async Task<ApiResponse> ExecuteAsync(UpdatePasswordRequestDto data)
@@ -32,6 +38,8 @@ namespace TucaAPI.src.Services.Account
                     MessageKey.UPDATE_TO_SAME_PASSWORD
                 );
 
+            var oldPasswordHash = user.PasswordHash.GetNonNullable();
+
             var result = await userManager.ChangePasswordAsync(
                 user,
                 data.OldPassword.GetNonNullable(),
@@ -43,6 +51,10 @@ namespace TucaAPI.src.Services.Account
                     StatusCodes.Status400BadRequest,
                     result.Errors.Select(item => item.ToAppErrorDescriptor())
                 );
+
+            await this.passwordHistoryRepository.CreateAsync(
+                new PasswordHistory { AppUserId = user.Id, Password = oldPasswordHash }
+            );
 
             return new ApiResponse { Success = true };
         }
