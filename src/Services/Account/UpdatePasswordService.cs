@@ -38,6 +38,24 @@ namespace TucaAPI.src.Services.Account
                     MessageKey.UPDATE_TO_SAME_PASSWORD
                 );
 
+            var passwordHistory = await this.passwordHistoryRepository.GetUserPasswordHistory(
+                user.Id,
+                DateTime.Now.Add(Constants.TIME_TO_ENABLE_PASSWORD_USAGE)
+            );
+
+            if (
+                passwordHistory.Any()
+                && this.userManager.IsPasswordInHistory(
+                    user,
+                    data.NewPassword.GetNonNullable(),
+                    passwordHistory
+                )
+            )
+                throw new AppException(
+                    StatusCodes.Status404NotFound,
+                    MessageKey.PASSWORD_ALREADY_USED
+                );
+
             var oldPasswordHash = user.PasswordHash.GetNonNullable();
 
             var result = await userManager.ChangePasswordAsync(

@@ -22,5 +22,6 @@ namespace TucaAPI.src.Common
         public const string TWO_FACTOR_REQUIRED = "TWO_FACTOR_REQUIRED";
         public const string INVALID_TOKEN = "INVALID_TOKEN";
         public const string UPDATE_TO_SAME_PASSWORD = "UPDATE_TO_SAME_PASSWORD";
+        public const string PASSWORD_ALREADY_USED = "PASSWORD_ALREADY_USED";
     }
 }

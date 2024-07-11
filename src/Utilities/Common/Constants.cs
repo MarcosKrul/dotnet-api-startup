@@ -10,5 +10,6 @@ namespace TucaAPI.src.Common
         public static TimeSpan TOKEN_EXPIRES_IN = TimeSpan.FromHours(1);
         public static TimeSpan RESET_LOGIN_ATTEMPTS = TimeSpan.FromHours(1);
         public static TimeSpan GOOGLE_AUTHENTICATOR_TIME_TOLERANCE = TimeSpan.FromSeconds(30);
+        public static TimeSpan TIME_TO_ENABLE_PASSWORD_USAGE = TimeSpan.FromDays(-(5 * 30));
     }
 }

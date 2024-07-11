@@ -36,5 +36,27 @@ namespace TucaAPI.src.Utilities.Extensions
 
             return hasUser;
         }
+
+        public static bool IsPasswordInHistory(
+            this UserManager<AppUser> userManager,
+            AppUser user,
+            string newPassword,
+            IEnumerable<string> passwordHistory
+        )
+        {
+            foreach (var oldPasswordHash in passwordHistory)
+            {
+                var verificationResult = userManager.PasswordHasher.VerifyHashedPassword(
+                    user,
+                    oldPasswordHash,
+                    newPassword
+                );
+
+                if (verificationResult == PasswordVerificationResult.Success)
+                    return true;
+            }
+
+            return false;
+        }
     }
 }
