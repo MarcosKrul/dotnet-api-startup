@@ -6,6 +6,7 @@ using TucaAPI.src.Extensions;
 using TucaAPI.src.Models;
 using TucaAPI.src.Providers;
 using TucaAPI.src.Providers.GoogleAuthenticator;
+using TucaAPI.src.Repositories;
 using TucaAPI.src.Services.Account;
 
 namespace TucaAPI.src.Services.TwoFactorAuthentication
@@ -21,14 +22,16 @@ namespace TucaAPI.src.Services.TwoFactorAuthentication
             ITokenProvider tokenProvider,
             SignInManager<AppUser> signInManager,
             IMailSenderProvider mailProvider,
-            ITemplateRenderingProvider templateRenderingProvider
+            ITemplateRenderingProvider templateRenderingProvider,
+            IPasswordHistoryRepository passwordHistoryRepository
         )
             : base(
                 userManager,
                 tokenProvider,
                 signInManager,
                 mailProvider,
-                templateRenderingProvider
+                templateRenderingProvider,
+                passwordHistoryRepository
             )
         {
             this.googleAuthenticatorProvider = googleAuthenticatorProvider;
