@@ -20,7 +20,21 @@ namespace TucaAPI.src.Repositories
             return passwordHistory;
         }
 
-        public async Task<IEnumerable<string>> GetUserPasswordHistory(string userId, DateTime limit)
+        public async Task<PasswordHistory?> GetMostRecentPasswordHistoryAsync(
+            string userId,
+            DateTime limit
+        )
+        {
+            return await this
+                .context.PasswordHistories.Where(i => i.AppUserId == userId && i.UpdatedOn > limit)
+                .OrderByDescending(i => i.UpdatedOn)
+                .FirstOrDefaultAsync();
+        }
+
+        public async Task<IEnumerable<string>> GetUserPasswordHistoryAsync(
+            string userId,
+            DateTime limit
+        )
         {
             return await this
                 .context.PasswordHistories.Where(i => i.AppUserId == userId && i.UpdatedOn > limit)

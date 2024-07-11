@@ -38,7 +38,7 @@ namespace TucaAPI.src.Services.Account
                     MessageKey.UPDATE_TO_SAME_PASSWORD
                 );
 
-            var passwordHistory = await this.passwordHistoryRepository.GetUserPasswordHistory(
+            var passwordHistory = await this.passwordHistoryRepository.GetUserPasswordHistoryAsync(
                 user.Id,
                 DateTime.Now.Add(Constants.TIME_TO_ENABLE_PASSWORD_USAGE)
             );
