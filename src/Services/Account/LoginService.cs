@@ -7,6 +7,7 @@ using TucaAPI.src.Exceptions;
 using TucaAPI.src.Extensions;
 using TucaAPI.src.Models;
 using TucaAPI.src.Providers;
+using TucaAPI.src.Repositories;
 using TucaAPI.src.Utilities.Common;
 using TucaAPI.src.Utilities.Extensions;
 
@@ -20,13 +21,15 @@ namespace TucaAPI.src.Services.Account
         private readonly SignInManager<AppUser> signInManager;
         private readonly IMailSenderProvider mailProvider;
         private readonly ITemplateRenderingProvider templateRenderingProvider;
+        private readonly IPasswordHistoryRepository passwordHistoryRepository;
 
         public LoginService(
             UserManager<AppUser> userManager,
             ITokenProvider tokenProvider,
             SignInManager<AppUser> signInManager,
             IMailSenderProvider mailProvider,
-            ITemplateRenderingProvider templateRenderingProvider
+            ITemplateRenderingProvider templateRenderingProvider,
+            IPasswordHistoryRepository passwordHistoryRepository
         )
         {
             this.tokenProvider = tokenProvider;
@@ -34,6 +37,7 @@ namespace TucaAPI.src.Services.Account
             this.signInManager = signInManager;
             this.mailProvider = mailProvider;
             this.templateRenderingProvider = templateRenderingProvider;
+            this.passwordHistoryRepository = passwordHistoryRepository;
         }
 
         protected virtual void VerifyTwoFactorAuthentication(AppUser user, T data)
@@ -88,10 +92,31 @@ namespace TucaAPI.src.Services.Account
             }
 
             if (!result.Succeeded)
+            {
+                var hasRecentPasswordChange =
+                    await this.passwordHistoryRepository.GetMostRecentPasswordHistoryAsync(
+                        user.Id,
+                        DateTime.Now.Add(Constants.TIME_TO_NOTIFY_THAT_PASSWORD_HAS_BEEN_CHANGED)
+                    );
+
+                if (hasRecentPasswordChange is not null)
+                    throw new AppException(
+                        StatusCodes.Status401Unauthorized,
+                        [
+                            new AppErrorDescriptor
+                            {
+                                Key = MessageKey.INVALID_CREDENTIALS,
+                                Description =
+                                    $"{Messages.PASSWORD_CHANGED} {hasRecentPasswordChange.UpdatedOn.GetReadableString()}"
+                            }
+                        ]
+                    );
+
                 throw new AppException(
                     StatusCodes.Status401Unauthorized,
                     MessageKey.INVALID_CREDENTIALS
                 );
+            }
 
             var token = await this.tokenProvider.CreateAsync(user);
 

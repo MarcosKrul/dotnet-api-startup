@@ -159,6 +159,7 @@ builder.Services.AddAuthorization(options =>
 builder.Services.AddScoped<IStockRepository, StockRepository>();
 builder.Services.AddScoped<ICommentRepository, CommentRepository>();
 builder.Services.AddScoped<IPortfolioRepository, PortfolioRepository>();
+builder.Services.AddScoped<IPasswordHistoryRepository, PasswordHistoryRepository>();
 builder.Services.AddScoped<ITokenProvider, TokenProvider>();
 builder.Services.AddScoped<IGoogleAuthenticatorProvider, GoogleAuthenticatorProvider>();
 builder.Services.AddScoped<IMailSenderProvider, MailSenderProvider>();

@@ -14,12 +14,19 @@ namespace TucaAPI.src.Data
         public DbSet<Stock> Stocks { get; set; }
         public DbSet<Comment> Comments { get; set; }
         public DbSet<Portfolio> Portfolios { get; set; }
+        public DbSet<PasswordHistory> PasswordHistories { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
 
             builder.Entity<Portfolio>(i => i.HasKey(p => new { p.AppUserId, p.StockId }));
+
+            builder
+                .Entity<PasswordHistory>()
+                .HasOne(i => i.AppUser)
+                .WithMany(i => i.PasswordHistory)
+                .HasForeignKey(i => i.AppUserId);
 
             builder
                 .Entity<Portfolio>()
