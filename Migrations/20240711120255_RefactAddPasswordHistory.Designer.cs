@@ -12,8 +12,8 @@ using TucaAPI.src.Data;
 namespace TucaAPI.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    [Migration("20240709233504_AddPasswordHistory")]
-    partial class AddPasswordHistory
+    [Migration("20240711120255_RefactAddPasswordHistory")]
+    partial class RefactAddPasswordHistory
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -54,13 +54,13 @@ namespace TucaAPI.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "358f1394-be8e-4543-a2f4-636b9e1d7229",
+                            Id = "93f4a7ab-c248-4d4e-921a-a3c562e2d185",
                             Name = "Admin",
                             NormalizedName = "Admin"
                         },
                         new
                         {
-                            Id = "e159014c-ff44-433a-b1a9-30cec1eddb3d",
+                            Id = "6ac17d6f-2035-4e4b-96ab-a7ce7f74f8ce",
                             Name = "User",
                             NormalizedName = "User"
                         });
@@ -277,11 +277,15 @@ namespace TucaAPI.Migrations
 
             modelBuilder.Entity("TucaAPI.src.Models.PasswordHistory", b =>
                 {
-                    b.Property<string>("AppUserId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AppUserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Password")
                         .IsRequired()
@@ -290,7 +294,9 @@ namespace TucaAPI.Migrations
                     b.Property<DateTime>("UpdatedOn")
                         .HasColumnType("datetime2");
 
-                    b.HasKey("AppUserId", "Id");
+                    b.HasKey("Id");
+
+                    b.HasIndex("AppUserId");
 
                     b.ToTable("PasswordHistory");
                 });

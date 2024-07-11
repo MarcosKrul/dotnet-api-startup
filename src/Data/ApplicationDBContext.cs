@@ -22,8 +22,6 @@ namespace TucaAPI.src.Data
 
             builder.Entity<Portfolio>(i => i.HasKey(p => new { p.AppUserId, p.StockId }));
 
-            builder.Entity<PasswordHistory>(i => i.HasKey(p => new { p.AppUserId, p.Id }));
-
             builder
                 .Entity<PasswordHistory>()
                 .HasOne(i => i.AppUser)
