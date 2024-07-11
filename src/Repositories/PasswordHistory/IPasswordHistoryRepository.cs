@@ -1,12 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using TucaAPI.src.Models;
 
-namespace TucaAPI.src.Repositories.PasswordHistory
+namespace TucaAPI.src.Repositories
 {
     public interface IPasswordHistoryRepository
     {
-        
+        Task<PasswordHistory> CreateAsync(PasswordHistory passwordHistory);
     }
 }
