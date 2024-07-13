@@ -8,10 +8,12 @@ namespace TucaAPI.src.Middlewares
     public class ErrorHandlerMiddleware
     {
         private readonly RequestDelegate next;
+        private readonly ILogger<ErrorHandlerMiddleware> logger;
 
-        public ErrorHandlerMiddleware(RequestDelegate next)
+        public ErrorHandlerMiddleware(RequestDelegate next, ILogger<ErrorHandlerMiddleware> logger)
         {
             this.next = next;
+            this.logger = logger;
         }
 
         public async Task InvokeAsync(HttpContext context)
@@ -24,8 +26,9 @@ namespace TucaAPI.src.Middlewares
             {
                 await HandleExceptionAsync(context, ex.StatusCode, ex.Error);
             }
-            catch
+            catch (Exception ex)
             {
+                this.logger.LogError(ex.Message, ex);
                 await HandleExceptionAsync(
                     context,
                     StatusCodes.Status500InternalServerError,

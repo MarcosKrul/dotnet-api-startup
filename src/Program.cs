@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Serilog;
 using TucaAPI.src.Attributes;
 using TucaAPI.src.Common;
 using TucaAPI.src.Data;
@@ -25,6 +26,10 @@ using TucaAPI.src.Services.TwoFactorAuthentication;
 using TucaAPI.src.Services.UserManagement;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Host.UseSerilog(
+    (context, configuration) => configuration.ReadFrom.Configuration(context.Configuration)
+);
 
 builder
     .Services.AddControllers()
@@ -196,6 +201,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseSerilogRequestLogging();
 
 app.UseHttpsRedirection();
 
